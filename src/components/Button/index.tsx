@@ -1,13 +1,26 @@
 import React from 'react';
 
 type ButtonProps = {
-    label: string
-    className?: string
+  label: string;
+  style?: string;
+  disabled?: boolean;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const Button = ({label="", className = ""}: ButtonProps) => {
+const Button = ({
+  label = '',
+  onClick = () => {},
+  disabled = false,
+  style = '',
+}: ButtonProps) => {
   return (
-    <button className={`rounded-lg bg-primary-100 py-2 text-base font-semibold text-white ${className}`}>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`rounded-lg py-2 text-base font-semibold text-white ${
+        disabled ? 'bg-primary-800' : 'bg-primary-100'
+      } ${style}`}
+    >
       {label}
     </button>
   );
