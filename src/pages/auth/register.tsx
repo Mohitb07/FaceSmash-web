@@ -37,7 +37,7 @@ const Register = () => {
           </label>
           <Input type="password" placeholder="Confirm Password" />
         </div>
-        <Button label="Sign Up"/>{' '}
+        <Button onClick={() => {}} label="Sign Up"/>{' '}
       </div>
     </AuthLayout>
   );
