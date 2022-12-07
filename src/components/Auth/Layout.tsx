@@ -64,7 +64,7 @@ const Layout: React.FC<LayoutProps> = ({
             <Link href={footerLink}>
               <h1 className="text-lg text-[#8E8FAB]">
                 {footerText}{' '}
-                <span className="text-primary-100 font-bold">
+                <span className="text-primary-100 font-bold cursor-pointer">
                   {footerLabel}
                 </span>
               </h1>
