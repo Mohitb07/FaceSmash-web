@@ -25,12 +25,12 @@ a {
   }
   body {
     color: white;
-    background: rgb(17, 16, 16);
+    background: rgb(25,24,26);
   }
 }
 
 @layer components {
   .nav-item{
-    @apply flex items-center space-x-5 hover:bg-slate-800 text-xl rounded-full transition-all duration-300 ease-in-out p-3;
+    @apply flex items-center md:justify-center lg:justify-start space-x-5 hover:bg-slate-800 text-xl rounded-full transition-all duration-300 ease-in-out p-3;
   }
 }
