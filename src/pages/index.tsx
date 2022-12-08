@@ -1,4 +1,6 @@
+import Feed from '../components/Feed';
 import Sidebar from '../components/Sidebar';
+import User from '../components/User';
 import { Meta } from '../layouts/Meta';
 import { Main } from '../templates/Main';
 
@@ -12,15 +14,35 @@ export default function Home() {
         />
       }
     >
-      <div className="flex">
-        <Sidebar />
-        <div>
-          <main>
-            <h1 className="text-primary-100">Center</h1>
-          </main>
-          <aside>
-            <h1>Right Hand side</h1>
-          </aside>
+      <div className="flex h-screen">
+        <div className="hidden md:flex fixed h-full w-full">
+          <Sidebar />
+        </div>
+        <div className=" flex-1">
+          <div className="flex p-10 justify-center items-start gap-10">
+            <main className="space-y-5 md:ml-[20%] xl:ml-[10%]">
+              <Feed />
+              <Feed />
+              <Feed />
+              <Feed />
+            </main>
+            <aside className="hidden lg:flex flex-col">
+              <div className="flex  items-center gap-5 mt-10">
+                <User size="large" />
+              </div>
+              <div className='mt-5'>
+                <p className="text-xl text-gray-500 font-semibold">
+                  Suggestions for you
+                </p>
+                <div>
+                  <User/>
+                  <User/>
+                  <User/>
+                  <User/>
+                </div>
+              </div>
+            </aside>
+          </div>
         </div>
       </div>
     </Main>
