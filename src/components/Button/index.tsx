@@ -5,8 +5,8 @@ type ButtonProps = {
   style?: string;
   disabled?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-  leftIcon?: JSX.Element
-  position?: "start" | "center" | "end" 
+  leftIcon?: JSX.Element;
+  position?: 'start' | 'center' | 'end';
 };
 
 const Button = ({
@@ -14,7 +14,7 @@ const Button = ({
   onClick = () => {},
   disabled = false,
   leftIcon,
-  position = "center",
+  position = 'center',
   style = '',
 }: ButtonProps) => {
   return (
@@ -25,9 +25,7 @@ const Button = ({
         disabled ? 'bg-primary-800' : 'bg-primary-100'
       } ${style}`}
     >
-      <span className='mx-5'>
-        {leftIcon}
-      </span>
+      {leftIcon && <span className="mx-5">{leftIcon}</span>}
       {label}
     </button>
   );
