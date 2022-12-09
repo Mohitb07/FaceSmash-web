@@ -10,7 +10,7 @@ import Avatar from '../Avatar';
 const Feed = () => {
   return (
     <div className="md:w-[500px] lg:w-[450px] xl:w-[600px] bg-[#242526] rounded-md">
-      <header className="flex items-center justify-between p-3 h-[5rem]">
+      <header className="flex items-center justify-between p-3 h-[4rem] md:h-[5rem]">
         <div className="flex items-center space-x-3">
           <Avatar
             url={
@@ -32,8 +32,8 @@ const Feed = () => {
         />
       </div>
       <div className="p-4 space-y-5">
-        <div className="flex justify-between  items-center text-4xl">
-          <div className="flex items-center space-x-5">
+        <div className="flex justify-between  items-center text-2xl md:text-4xl">
+          <div className="flex items-center space-x-2 md:space-x-5">
             <div className="group cursor-pointer">
               <FiHeart className="group-hover:opacity-40" />
             </div>
@@ -49,16 +49,16 @@ const Feed = () => {
           </div>
         </div>
         <div>
-          <span className="text-xl font-semibold">65,584 likes</span>
+          <span className="text-lg md:text-xl font-semibold">65,584 likes</span>
         </div>
         <div>
-          <p className="text-lg">
+          <p className="text-base md:text-lg">
             <span className="font-semibold mr-2">crictracker</span>The man of
             big occasions for India - Shikhar Dhawan🏆
           </p>
         </div>
         <div>
-          <span className="text-slate-400">2 DAYS AGO</span>
+          <span className="text-slate-400 text-sm md:text-base">2 DAYS AGO</span>
         </div>
       </div>
     </div>

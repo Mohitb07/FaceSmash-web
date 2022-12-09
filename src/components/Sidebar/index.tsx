@@ -8,7 +8,7 @@ import Avatar from '../Avatar';
 
 const Sidebar = () => {
   return (
-    <div className="flex flex-col justify-between bg-[#0b0b0b] pt-[5rem] px-[2rem]">
+    <div className="hidden md:flex fixed h-full flex-col justify-between bg-[#0b0b0b] pt-[5rem] px-[2rem] pb-[2rem]">
       <div>
         <div className='hidden lg:block'>
           <h1 className="text-[2rem] font-bold text-white mb-[3rem] ml-[1rem]">
@@ -44,7 +44,7 @@ const Sidebar = () => {
         <ul>
           <li className="nav-item">
             <RxHamburgerMenu className="text-3xl group-hover:scale-110 transition-transform ease-in-out duration-300" />{' '}
-            <span>More</span>
+            <span className='hidden lg:block'>More</span>
           </li>
         </ul>
       </div>

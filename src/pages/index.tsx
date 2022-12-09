@@ -15,11 +15,11 @@ export default function Home() {
       }
     >
       <div className="flex h-screen">
-        <div className="hidden md:flex fixed h-full w-full">
+        {/* <div className="">
           <Sidebar />
-        </div>
-        <div className=" flex-1">
-          <div className="flex p-10 justify-center items-start gap-10">
+        </div> */}
+        <div className="flex-1">
+          <div className="flex md:p-10 justify-center items-start gap-10">
             <main className="space-y-5 md:ml-[20%] xl:ml-[10%]">
               <Feed />
               <Feed />
