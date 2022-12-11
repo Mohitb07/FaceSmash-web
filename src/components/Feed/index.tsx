@@ -31,7 +31,7 @@ const Feed = () => {
           alt="post image"
         />
       </div>
-      <div className="p-4 space-y-5">
+      <div className="p-4 space-y-3 md:space-y-5">
         <div className="flex justify-between  items-center text-2xl md:text-4xl">
           <div className="flex items-center space-x-2 md:space-x-5">
             <div className="group cursor-pointer">
@@ -49,7 +49,7 @@ const Feed = () => {
           </div>
         </div>
         <div>
-          <span className="text-lg md:text-xl font-semibold">65,584 likes</span>
+          <span className="text-base md:text-xl font-semibold">65,584 likes</span>
         </div>
         <div>
           <p className="text-base md:text-lg">
