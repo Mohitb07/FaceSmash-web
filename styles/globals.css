@@ -31,6 +31,6 @@ a {
 
 @layer components {
   .nav-item{
-    @apply flex items-center md:justify-center lg:justify-start space-x-5 hover:bg-slate-800 text-xl rounded-full transition-all duration-300 ease-in-out p-3;
+    @apply flex items-center md:justify-center lg:justify-start space-x-5 hover:bg-slate-800 text-xl rounded-full transition-all duration-300 ease-in-out p-3 cursor-pointer;
   }
 }
