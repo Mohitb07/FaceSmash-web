@@ -1,8 +1,10 @@
 import React from 'react';
+
 import { FiSettings } from 'react-icons/fi';
+
 import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
-import Feed from '../../components/Feed';
+import VirtualisedList from '../../components/VirtualisedList';
 import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 
@@ -18,7 +20,7 @@ const UserProfile = () => {
         />
       }
     >
-      <div className="flex flex-col justify-start md:justify-center space-y-5 md:space-y-10 items-center md:p-10 lg:ml-[10%] xl:ml-0">
+      <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 items-center md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
           <div className="h-[100px] w-[100px] md:h-[180px] md:w-[180px] xl:h-[200px] xl:w-[200px]">
             <Avatar
@@ -62,6 +64,10 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
+        <div className="flex flex-col md:hidden text-left w-full px-5">
+          <span className="text-lg font-semibold">Mohit Bisht</span>
+          <span className="text-base">www.mohitsbisht.tech</span>
+        </div>
         <div className="h-[5rem] grid grid-cols-3 border-y border-slate-700 place-items-center w-full p-1 md:hidden">
           <div className="text-center">
             <span className="font-semibold">1230</span>
@@ -77,13 +83,7 @@ const UserProfile = () => {
           </div>
         </div>
         <div className="space-y-5 pb-16">
-          <Feed />
-          <Feed />
-          <Feed />
-          <Feed />
-          <>
-            <p className="text-center text-gray-500">End Of Result</p>
-          </>
+          <VirtualisedList />
         </div>
       </div>
     </Main>
