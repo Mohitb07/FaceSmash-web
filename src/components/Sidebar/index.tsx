@@ -25,21 +25,23 @@ const Sidebar = () => {
         <ul className="space-y-12 text-xl">
           {/* VscHome */}
           <Link href="/">
-            <li className="nav-item">
-              <TiHome className="text-3xl text-center" />{' '}
+            <li className="nav-item group">
+              <TiHome className="text-3xl hover-animation" />{' '}
               <span className="hidden lg:block">Home</span>
             </li>
           </Link>
-          <li className="nav-item">
-            <BsSearch className="text-3xl" />{' '}
+          <li className="nav-item group">
+            <BsSearch className="text-2xl hover-animation" />{' '}
             <span className="hidden lg:block">Search</span>
           </li>
           <Link href="/mohitbisht1903">
-            <li className="nav-item">
+            <li className="nav-item group">
               <Avatar
+                styles='hover-animation'
                 url={
                   'https://lh3.googleusercontent.com/ogw/AOh-ky2wAgtbl4h_XUEs5x-5xfgBLXa_Aq0k6ahwaOxCgw=s32-c-mo'
                 }
+                
               />{' '}
               <span className="hidden lg:block">Profile</span>
             </li>
@@ -49,7 +51,7 @@ const Sidebar = () => {
       <div className="group">
         <ul>
           <li className="nav-item">
-            <RxHamburgerMenu className="text-3xl group-hover:scale-110 transition-transform ease-in-out duration-300" />{' '}
+            <RxHamburgerMenu className="text-3xl hover-animation" />{' '}
             <span className="hidden lg:block">More</span>
           </li>
         </ul>
