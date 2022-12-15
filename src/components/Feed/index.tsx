@@ -1,13 +1,18 @@
 import Image from 'next/image';
-import React from 'react';
+import React, {useState} from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { TbMessageCircle2 } from 'react-icons/tb';
 import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
 
 import Avatar from '../Avatar';
+import { Collapse, Text } from '@chakra-ui/react';
 
 const Feed = () => {
+  const [show, setShow] = useState(false);
+
+  const handleToggle = () => setShow(!show);
+
   return (
     <div className="md:w-[500px] lg:w-[450px] xl:w-[600px] bg-[#242526] rounded-md">
       <header className="flex items-center justify-between p-3 h-[4rem] md:h-[5rem]">
@@ -49,16 +54,25 @@ const Feed = () => {
           </div>
         </div>
         <div>
-          <span className="text-base md:text-xl font-semibold">65,584 likes</span>
+          <span className="text-base md:text-xl font-semibold">
+            65,584 likes
+          </span>
         </div>
         <div>
-          <p className="text-base md:text-lg">
-            <span className="font-semibold mr-2">crictracker</span>The man of
-            big occasions for India - Shikhar Dhawan🏆
-          </p>
+          <Collapse startingHeight={20} in={show}>
+            <p className="text-base md:text-lg">
+              <span className="font-semibold mr-2">crictracker</span>The man of
+              big occasions for India - Shikhar Dhawan🏆 Lorem ipsum dolor sit
+              amet consectetur adipisicing elit. In omnis atque modi reiciendis
+              voluptatem cum mollitia, itaque distinctio nam. Culpa.
+            </p>
+          </Collapse>
+          <Text className='cursor-pointer font-bold text-gray-400' mt={2} onClick={handleToggle}>Show {show ? 'Less' : 'More'}</Text>
         </div>
         <div>
-          <span className="text-slate-400 text-sm md:text-base">2 DAYS AGO</span>
+          <span className="text-slate-400 text-sm md:text-base">
+            2 DAYS AGO
+          </span>
         </div>
       </div>
     </div>
