@@ -15,7 +15,12 @@ import {
   FormErrorMessage,
   Textarea,
   Button,
+  Text,
+  IconButton,
+  Flex,
 } from '@chakra-ui/react';
+import { BiLink, BiUnlink } from 'react-icons/bi';
+import { BsImages } from 'react-icons/bs';
 
 type PostModalProps = {
   isModalOpen: boolean;
@@ -28,6 +33,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     description: '',
   });
   const [loading, setLoading] = useState(false);
+  const [isLinkVisible, setIsLinkVisible] = useState(false);
 
   const handlePostValueChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -55,7 +61,9 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create new post</ModalHeader>
+        <ModalHeader>
+          <Text fontSize="2xl">Create new post</Text>
+        </ModalHeader>
         <ModalCloseButton disabled={loading} />
         <ModalBody>
           <Box p={1}>
@@ -71,6 +79,21 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                 placeholder="Enter title of your post"
                 onChange={handlePostValueChange}
               />
+              {isLinkVisible && (
+                <div className='mt-5'>
+                  <FormLabel>Link</FormLabel>
+                  <Input
+                    disabled={loading}
+                    name="title"
+                    type="url"
+                    focusBorderColor="brand.100"
+                    rounded="lg"
+                    value={postValue.title}
+                    placeholder="Provide link"
+                    onChange={handlePostValueChange}
+                  />
+                </div>
+              )}
               <FormErrorMessage>Your First name is invalid</FormErrorMessage>
               <FormLabel mt={5}>Description</FormLabel>
               <Textarea
@@ -87,6 +110,19 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                 size="sm"
               />
             </FormControl>
+            <Flex gap={3} mt={5}>
+              <IconButton
+                onClick={() => setIsLinkVisible(s => !s)}
+                colorScheme={`${isLinkVisible ? 'gray' : 'blue'}`}
+                aria-label="Add link"
+                icon={isLinkVisible ? <BiUnlink className="text-xl"/> :  <BiLink className="text-xl" />}
+              />
+              <IconButton
+                colorScheme="teal"
+                aria-label="Add photo"
+                icon={<BsImages />}
+              />
+            </Flex>
           </Box>
         </ModalBody>
         <ModalFooter>
