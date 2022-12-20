@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import {
   Modal,
@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
+import Image from 'next/image';
 
 type PostModalProps = {
   isModalOpen: boolean;
@@ -31,9 +32,12 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   const [postValue, setPostValue] = useState({
     title: '',
     description: '',
+    image: '',
   });
   const [loading, setLoading] = useState(false);
   const [isLinkVisible, setIsLinkVisible] = useState(false);
+  const [isImageContainerVisible, setIsImageContainerVisible] = useState(true);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handlePostValueChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,6 +48,15 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     }));
   };
 
+  const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setPostValue((prev) => ({
+        ...prev,
+        image: URL.createObjectURL(e.target.files![0]),
+      }));
+    }
+  };
+
   const handlePostCreation = () => {
     setLoading(true);
     setTimeout(() => {
@@ -51,6 +64,8 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
       setLoading(false);
     }, 2000);
   };
+
+  console.log('post value', postValue);
 
   return (
     <Modal
@@ -80,7 +95,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                 onChange={handlePostValueChange}
               />
               {isLinkVisible && (
-                <div className='mt-5'>
+                <div className="mt-5">
                   <FormLabel>Link</FormLabel>
                   <Input
                     disabled={loading}
@@ -109,18 +124,73 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                 placeholder="Enter description of your post"
                 size="sm"
               />
+              {isImageContainerVisible && (
+                <div
+                  className="mt-5 border-2 border-dashed border-slate-600 rounded-md overflow-hidden min-h-[5rem] px-3"
+                  onClick={() =>
+                    imageInputRef.current && imageInputRef.current.click()
+                  }
+                >
+                  {!postValue.image && (
+                    <Text
+                      textAlign="center"
+                      mt={4}
+                      color="GrayText"
+                      fontSize="2xl"
+                    >
+                      Select Image from your system
+                    </Text>
+                  )}
+                  {postValue.image && (
+                    <div className="flex justify-center items-center p-2">
+                      <Image
+                        src={postValue.image}
+                        height={300}
+                        width={600}
+                        alt="post image"
+                        objectFit="cover"
+                        className="rounded-2xl"
+                      />
+                    </div>
+                  )}
+                  <Input
+                    ref={imageInputRef}
+                    hidden
+                    disabled={loading}
+                    name="image"
+                    type="file"
+                    focusBorderColor="brand.100"
+                    rounded="lg"
+                    value={postValue.title}
+                    onChange={handleImageProcessing}
+                  />
+                </div>
+              )}
             </FormControl>
             <Flex gap={3} mt={5}>
               <IconButton
-                onClick={() => setIsLinkVisible(s => !s)}
+                onClick={() => setIsLinkVisible((s) => !s)}
                 colorScheme={`${isLinkVisible ? 'gray' : 'blue'}`}
                 aria-label="Add link"
-                icon={isLinkVisible ? <BiUnlink className="text-xl"/> :  <BiLink className="text-xl" />}
+                icon={
+                  isLinkVisible ? (
+                    <BiUnlink className="text-xl" />
+                  ) : (
+                    <BiLink className="text-xl" />
+                  )
+                }
               />
               <IconButton
-                colorScheme="teal"
+                onClick={() => setIsImageContainerVisible((s) => !s)}
+                colorScheme={`${isImageContainerVisible ? 'gray' : 'teal'}`}
                 aria-label="Add photo"
-                icon={<BsImages />}
+                icon={
+                  isImageContainerVisible ? (
+                    <BsImages className="text-xl" />
+                  ) : (
+                    <BsImages className="text-xl" />
+                  )
+                }
               />
             </Flex>
           </Box>
