@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { TiHome } from 'react-icons/ti';
+import { VscHome } from 'react-icons/vsc';
 import { BsSearch } from 'react-icons/bs';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
-import Link from 'next/link';
-import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuItem, Avatar } from '@chakra-ui/react';
 
-import Avatar from '../Avatar';
 import Brand from '../Brand';
-
 import NavItem from '../NavItem';
 import PostModal from './PostModal';
 import SearchDrawer from './SearchDrawer';
@@ -17,7 +17,7 @@ import SearchDrawer from './SearchDrawer';
 const Sidebar = () => {
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const router = useRouter();
   const searchDrawerClose = () => {
     if (isSearchDrawerOpen) {
       setIsSearchDrawerOpen(false);
@@ -47,7 +47,13 @@ const Sidebar = () => {
           {/* VscHome */}
           <Link href="/">
             <NavItem
-              icon={<TiHome className="text-3xl hover-animation" />}
+              icon={
+                router.pathname === '/' ? (
+                  <TiHome className="text-3xl hover-animation" />
+                ) : (
+                  <VscHome className="text-3xl hover-animation" />
+                )
+              }
               label="Home"
             />
           </Link>
@@ -64,10 +70,12 @@ const Sidebar = () => {
           <Link href="/mohitbisht1903">
             <NavItem label="Profile">
               <Avatar
-                styles="hover-animation"
-                url={
-                  'https://lh3.googleusercontent.com/ogw/AOh-ky2wAgtbl4h_XUEs5x-5xfgBLXa_Aq0k6ahwaOxCgw=s32-c-mo'
-                }
+                ring={router.pathname === '/[username]' ? 2 : 0}
+                ringColor="white"
+                className="hover-animation"
+                size="xs"
+                name="Mohit Bisht"
+                src="https://lh3.googleusercontent.com/ogw/AOh-ky2wAgtbl4h_XUEs5x-5xfgBLXa_Aq0k6ahwaOxCgw=s32-c-mo"
               />
             </NavItem>
           </Link>
