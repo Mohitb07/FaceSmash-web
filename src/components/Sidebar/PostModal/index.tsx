@@ -33,6 +33,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     title: '',
     description: '',
     image: '',
+    link: '',
   });
   const [loading, setLoading] = useState(false);
   const [isLinkVisible, setIsLinkVisible] = useState(false);
@@ -62,6 +63,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     setTimeout(() => {
       console.log('sending', postValue);
       setLoading(false);
+      modalClose()
     }, 2000);
   };
 
@@ -99,11 +101,11 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                   <FormLabel>Link</FormLabel>
                   <Input
                     disabled={loading}
-                    name="title"
+                    name="link"
                     type="url"
                     focusBorderColor="brand.100"
                     rounded="lg"
-                    value={postValue.title}
+                    value={postValue.link}
                     placeholder="Provide link"
                     onChange={handlePostValueChange}
                   />
@@ -161,7 +163,6 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                     type="file"
                     focusBorderColor="brand.100"
                     rounded="lg"
-                    value={postValue.title}
                     onChange={handleImageProcessing}
                   />
                 </div>
