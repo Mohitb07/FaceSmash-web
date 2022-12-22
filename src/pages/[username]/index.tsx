@@ -1,16 +1,21 @@
-import React from 'react';
-
+import { lazy } from 'react';
 import { FiSettings } from 'react-icons/fi';
+import { Avatar, useDisclosure } from '@chakra-ui/react';
 
-import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
 import VirtualisedList from '../../components/VirtualisedList';
 import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 
+const UpdateProfileModal = lazy(
+  () => import('../../components/UpdateProfileModal')
+);
+
 // bg-blue-500 md:bg-red-500 lg:bg-green-500 xl:bg-pink-500
 
 const UserProfile = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Main
       meta={
@@ -22,13 +27,11 @@ const UserProfile = () => {
     >
       <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 items-center md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
-          <div className="h-[100px] w-[100px] md:h-[180px] md:w-[180px] xl:h-[200px] xl:w-[200px]">
+          <div>
             <Avatar
-              url={
-                'http://projects.websetters.in/digg-seos/digg/wp-content/themes/twentytwenty-child-theme/img/demo-prof.jpg'
-              }
-              height={200}
-              width={200}
+              size="2xl"
+              name="Kola Tioluwani"
+              src="http://projects.websetters.in/digg-seos/digg/wp-content/themes/twentytwenty-child-theme/img/demo-prof.jpg"
             />
           </div>
           <div className="flex flex-col space-y-6">
@@ -38,14 +41,14 @@ const UserProfile = () => {
               </p>
               <Button
                 label="Edit profile"
-                onClick={() => {}}
+                onClick={onOpen}
                 style="hidden md:block text-base lg:text-md xl:text-[1.1rem] px-4 bg-[#fff] text-black"
               />
               <FiSettings className="text-xl xl:text-3xl" />
             </div>
             <Button
               label="Edit profile"
-              onClick={() => {}}
+              onClick={onOpen}
               style="block md:hidden text-base lg:text-md xl:text-[1.2rem] px-4 bg-[#fff] text-black"
             />
             <div className="text-lg hidden items-center gap-5 md:flex">
@@ -86,6 +89,7 @@ const UserProfile = () => {
           <VirtualisedList />
         </div>
       </div>
+      <UpdateProfileModal onClose={onClose} isOpen={isOpen} />
     </Main>
   );
 };
