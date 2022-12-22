@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { lazy, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -7,17 +7,25 @@ import { VscHome } from 'react-icons/vsc';
 import { BsSearch } from 'react-icons/bs';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
-import { Menu, MenuButton, MenuList, MenuItem, Avatar } from '@chakra-ui/react';
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Avatar,
+} from '@chakra-ui/react';
 
 import Brand from '../Brand';
 import NavItem from '../NavItem';
-import PostModal from './PostModal';
-import SearchDrawer from './SearchDrawer';
+
+const PostModal = lazy(() => import('./PostModal'));
+const SearchDrawer = lazy(() => import('./SearchDrawer'));
 
 const Sidebar = () => {
+  const router = useRouter();
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
+
   const searchDrawerClose = () => {
     if (isSearchDrawerOpen) {
       setIsSearchDrawerOpen(false);
@@ -44,7 +52,6 @@ const Sidebar = () => {
         </div>
 
         <ul className="space-y-12 text-xl">
-          {/* VscHome */}
           <Link href="/">
             <NavItem
               icon={
