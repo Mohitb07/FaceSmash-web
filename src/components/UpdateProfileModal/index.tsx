@@ -15,7 +15,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  FormErrorMessage,
 } from '@chakra-ui/react';
 
 type UpdateProfileModalProps = {
@@ -24,7 +23,6 @@ type UpdateProfileModalProps = {
 };
 
 const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
-    console.log('loaded')
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [bio, setBio] = useState('Mohit Bisht');
@@ -94,14 +92,13 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
               <Input
                 disabled={loading}
                 autoFocus
-                name="title"
+                name="bio"
                 focusBorderColor="brand.100"
                 rounded="lg"
                 placeholder="Your bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
               />
-              <FormErrorMessage>Your First name is invalid</FormErrorMessage>
             </FormControl>
           </Box>
         </ModalBody>
