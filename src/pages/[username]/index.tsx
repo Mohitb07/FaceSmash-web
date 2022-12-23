@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { FiSettings } from 'react-icons/fi';
 import { Avatar, useDisclosure } from '@chakra-ui/react';
 
@@ -89,7 +89,11 @@ const UserProfile = () => {
           <VirtualisedList />
         </div>
       </div>
-      <UpdateProfileModal onClose={onClose} isOpen={isOpen} />
+      <Suspense fallback={<div>Loading...</div>}>
+        {isOpen && (
+          <UpdateProfileModal onClose={onClose} isOpen={isOpen} />
+        )}
+      </Suspense>
     </Main>
   );
 };

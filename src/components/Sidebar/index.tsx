@@ -1,4 +1,4 @@
-import React, { lazy, useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -13,6 +13,11 @@ import {
   MenuList,
   MenuItem,
   Avatar,
+  Modal,
+  Spinner,
+  ModalBody,
+  Drawer,
+  DrawerContent,
 } from '@chakra-ui/react';
 
 import Brand from '../Brand';
@@ -105,11 +110,35 @@ const Sidebar = () => {
           </MenuList>
         </Menu>
       </div>
-      <SearchDrawer
-        isSearchDrawerOpen={isSearchDrawerOpen}
-        searchDrawerClose={searchDrawerClose}
-      />
-      <PostModal isModalOpen={isModalOpen} modalClose={modalClose} />
+      <Suspense
+        fallback={
+          <Drawer isOpen={true} onClose={() => {}}>
+            <DrawerContent>
+              <Spinner />
+            </DrawerContent>
+          </Drawer>
+        }
+      >
+        {isSearchDrawerOpen && (
+          <SearchDrawer
+            isSearchDrawerOpen={isSearchDrawerOpen}
+            searchDrawerClose={searchDrawerClose}
+          />
+        )}
+      </Suspense>
+      <Suspense
+        fallback={
+          <Modal isOpen={true} onClose={() => {}}>
+            <ModalBody>
+              <Spinner />
+            </ModalBody>
+          </Modal>
+        }
+      >
+        {isModalOpen && (
+          <PostModal isModalOpen={isModalOpen} modalClose={modalClose} />
+        )}
+      </Suspense>
     </div>
   );
 };
