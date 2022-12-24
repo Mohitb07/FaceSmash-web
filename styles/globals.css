@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@100;200;300;400&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,8 +7,8 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif !important;
 }
 
 a {
@@ -19,21 +20,25 @@ a {
   box-sizing: border-box;
 }
 
+.chakra-ui * {
+  font-family: 'Lato', sans-serif;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
   body {
     color: white;
-    background: rgb(25,24,26);
+    background: rgb(25, 24, 26);
   }
 }
 
 @layer components {
-  .nav-item{
+  .nav-item {
     @apply flex items-center md:justify-center lg:justify-start space-x-5 hover:bg-slate-800 text-xl rounded-full transition-all duration-300 ease-in-out p-3 cursor-pointer;
   }
-  .hover-animation{
-    @apply group-hover:scale-125 transition-transform ease-in-out duration-300
+  .hover-animation {
+    @apply group-hover:scale-125 transition-transform ease-in-out duration-300;
   }
 }
