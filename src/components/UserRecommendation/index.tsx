@@ -8,7 +8,7 @@ const UserRecommendation = () => {
         <User size="large" />
       </div>
       <div className="mt-5">
-        <p className="text-xl text-gray-500 font-semibold">
+        <p className="text-xl text-gray-500 font-semibold tracking-wider">
           Suggestions for you
         </p>
         <div>

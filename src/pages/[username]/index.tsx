@@ -1,11 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { FiSettings } from 'react-icons/fi';
-import { Avatar, useDisclosure } from '@chakra-ui/react';
+import {useDisclosure } from '@chakra-ui/react';
 
 import Button from '../../components/Button';
 import VirtualisedList from '../../components/VirtualisedList';
 import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
+import Avatar from '../../components/Avatar';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
@@ -28,11 +29,7 @@ const UserProfile = () => {
       <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 items-center md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
           <div>
-            <Avatar
-              size="2xl"
-              name="Kola Tioluwani"
-              src="http://projects.websetters.in/digg-seos/digg/wp-content/themes/twentytwenty-child-theme/img/demo-prof.jpg"
-            />
+            <Avatar height={200} width={200} url="http://projects.websetters.in/digg-seos/digg/wp-content/themes/twentytwenty-child-theme/img/demo-prof.jpg"/>
           </div>
           <div className="flex flex-col space-y-6">
             <div className="flex items-center gap-5">

@@ -27,7 +27,7 @@ const User = ({ size = 'small' }: UserProps) => {
         width={width}
       />
       <div>
-        <p className="font-semibold">mohitbisht1903</p>
+        <p className="font-semibold tracking-wide">mohitbisht1903</p>
         <p className={`text-${textSize} text-gray-500`}>Mohit Bisht</p>
       </div>
     </div>
