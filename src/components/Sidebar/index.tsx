@@ -7,6 +7,7 @@ import { VscHome } from 'react-icons/vsc';
 import { BsSearch } from 'react-icons/bs';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
+import { useAuthSignOut } from '@react-query-firebase/auth';
 import {
   Menu,
   MenuButton,
@@ -22,6 +23,7 @@ import {
 
 import Brand from '../Brand';
 import NavItem from '../NavItem';
+import { auth } from '../../../firebase';
 
 const PostModal = lazy(() => import('./PostModal'));
 const SearchDrawer = lazy(() => import('./SearchDrawer'));
@@ -42,6 +44,8 @@ const Sidebar = () => {
       setIsModalOpen(false);
     }
   };
+
+  const mutation = useAuthSignOut(auth);
 
   return (
     <div className="hidden md:flex fixed h-full flex-col justify-between bg-[#0b0b0b] pt-[5rem] px-[2rem] pb-[2rem]">
@@ -104,7 +108,7 @@ const Sidebar = () => {
             </ul>
           </MenuButton>
           <MenuList>
-            <MenuItem>
+            <MenuItem onClick={() => mutation.mutate()}>
               <span className="text-red-500">Log Out</span>
             </MenuItem>
           </MenuList>
