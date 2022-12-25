@@ -5,6 +5,7 @@ type InputProps = {
   placeholder: string;
   isError?: boolean;
   errorText?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 };
 
 const Input: React.FC<InputProps> = ({
@@ -12,6 +13,7 @@ const Input: React.FC<InputProps> = ({
   placeholder = '',
   isError = false,
   errorText = "",
+  onChange,
 }) => {
   return (
     <div className='flex flex-col'>
@@ -21,6 +23,7 @@ const Input: React.FC<InputProps> = ({
           isError ? 'border-red-700' : 'border-transparent'
         } bg-[#3D3D40] px-4 py-3 text-base text-white caret-white placeholder:text-[#8E8FAB] focus:outline-none`}
         placeholder={placeholder}
+        onChange={onChange}
       />
       {isError && <span className="text-base ml-[1rem] text-red-500">{errorText}</span>}
     </div>
