@@ -1,36 +1,12 @@
 import { BsSearch } from 'react-icons/bs';
-import { useAuthUser } from '@react-query-firebase/auth';
-import { Spinner } from '@chakra-ui/react';
 
 import Brand from '../components/Brand';
 import UserRecommendation from '../components/UserRecommendation';
 import VirtualisedList from '../components/VirtualisedList';
 import { Meta } from '../layouts/Meta';
 import { Main } from '../templates/Main';
-import { auth } from '../../firebase';
 
 export default function Home() {
-  const user = useAuthUser(['user'], auth, {
-    onSuccess(user) {
-      if (user) {
-        console.log('User is authenticated!', user);
-      }
-    },
-    onError(error) {
-      console.error('Failed to subscribe to users authentication state!', error);
-    },
-  });
-
-  if (user.isLoading) {
-    return (
-      <div className="h-screen w-screen bg-slate-600 flex justify-center items-center">
-        <Spinner size="xl" />
-      </div>
-    );
-  }
-
-  console.log('user fetched', user);
-
   return (
     <Main
       meta={
