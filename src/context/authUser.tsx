@@ -1,40 +1,64 @@
-import { Spinner } from '@chakra-ui/react';
-import { useAuthUser } from '@react-query-firebase/auth';
-import { User } from 'firebase/auth';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 
-import { auth } from '../../firebase';
+import { IUserDetail } from '../interface';
+import { db } from '../../firebase';
+import { useRouter } from 'next/router';
 
-type UserState = User | null;
+type UserState = IUserDetail | null;
 
-export const AuthUserContext = createContext<UserState>(null);
+const DEFAULT_VALUES: IUserDetail = {
+  createdAt: '',
+  email: '',
+  lastSignIn: '',
+  profilePic: '',
+  qusername: '',
+  uid: '',
+  username: '',
+  bio: '',
+};
 
-const AuthUserProvider = ({ children }: { children: ReactNode }) => {
-  const [authUser, setAuthUser] = useState<UserState>(null);
-  useAuthUser(['user'], auth, {
-    onSuccess(user) {
+export const UserContext = createContext<UserState>(DEFAULT_VALUES);
+
+const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [authUser, setAuthUser] = useState<UserState>(DEFAULT_VALUES);
+  const auth = getAuth();
+  console.log('current status', auth.currentUser)
+  useEffect(() => {
+    let unsubscribeUser: Unsubscribe;
+    const unsubscribeAuth = onAuthStateChanged(auth, (user: User | null) => {
       if (user) {
-        console.log('User is authenticated!', user);
-        setAuthUser(user);
+        const uid = user.uid;
+        unsubscribeUser = onSnapshot(
+          doc(db, 'Users', uid),
+          (doc) => {
+            setAuthUser(doc.data() as UserState);
+          },
+          (error) => {
+            console.log('ERROR FOUND ', error);
+          }
+        );
+      } else {
+        console.log('user is logged out');
+        setAuthUser(null);
       }
-    },
-    onError(error) {
-      console.error(
-        'Failed to subscribe to users authentication state!',
-        error
-      );
-    },
-  });
+    });
 
-  if(!authUser){
-    <Spinner size="xl"/>
-  }
+    return () => {
+      if (unsubscribeAuth) {
+        unsubscribeAuth();
+      }
+      if (unsubscribeUser) {
+        unsubscribeUser();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <AuthUserContext.Provider value={authUser}>
-      {children}
-    </AuthUserContext.Provider>
+    <UserContext.Provider value={authUser}>{children}</UserContext.Provider>
   );
 };
 
-export default AuthUserProvider;
+export default UserProvider;
