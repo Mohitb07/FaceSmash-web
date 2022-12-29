@@ -67,8 +67,6 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     }, 2000);
   };
 
-  console.log('post value', postValue);
-
   return (
     <Modal
       isCentered

@@ -18,7 +18,6 @@ const UpdateProfileModal = lazy(
 const UserProfile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const authuser = useAuthUser();
-  console.log('authUser userprofile', authuser);
   return (
     <Main
       meta={
