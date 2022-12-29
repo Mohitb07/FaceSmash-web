@@ -5,9 +5,9 @@ import { Button } from '@chakra-ui/react';
 
 import AuthLayout from '../../components/Auth/Layout';
 import Input from '../../components/Input';
-import { auth } from '../../../firebase';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
 import { useRouter } from 'next/router';
+import { withPublic } from '../../routes/WithPublic';
 
 const Login = () => {
   const router = useRouter();
@@ -85,4 +85,4 @@ const Login = () => {
     </AuthLayout>
   );
 };
-export default Login;
+export default withPublic(Login);

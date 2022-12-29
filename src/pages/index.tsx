@@ -4,9 +4,10 @@ import Brand from '../components/Brand';
 import UserRecommendation from '../components/UserRecommendation';
 import VirtualisedList from '../components/VirtualisedList';
 import { Meta } from '../layouts/Meta';
+import {withAuth} from '../routes/WithProtected';
 import { Main } from '../templates/Main';
 
-export default function Home() {
+function Home() {
   return (
     <Main
       meta={
@@ -44,3 +45,5 @@ export default function Home() {
     </Main>
   );
 }
+
+export default withAuth(Home)
