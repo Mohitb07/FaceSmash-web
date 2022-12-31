@@ -2,7 +2,7 @@ import { BsSearch } from 'react-icons/bs';
 
 import Brand from '../components/Brand';
 import UserRecommendation from '../components/UserRecommendation';
-import VirtualisedList from '../components/VirtualisedList';
+import DataList from '../components/DataList';
 import { Meta } from '../layouts/Meta';
 import {withAuth} from '../routes/WithProtected';
 import { Main } from '../templates/Main';
@@ -34,7 +34,7 @@ function Home() {
           </div>
           <div className="flex md:p-10 justify-center items-start gap-10">
             <main className="space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
-              <VirtualisedList />
+              <DataList />
             </main>
             <aside className="hidden lg:flex flex-col">
               <UserRecommendation />
