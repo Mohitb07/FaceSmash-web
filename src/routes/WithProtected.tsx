@@ -10,12 +10,13 @@ export const withAuth = (Component: () => JSX.Element) => {
     const { authUser, loading } = useAuthUser();
     const router = useRouter();
     useEffect(() => {
-      console.log('pathname', window.location.pathname);
+      console.log('inside effect', authUser, loading)
       if (!authUser && !loading) {
+        console.log('inside redirect', authUser, loading)
         router.replace('/auth/login');
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authUser]);
+    }, [authUser, loading]);
 
     if (!authUser && loading) {
       return (
@@ -28,6 +29,8 @@ export const withAuth = (Component: () => JSX.Element) => {
     if(authUser && !loading){
       return <Component {...props} />;
     }
+
+    return null;
   };
 };
 

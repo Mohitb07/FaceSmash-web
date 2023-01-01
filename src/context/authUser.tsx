@@ -29,6 +29,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
   console.log('current status', auth.currentUser);
+  console.log('current flag', authUser?.createdAt, loading);
 
   useEffect(() => {
     let unsubscribeUser: Unsubscribe;
@@ -41,20 +42,22 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
             doc(db, 'Users', uid),
             (doc) => {
               setAuthUser(doc.data() as IUserDetail);
+              setLoading(false)
             },
             (error) => {
               console.log('ERROR FOUND ', error);
+              setLoading(false)
             }
           );
         } else {
-          console.log('user is logged out');
+          console.log('user is logged out, setting load false');
           setAuthUser(null);
+          setLoading(false)
         }
       });
     } catch (error) {
       console.log('Error ', error);
-    } finally {
-      setLoading(false);
+      setLoading(false)
     }
 
     return () => {
@@ -69,7 +72,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   if (loading) {
-    <Spinner size="xl" />;
+    <div className="h-screen w-screen z-50 flex justify-center items-center bg-green-500">
+      <Spinner size="xl" />
+    </div>;
   }
 
   return (
