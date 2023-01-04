@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 
+import Image from 'next/image';
 import {
   Modal,
   ModalOverlay,
@@ -21,7 +22,6 @@ import {
 } from '@chakra-ui/react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
-import Image from 'next/image';
 
 type PostModalProps = {
   isModalOpen: boolean;

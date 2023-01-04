@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { BsSearch } from 'react-icons/bs';
 
-import User from '../../User';
+import User from '../../../components/User';
 
 type SearchDrawerProps = {
   isSearchDrawerOpen: boolean;

@@ -7,7 +7,7 @@ import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
-import PostModal from '../Sidebar/PostModal';
+import PostModal from '../SideBar/PostModal';
 
 const BottomNavigation = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);

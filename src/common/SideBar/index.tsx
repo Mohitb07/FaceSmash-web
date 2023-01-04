@@ -21,8 +21,8 @@ import {
 } from '@chakra-ui/react';
 import { getAuth, signOut } from 'firebase/auth';
 
-import Brand from '../Brand';
-import NavItem from '../NavItem';
+import Brand from '../../components/Brand';
+import NavItem from '../../components/NavItem';
 
 const PostModal = lazy(() => import('./PostModal'));
 const SearchDrawer = lazy(() => import('./SearchDrawer'));
@@ -49,7 +49,7 @@ const Sidebar = () => {
     signOut(auth)
       .then(() => {
         console.log('user logged out');
-        router.replace('/auth/login')
+        router.replace('/auth/login');
       })
       .catch((error) => {
         console.log('error while signing out', error);
