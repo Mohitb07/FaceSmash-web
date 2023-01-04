@@ -1,4 +1,4 @@
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense } from 'react';
 import { FiSettings } from 'react-icons/fi';
 import { useDisclosure } from '@chakra-ui/react';
 
@@ -8,6 +8,8 @@ import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 import Avatar from '../../components/Avatar';
 import { useAuthUser } from '../../hooks/useAuthUser';
+import Sidebar from '../../common/SideBar';
+import BottomNavigation from '../../common/BottomBar';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
@@ -17,7 +19,7 @@ const UpdateProfileModal = lazy(
 
 const UserProfile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {authUser} = useAuthUser();
+  const { authUser } = useAuthUser();
   return (
     <Main
       meta={
@@ -27,6 +29,12 @@ const UserProfile = () => {
         />
       }
     >
+      <div>
+        <Sidebar />
+      </div>
+      <div className="bg-slate-900 fixed z-50 bottom-0 w-full">
+        <BottomNavigation />
+      </div>
       <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 items-center md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
           <div>

@@ -4,8 +4,10 @@ import Brand from '../components/Brand';
 import UserRecommendation from '../components/UserRecommendation';
 import DataList from '../components/DataList';
 import { Meta } from '../layouts/Meta';
-import {withAuth} from '../routes/WithProtected';
+import { withAuth } from '../routes/WithProtected';
 import { Main } from '../templates/Main';
+import Sidebar from '../common/SideBar';
+import BottomNavigation from '../common/BottomBar';
 
 function Home() {
   return (
@@ -17,6 +19,12 @@ function Home() {
         />
       }
     >
+      <div>
+        <Sidebar />
+      </div>
+      <div className="bg-slate-900 fixed z-50 bottom-0 w-full">
+        <BottomNavigation />
+      </div>
       <div className="h-screen">
         <div className="">
           <header className="block md:hidden text-center">
@@ -46,4 +54,4 @@ function Home() {
   );
 }
 
-export default withAuth(Home)
+export default withAuth(Home);
