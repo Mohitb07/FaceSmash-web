@@ -1,38 +1,54 @@
-import React, { useState } from 'react';
-import { AuthError } from 'firebase/auth';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { Button } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+
+import {
+  Button,
+  InputGroup,
+  InputRightElement,
+  Text,
+  useBoolean,
+} from '@chakra-ui/react';
 
 import AuthLayout from '../../components/Auth/Layout';
-import Input from '../../components/Input';
+import { Input } from '@chakra-ui/react';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
 import { useRouter } from 'next/router';
 import { withPublic } from '../../routes/WithPublic';
+import { useLogin } from '../../hooks/useLogin';
 
 const Login = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<AuthError>();
+  const [loginFieldData, setLoginFieldData] = useState({
+    email: '',
+    password: '',
+  });
+  const { loading, error, onSignIn, setError } = useLogin(router);
+  const [isShown, setIsShown] = useBoolean(false);
 
-  async function onSignIn() {
-    setLoading(true);
-    setError(undefined);
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('user logged in');
-        router.replace('/');
-      })
-      .catch((error) => {
-        setError(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
-  const disableLoginBtn = loading || !email || !password;
+  useEffect(() => {
+    setError((prev) => ({
+      ...prev,
+      email: '',
+    }));
+  }, [loginFieldData.email, setError]);
+
+  useEffect(() => {
+    setError((prev) => ({
+      ...prev,
+      password: '',
+    }));
+  }, [loginFieldData.password, setError]);
+
+  const disableLoginBtn =
+    loading || !loginFieldData.email || !loginFieldData.password;
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setLoginFieldData((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+
+  const onSignInAttempt = () =>
+    onSignIn(loginFieldData.email, loginFieldData.password);
 
   return (
     <AuthLayout
@@ -43,33 +59,64 @@ const Login = () => {
     >
       <div className="mt-5 flex flex-col space-y-2">
         <div className="flex flex-col space-y-1">
-          <label htmlFor="" className="text-[#8E8FAB]">
+          <label htmlFor="email" className="text-[#8E8FAB]">
             Email
           </label>
           <Input
-            type="email"
+            isDisabled={loading}
+            value={loginFieldData.email}
+            onChange={handleChange}
+            errorBorderColor="crimson"
+            isInvalid={Boolean(error.email)}
+            focusBorderColor="brand.100"
+            id="email"
+            name="email"
+            size="lg"
+            colorScheme="brand"
+            variant="filled"
             placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
-            isError={Boolean(error?.message)}
-            errorText={
-              FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS]
-            }
+            type="email"
           />
+          {error.email && (
+            <Text fontSize="medium" color="crimson">
+              {FIREBASE_ERRORS[error.email as keyof typeof FIREBASE_ERRORS]}
+            </Text>
+          )}
         </div>
 
         <div className="flex flex-col space-y-1 pb-10">
-          <label htmlFor="" className="text-[#8E8FAB]">
+          <label htmlFor="password" className="text-[#8E8FAB]">
             Password
           </label>
-          <Input
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-            isError={Boolean(error?.message)}
-            errorText={
-              FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS]
-            }
-          />
+          <InputGroup size="lg">
+            <Input
+              isDisabled={loading}
+              value={loginFieldData.password}
+              errorBorderColor="crimson"
+              isInvalid={Boolean(error.password)}
+              focusBorderColor="brand.100"
+              id="password"
+              name="password"
+              size="lg"
+              colorScheme="brand"
+              variant="filled"
+              placeholder="Password"
+              type={isShown ? 'text' : 'password'}
+              onChange={handleChange}
+            />
+            {loginFieldData.password.length > 0 && (
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={setIsShown.toggle}>
+                  {isShown ? 'Hide' : 'Show'}
+                </Button>
+              </InputRightElement>
+            )}
+          </InputGroup>
+          {error.password && (
+            <Text fontSize="medium" color="crimson">
+              {FIREBASE_ERRORS[error.password as keyof typeof FIREBASE_ERRORS]}
+            </Text>
+          )}
         </div>
         <Button
           isLoading={loading}
@@ -77,7 +124,7 @@ const Login = () => {
           colorScheme="brand"
           size="md"
           isDisabled={disableLoginBtn}
-          onClick={onSignIn}
+          onClick={onSignInAttempt}
         >
           Log in
         </Button>
