@@ -6,8 +6,8 @@ import DataList from '../components/DataList';
 import { Meta } from '../layouts/Meta';
 import { withAuth } from '../routes/WithProtected';
 import { Main } from '../templates/Main';
-import Sidebar from '../common/SideBar';
-import BottomNavigation from '../common/BottomBar';
+import Sidebar from '../components/SideNavigation';
+import BottomNavigation from '../components/BottomNavigation';
 
 function Home() {
   return (

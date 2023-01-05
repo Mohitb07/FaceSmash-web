@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
+import { useRouter } from 'next/router';
 import {
   Button,
   InputGroup,
   InputRightElement,
   Text,
   useBoolean,
+  Input,
 } from '@chakra-ui/react';
 
 import AuthLayout from '../../components/Auth/Layout';
-import { Input } from '@chakra-ui/react';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
-import { useRouter } from 'next/router';
 import { withPublic } from '../../routes/WithPublic';
 import { useLogin } from '../../hooks/useLogin';
 

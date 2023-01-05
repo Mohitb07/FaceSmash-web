@@ -8,8 +8,8 @@ import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 import Avatar from '../../components/Avatar';
 import { useAuthUser } from '../../hooks/useAuthUser';
-import Sidebar from '../../common/SideBar';
-import BottomNavigation from '../../common/BottomBar';
+import Sidebar from '../../components/BottomNavigation';
+import BottomNavigation from '../../components/BottomNavigation';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')

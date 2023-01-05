@@ -29,7 +29,6 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
   console.log('current status', auth.currentUser);
-  console.log('current flag', authUser?.createdAt, loading);
 
   useEffect(() => {
     let unsubscribeUser: Unsubscribe;
