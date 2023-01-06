@@ -40,7 +40,7 @@ const Layout: React.FC<LayoutProps> = ({
           />
         </div>
         <div>
-          <div className={`w-screen h-screen md:h-[600px] md:w-[500px] bg-[#19181A] p-5 md:p-16 ${containerStyle}`}>
+          <div className={`w-screen h-screen md:h-auto md:w-[500px] bg-[#19181A] p-5 md:p-16 ${containerStyle}`}>
             <header>
               <h1 className="text-center text-5xl font-bold text-white">
                 <span className="text-primary-100">Face</span>Smash
