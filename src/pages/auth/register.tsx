@@ -78,7 +78,8 @@ const Register = () => {
             type="text"
           />
           <Text
-            fontSize="medium"
+            fontSize="sm"
+            paddingLeft="4"
             color={charactersLeft > 0 ? 'white' : 'crimson'}
           >
             Characters left {charactersLeft}
@@ -143,7 +144,7 @@ const Register = () => {
             </Text>
           )}
         </div>
-        <div className="flex flex-col space-y-1 pb-10">
+        <div className="flex flex-col space-y-1 pb-5">
           <label htmlFor="password" className="text-[#8E8FAB]">
             Confirm Password
           </label>
@@ -180,12 +181,18 @@ const Register = () => {
           )}
         </div>
         <Button
-          isLoading={false}
+          isLoading={loading}
           color="white"
           colorScheme="brand"
           size="md"
-          isDisabled={false}
-          onClick={() => {}}
+          isDisabled={loading}
+          onClick={() =>
+            onSignUp(
+              registerFieldData.username,
+              registerFieldData.email,
+              registerFieldData.password
+            )
+          }
         >
           Sign Up
         </Button>
