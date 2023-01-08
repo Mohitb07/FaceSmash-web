@@ -7,9 +7,9 @@ import Link from 'next/link';
 type LayoutProps = {
   children: React.ReactNode;
   meta: string;
-  footerText: string;
-  footerLabel: string;
-  footerLink: string;
+  footerText?: string;
+  footerLabel?: string;
+  footerLink?: string;
   containerStyle?: string;
 };
 
