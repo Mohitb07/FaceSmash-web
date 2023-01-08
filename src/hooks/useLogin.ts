@@ -18,7 +18,7 @@ export const useLogin = (router: NextRouter) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log('user logged in');
-        router.replace('/');
+        // router.replace('/');
       })
       .catch((error) => {
         console.log('error', error);

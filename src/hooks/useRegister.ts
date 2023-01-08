@@ -32,7 +32,6 @@ export const useRegister = (router: NextRouter) => {
         profilePic: DEFAULT_PROFILE_PIC,
       });
       console.log('successfully created');
-      router.replace('/');
     } catch (error) {
       console.log('registration error', error);
     }
