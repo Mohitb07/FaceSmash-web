@@ -7,13 +7,14 @@ import { useAuthUser } from '../hooks/useAuthUser';
 
 export const withAuth = (Component: () => JSX.Element) => {
   return function WithAuthRouteProtection(props: any) {
-    const { authUser, loading } = useAuthUser();
+    const { authUser, loading, isVerified } = useAuthUser();
     const router = useRouter();
     useEffect(() => {
-      console.log('inside effect', authUser, loading)
       if (!authUser && !loading) {
-        console.log('inside redirect', authUser, loading)
         router.replace('/auth/login');
+      }
+      if(authUser && !loading && !isVerified){
+        router.replace('/auth/verification')
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authUser, loading]);
