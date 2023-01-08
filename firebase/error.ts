@@ -10,4 +10,6 @@ export const FIREBASE_ERRORS = {
 
   'Firebase: Password should be at least 6 characters (auth/weak-password).':
     'Password should be at least 6 characters long',
+  'Firebase: Error (auth/network-request-failed).':
+    'Disconnected to Internet, Try Again',
 };
