@@ -23,6 +23,7 @@ import { getAuth, signOut } from 'firebase/auth';
 
 import Brand from '../../components/Brand';
 import NavItem from '../../components/NavItem';
+import { useAuthUser } from '../../hooks/useAuthUser';
 
 const PostModal = lazy(() => import('./PostModal'));
 const SearchDrawer = lazy(() => import('./SearchDrawer'));
@@ -32,7 +33,8 @@ const Sidebar = () => {
   const auth = getAuth();
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const {authUser} = useAuthUser()
+  
   const searchDrawerClose = () => {
     if (isSearchDrawerOpen) {
       setIsSearchDrawerOpen(false);
@@ -100,7 +102,7 @@ const Sidebar = () => {
                 className="hover-animation"
                 size="xs"
                 name="Mohit Bisht"
-                src="https://lh3.googleusercontent.com/ogw/AOh-ky2wAgtbl4h_XUEs5x-5xfgBLXa_Aq0k6ahwaOxCgw=s32-c-mo"
+                src={authUser?.profilePic}
               />
             </NavItem>
           </Link>
