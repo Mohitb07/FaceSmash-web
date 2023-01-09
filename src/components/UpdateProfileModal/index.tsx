@@ -17,29 +17,40 @@ import {
   Input,
 } from '@chakra-ui/react';
 
+import { convertImageObject } from '../../utils/convertImageObject';
+import { DEFAULT_PROFILE_PIC } from '../../constant';
+import { useAuthUser } from '../../hooks/useAuthUser';
+
 type UpdateProfileModalProps = {
   onClose: () => void;
   isOpen: boolean;
 };
 
 const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
+  const { authUser } = useAuthUser();
   const [loading, setLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState('');
-  const [bio, setBio] = useState('Mohit Bisht');
+  const [updateProfileFieldData, setUpdateProfileFieldData] = useState({
+    selectedImage: '',
+    bio: authUser?.bio || '',
+  });
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedImage(URL.createObjectURL(e.target.files![0]));
-    }
+    setUpdateProfileFieldData((prev) => ({
+      ...prev,
+      selectedImage: convertImageObject(e),
+    }));
   };
 
   const handleProfileUpdate = () => {
     setLoading(true);
     setTimeout(() => {
-      console.log('data', bio);
+      console.log('data', updateProfileFieldData);
       setLoading(false);
-      setSelectedImage('');
+      setUpdateProfileFieldData({
+        selectedImage: '',
+        bio: authUser?.bio || '',
+      });
       onClose();
     }, 2000);
   };
@@ -70,10 +81,11 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
                 >
                   <Avatar
                     size="2xl"
-                    name="Prosper Otemuyiwa"
+                    name={authUser?.username}
                     src={
-                      selectedImage ||
-                      'http://projects.websetters.in/digg-seos/digg/wp-content/themes/twentytwenty-child-theme/img/demo-prof.jpg'
+                      updateProfileFieldData.selectedImage ||
+                      authUser?.profilePic ||
+                      DEFAULT_PROFILE_PIC
                     }
                   />
                   <Input
@@ -96,8 +108,13 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
                 focusBorderColor="brand.100"
                 rounded="lg"
                 placeholder="Your bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
+                value={updateProfileFieldData.bio}
+                onChange={(e) =>
+                  setUpdateProfileFieldData((prev) => ({
+                    ...prev,
+                    bio: e.target.value,
+                  }))
+                }
               />
             </FormControl>
           </Box>
@@ -113,7 +130,7 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
             Cancel
           </Btn>
           <Btn
-            disabled={!bio}
+            disabled={!updateProfileFieldData.bio}
             onClick={handleProfileUpdate}
             rounded="full"
             color="white"
