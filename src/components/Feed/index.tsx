@@ -7,10 +7,10 @@ import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
 import { Avatar } from '@chakra-ui/react';
 import { Collapse, Text } from '@chakra-ui/react';
-import { Timestamp } from 'firebase/firestore';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { FeedProps } from '../../interface';
+import Link from 'next/link';
 
 dayjs.extend(relativeTime);
 
@@ -33,10 +33,12 @@ const Feed = ({
   return (
     <div className="md:w-[500px] lg:w-[450px] xl:w-[600px] bg-[#242526] rounded-md">
       <header className="flex items-center justify-between p-3 h-[4rem] md:h-[5rem]">
-        <div className="flex items-center space-x-3">
-          <Avatar size="sm" name="Mohit Bisht" src={userProfile || ''} />
-          <p className="font-bold">{username}</p>
-        </div>
+        <Link href={`${username}?user_id=${userId}`}>
+          <div className="flex items-center space-x-3 cursor-pointer">
+            <Avatar size="sm" name="Mohit Bisht" src={userProfile || ''} />
+            <p className="font-bold">{username}</p>
+          </div>
+        </Link>
         <BsThreeDotsVertical className="text-xl cursor-pointer" />
       </header>
       {postImage && (
@@ -46,9 +48,7 @@ const Feed = ({
       )}
       <div className="p-4 space-y-3 md:space-y-5">
         <div
-          className={`flex flex-col ${
-            !postImage ? 'flex-col-reverse' : ''
-          }`}
+          className={`flex flex-col ${!postImage ? 'flex-col-reverse' : ''}`}
         >
           <div>
             <div className="flex space-y-3 md:space-y-5 justify-between items-center text-2xl md:text-3xl">
@@ -77,18 +77,20 @@ const Feed = ({
             <Text fontSize="3xl">{postTitle}</Text>
             <Collapse startingHeight={25} in={show}>
               <p className="text-base md:text-base">
-                <span className="mr-2 font-semibold tracking-wide">{username}</span>
+                <span className="mr-2 font-semibold tracking-wide">
+                  {username}
+                </span>
                 <span>{description}</span>
               </p>
             </Collapse>
             {description.length > 30 && (
               <Text
-              className="cursor-pointer font-bold text-gray-400"
-              mt={2}
-              onClick={handleToggle}
-            >
-              Show {show ? 'Less' : 'More'}
-            </Text>
+                className="cursor-pointer font-bold text-gray-400"
+                mt={2}
+                onClick={handleToggle}
+              >
+                Show {show ? 'Less' : 'More'}
+              </Text>
             )}
           </div>
         </div>
