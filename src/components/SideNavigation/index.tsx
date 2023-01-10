@@ -94,7 +94,7 @@ const Sidebar = () => {
             icon={<HiOutlinePlusCircle className="text-2xl hover-animation" />}
             label="Create"
           />
-          <Link href="/mohitbisht1903">
+          <Link href={`${authUser?.qusername}?user_id=${authUser?.uid}`}>
             <NavItem label="Profile">
               <Avatar
                 ring={router.pathname === '/[username]' ? 2 : 0}
