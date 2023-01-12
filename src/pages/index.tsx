@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { BsSearch } from 'react-icons/bs';
-import { collection, query, getDocs, limit } from 'firebase/firestore';
 
 import Brand from '../components/Brand';
 import UserRecommendation from '../components/UserRecommendation';
@@ -10,26 +9,20 @@ import { Meta } from '../layouts/Meta';
 import { withAuth } from '../routes/WithProtected';
 import { Main } from '../templates/Main';
 import Navigation from '../common/Navigation';
-import { db } from '../../firebase';
-import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
 import { Post } from '../interface';
+import { useGetPosts } from '../hooks/useGetPosts';
 
 function Home() {
-  const [feedList, setfeedList] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [feedList, setFeedList] = useState<Post[]>([]);
+  const {getPosts, isLoading} = useGetPosts()
 
   useEffect(() => {
-    setIsLoading(true)
-    const q = query(collection(db, POSTS_COLLECTION), limit(FEED_LIMIT));
-    getDocs(q).then((snap) => {
-      const postList = snap.docs.map((d) => ({
-        ...(d.data() as Post),
-        key: d.id,
-      }));
-      setIsLoading(false);
-      setfeedList(postList);
-    });
-  }, []);
+    const getAllPosts = async () => {
+      const posts = await getPosts()
+      setFeedList(posts)
+    }
+    getAllPosts();
+  }, [getPosts]);
 
   console.log('posts list', feedList);
 
