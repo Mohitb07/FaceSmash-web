@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import AuthLayout from '../../components/Auth/Layout';
 
 import {
   Input,
@@ -14,6 +13,8 @@ import { withPublic } from '../../routes/WithPublic';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
 import { useRouter } from 'next/router';
 import { useRegister } from '../../hooks/useRegister';
+import AuthLayout from '../../layouts/Auth';
+
 
 const Register = () => {
   const router = useRouter();

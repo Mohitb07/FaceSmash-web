@@ -1,10 +1,11 @@
-import { Spinner } from '@chakra-ui/react';
-import { getAuth, sendEmailVerification, signOut } from 'firebase/auth';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import AuthLayout from '../../components/Auth/Layout';
-// import Button from '../../components/Button';
+
+import { useRouter } from 'next/router';
+import { Spinner } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/react';
+import { getAuth, sendEmailVerification, signOut } from 'firebase/auth';
+
+import AuthLayout from '../../layouts/Auth';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { withAuth } from '../../routes/WithProtected';
 
