@@ -1,14 +1,23 @@
-import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
 import React from 'react';
-import { Post } from '../../interface';
-import Feed from '../Feed';
+import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
 
-type PostListProps = {
-  list: Post[];
+import { Post } from '../../interface';
+
+type DataListProps = {
+  data: Post[];
   isLoading: boolean;
+  ListEmptyComponent: React.ComponentType;
+  ListFooterComponent: React.ComponentType;
+  renderItem: <T>(item: T) => JSX.Element
 };
 
-const PostList = ({ list, isLoading }: PostListProps) => {
+const DataList = ({
+  data,
+  isLoading,
+  ListEmptyComponent,
+  ListFooterComponent,
+  renderItem,
+}: DataListProps) => {
   if (isLoading) {
     return (
       <div className="md:w-[500px] space-y-5 lg:w-[450px] xl:w-[600px] rounded-md">
@@ -30,28 +39,14 @@ const PostList = ({ list, isLoading }: PostListProps) => {
       </div>
     );
   }
+  if (data.length === 0) {
+    return <ListEmptyComponent />;
+  }
   return (
     <>
-      {list.map((feed) => (
-        <Feed
-          key={feed.key}
-          username={feed.username}
-          postImage={feed.image}
-          userProfile={feed.userProfile}
-          createdAt={feed.createdAt}
-          description={feed.description}
-          link={feed.link}
-          imageRef={feed.imageRef}
-          likes={feed.likes}
-          userId={feed.user}
-          postTitle={feed.title}
-          postId={feed.key}
-        />
-      ))}
-      <>
-        <p className="text-center text-gray-500">End Of Result</p>
-      </>
+      {data.map((item) => renderItem(item))}
+      {!isLoading && <ListFooterComponent />}
     </>
   );
 };
-export default PostList;
+export default DataList;
