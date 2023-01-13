@@ -20,6 +20,9 @@ import Sidebar from '../../components/SideNavigation';
 import BottomNavigation from '../../components/BottomNavigation';
 import { useGetUser } from '../../hooks/useGetUser';
 import { useGetPosts } from '../../hooks/useGetPosts';
+import Feed from '../../components/Feed';
+import EmptyData from '../../components/DataList/EmptyData';
+import Footer from '../../components/DataList/Footer';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
@@ -50,7 +53,7 @@ const UserProfile = () => {
   });
   const [userData, setUserData] = useState<IUserDetail>(DEFAULT_USER_DETAILS);
 
-  const memoizedFeedList = useMemo(() => feedList, [feedList]);
+  const memoizedFeedList: Post[] = useMemo(() => feedList, [feedList]);
   const memoizedUserData = useMemo(() => userData, [userData]);
 
   useEffect(() => {
@@ -97,6 +100,25 @@ const UserProfile = () => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, getUserPosts, getUserDetail]);
+
+  function renderItem<T extends Post>(feed: T) {
+    return (
+      <Feed
+        key={feed.key}
+        username={feed.username}
+        postImage={feed.image}
+        userProfile={feed.userProfile}
+        createdAt={feed.createdAt}
+        description={feed.description}
+        link={feed.link}
+        imageRef={feed.imageRef}
+        likes={feed.likes}
+        userId={feed.user}
+        postTitle={feed.title}
+        postId={feed.key}
+      />
+    );
+  }
 
   return (
     <Main
@@ -185,7 +207,13 @@ const UserProfile = () => {
           </div>
         </div>
         <div className="space-y-5 pb-16">
-          <DataList list={memoizedFeedList} isLoading={isLoading.posts} />
+          <DataList
+            renderItem={(item: any) => renderItem(item)}
+            ListEmptyComponent={EmptyData}
+            ListFooterComponent={Footer}
+            data={memoizedFeedList}
+            isLoading={isLoading.posts}
+          />
         </div>
       </div>
       <Suspense fallback={<div>Loading...</div>}>
