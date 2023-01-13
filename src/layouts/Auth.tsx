@@ -1,8 +1,8 @@
-import { Main } from '../../templates/Main';
 import Image from 'next/image';
 import React from 'react';
-import { Meta } from '../../layouts/Meta';
 import Link from 'next/link';
+import { Main } from '../templates/Main';
+import { Meta } from './Meta';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -40,15 +40,15 @@ const Layout: React.FC<LayoutProps> = ({
           />
         </div>
         <div>
-          <div className={`w-screen h-screen md:h-auto md:w-[500px] bg-[#19181A] p-5 md:p-16 ${containerStyle}`}>
+          <div
+            className={`w-screen h-screen md:h-auto md:w-[500px] bg-[#19181A] p-5 md:p-16 ${containerStyle}`}
+          >
             <header>
               <h1 className="text-center text-5xl font-bold text-white">
                 <span className="text-primary-100">Face</span>Smash
               </h1>
             </header>
-            <div className='flex-1'>
-              {children}
-            </div>
+            <div className="flex-1">{children}</div>
             <div className="md:hidden text-center mt-10">
               <Link href={footerLink}>
                 <h1 className="text-sm text-[#8E8FAB]">
