@@ -10,10 +10,10 @@ import {
   Input,
 } from '@chakra-ui/react';
 
-import AuthLayout from '../../components/Auth/Layout';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
 import { withPublic } from '../../routes/WithPublic';
 import { useLogin } from '../../hooks/useLogin';
+import AuthLayout from '../../layouts/Auth';
 
 const Login = () => {
   const router = useRouter();
