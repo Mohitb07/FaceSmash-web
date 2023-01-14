@@ -1,23 +1,21 @@
 import React from 'react';
 import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
 
-import { Post } from '../../interface';
-
-type DataListProps = {
-  data: Post[];
+type DataListProps<D> = {
+  data: D[];
   isLoading: boolean;
   ListEmptyComponent: React.ComponentType;
   ListFooterComponent: React.ComponentType;
-  renderItem: <T>(item: T) => JSX.Element
+  renderItem: <T>(item: T) => JSX.Element;
 };
 
-const DataList = ({
+const DataList = <D extends any>({
   data,
   isLoading,
   ListEmptyComponent,
   ListFooterComponent,
   renderItem,
-}: DataListProps) => {
+}: DataListProps<D>) => {
   if (isLoading) {
     return (
       <div className="md:w-[500px] space-y-5 lg:w-[450px] xl:w-[600px] rounded-md">
