@@ -43,7 +43,7 @@ const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.user_id;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { authUser, loading: isAuthUserLoading } = useAuthUser();
+  const { authUser } = useAuthUser();
   const { getUserDetail } = useGetUser();
   const { getUserPosts } = useGetPosts();
   const [feedList, setFeedList] = useState<Post[]>([]);
