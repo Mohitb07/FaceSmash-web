@@ -14,7 +14,7 @@ import DataList from '../../components/DataList';
 import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 import { useAuthUser } from '../../hooks/useAuthUser';
-import { IUserDetail, Post } from '../../interface';
+import { User, Post } from '../../interface';
 import { withAuth } from '../../routes/WithProtected';
 import Sidebar from '../../components/SideNavigation';
 import BottomNavigation from '../../components/BottomNavigation';
@@ -28,7 +28,7 @@ const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
 );
 // bg-blue-500 md:bg-red-500 lg:bg-green-500 xl:bg-pink-500
-const DEFAULT_USER_DETAILS: IUserDetail = {
+const DEFAULT_USER_DETAILS: User = {
   bio: '',
   createdAt: '',
   email: '',
@@ -51,7 +51,7 @@ const UserProfile = () => {
     user: true,
     posts: true,
   });
-  const [userData, setUserData] = useState<IUserDetail>(DEFAULT_USER_DETAILS);
+  const [userData, setUserData] = useState<User>(DEFAULT_USER_DETAILS);
 
   const memoizedFeedList: Post[] = useMemo(() => feedList, [feedList]);
   const memoizedUserData = useMemo(() => userData, [userData]);
