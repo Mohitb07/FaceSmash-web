@@ -4,12 +4,12 @@ import { doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 
-import { IUserDetail } from '../interface';
+import { User as IUser } from '../interface';
 import { db } from '../../firebase';
 import { Spinner } from '@chakra-ui/react';
 
 type UserState = {
-  authUser: IUserDetail | null;
+  authUser: IUser | null;
   loading: boolean;
   isVerified: boolean;
   setIsVerified: Dispatch<SetStateAction<boolean>>;
@@ -34,7 +34,7 @@ const DEFAULT_VALUES: UserState = {
 export const UserContext = createContext<UserState>(DEFAULT_VALUES);
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [authUser, setAuthUser] = useState<IUserDetail | null>(null);
+  const [authUser, setAuthUser] = useState<IUser | null>(null);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
@@ -51,7 +51,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
           unsubscribeUser = onSnapshot(
             doc(db, 'Users', uid),
             (doc) => {
-              setAuthUser(doc.data() as IUserDetail);
+              setAuthUser(doc.data() as IUser);
               setIsVerified(user.emailVerified);
               setLoading(false);
             },
@@ -83,7 +83,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   if (loading) {
-    <div className="h-screen w-screen z-50 flex justify-center items-center bg-green-500">
+    <div className="h-screen w-screen z-50 flex justify-center items-center">
       <Spinner size="xl" />
     </div>;
   }

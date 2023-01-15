@@ -1,6 +1,6 @@
 import {Timestamp} from 'firebase/firestore'
 
-export interface IUserDetail {
+export interface User {
     createdAt: string
     email: string
     lastSignIn: string
