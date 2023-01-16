@@ -42,8 +42,9 @@ const Feed = ({
         <BsThreeDotsVertical className="text-xl cursor-pointer" />
       </header>
       {postImage && (
-        <div>
-          <Image src={postImage} width={600} height={600} alt="post image" />
+        <div className="w-[600px] h-auto bg-red-200">
+          {/* <Image className='w-full h-full' src={postImage} height="100%" width="100vw" alt="post image" /> */}
+          <img src={postImage} alt="post image" />
         </div>
       )}
       <div className="p-4 space-y-3 md:space-y-5">
