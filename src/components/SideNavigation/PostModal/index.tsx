@@ -22,22 +22,43 @@ import {
 } from '@chakra-ui/react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
+
+import { db } from '../../../../firebase';
+import { POSTS_COLLECTION } from '../../../constant';
+import { useAuthUser } from '../../../hooks/useAuthUser';
 
 type PostModalProps = {
   isModalOpen: boolean;
   modalClose: () => void;
 };
 
+type PostValue = {
+  title: string;
+  description: string;
+  image: Blob | MediaSource | '';
+  link: string;
+  imageRef: string;
+};
+
 const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
-  const [postValue, setPostValue] = useState({
+  const [postValue, setPostValue] = useState<PostValue>({
     title: '',
     description: '',
     image: '',
     link: '',
+    imageRef: '',
   });
   const [loading, setLoading] = useState(false);
   const [isLinkVisible, setIsLinkVisible] = useState(false);
   const [isImageContainerVisible, setIsImageContainerVisible] = useState(true);
+  const { authUser } = useAuthUser();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handlePostValueChange = (
@@ -50,22 +71,65 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   };
 
   const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setPostValue((prev) => ({
-        ...prev,
-        image: URL.createObjectURL(e.target.files![0]),
-      }));
+    const file = e.target.files![0];
+    setPostValue((prev) => ({
+      ...prev,
+      image: file,
+      imageRef: `${file.name}${file.lastModified}`,
+    }));
+  };
+
+  const handlePostCreation = async () => {
+    const storage = getStorage();
+    try {
+      setLoading(true);
+      if (postValue.imageRef && authUser?.uid) {
+        const storageRef = ref(
+          storage,
+          `${authUser.uid}/posts/${postValue.imageRef}`
+        );
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          postValue.image as Blob
+        );
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const percent = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            ); // update progress
+            console.log('perc', percent);
+          },
+          (err) => console.log(err),
+          async () => {
+            // download url
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            if (url) {
+              await addDoc(collection(db, POSTS_COLLECTION), {
+                createdAt: serverTimestamp(),
+                description: postValue.description,
+                image: url,
+                imageRef: postValue.imageRef,
+                likes: 0,
+                link: postValue.link,
+                title: postValue.title,
+                user: authUser.uid,
+                userProfile: authUser.profilePic,
+                username: authUser.username,
+              });
+              modalClose();
+              setLoading(false);
+            }
+          }
+        );
+      }
+    } catch (error) {
+      console.log('Error', error);
+      setLoading(false);
     }
   };
 
-  const handlePostCreation = () => {
-    setLoading(true);
-    setTimeout(() => {
-      console.log('sending', postValue);
-      setLoading(false);
-      modalClose()
-    }, 2000);
-  };
+  console.log('laoding', loading);
 
   return (
     <Modal
@@ -144,7 +208,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                   {postValue.image && (
                     <div className="flex justify-center items-center p-2">
                       <Image
-                        src={postValue.image}
+                        src={URL.createObjectURL(postValue.image)}
                         height={300}
                         width={600}
                         alt="post image"
@@ -154,6 +218,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                     </div>
                   )}
                   <Input
+                    accept="image/*"
                     ref={imageInputRef}
                     hidden
                     disabled={loading}
