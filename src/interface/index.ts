@@ -37,4 +37,5 @@ export interface User {
     link?: string
     imageRef?: string
     likes: number
+    authUserId: string
   }

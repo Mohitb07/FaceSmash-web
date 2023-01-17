@@ -1,5 +1,10 @@
 import React from 'react';
-import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
+import {
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+  SlideFade,
+} from '@chakra-ui/react';
 
 type DataListProps<D> = {
   data: D[];
@@ -42,8 +47,10 @@ const DataList = <D extends any>({
   }
   return (
     <>
-      {data.map((item) => renderItem(item))}
-      {!isLoading && <ListFooterComponent />}
+      <div className="space-y-8">
+        {data.map((item) => renderItem(item))}
+        {!isLoading && <ListFooterComponent />}
+      </div>
     </>
   );
 };

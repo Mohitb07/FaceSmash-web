@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 
 import {
   Drawer,
@@ -44,12 +44,9 @@ const SearchDrawer = ({
         </DrawerHeader>
         <DrawerBody>
           <p className="text-xl">Recent</p>
-          <User />
-          <User />
-          <User />
         </DrawerBody>
       </DrawerContent>
     </Drawer>
   );
 };
-export default SearchDrawer;
+export default memo(SearchDrawer);

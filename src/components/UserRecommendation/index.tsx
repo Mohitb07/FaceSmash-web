@@ -11,7 +11,7 @@ const UserRecommendation = () => {
   const { authUser } = useAuthUser();
   const [randomSuggestion, setRandomSuggestion] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const getRandomUsers = async () => {
       try {
@@ -41,7 +41,7 @@ const UserRecommendation = () => {
     };
     getRandomUsers();
   }, [authUser?.uid]);
- 
+
   if (isLoading) {
     return (
       <div className="w-[20rem] flex items-center justify-center h-[15rem]">
@@ -51,9 +51,10 @@ const UserRecommendation = () => {
   }
 
   return (
-    <div>
+    <>
       <div className="flex items-center gap-5 mt-10">
         <UserCard
+          userId={authUser?.uid || ''}
           size="large"
           username={authUser?.username || ''}
           email={authUser?.email || ''}
@@ -68,6 +69,7 @@ const UserRecommendation = () => {
           {randomSuggestion.map((user) => (
             <UserCard
               key={user.uid}
+              userId={user.uid}
               username={user.username}
               email={user.email}
               profileURL={user.profilePic}
@@ -75,7 +77,7 @@ const UserRecommendation = () => {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default UserRecommendation;
