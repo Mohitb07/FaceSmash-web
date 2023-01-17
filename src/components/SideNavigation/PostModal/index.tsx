@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, memo } from 'react';
 
 import Image from 'next/image';
 import {
@@ -22,24 +22,17 @@ import {
 } from '@chakra-ui/react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
 
-import { db } from '../../../../firebase';
-import { POSTS_COLLECTION } from '../../../constant';
 import { useAuthUser } from '../../../hooks/useAuthUser';
+import { useCreatePost } from '../../../hooks/useCreatePost';
+import { useImageUpload } from '../../../hooks/useImageUpload';
 
 type PostModalProps = {
   isModalOpen: boolean;
   modalClose: () => void;
 };
 
-type PostValue = {
+export type PostValue = {
   title: string;
   description: string;
   image: Blob | MediaSource | '';
@@ -59,6 +52,8 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   const [isLinkVisible, setIsLinkVisible] = useState(false);
   const [isImageContainerVisible, setIsImageContainerVisible] = useState(true);
   const { authUser } = useAuthUser();
+  const { createPostWithImage, createPostWithoutImage } = useCreatePost();
+  const { uploadImage } = useImageUpload();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handlePostValueChange = (
@@ -80,56 +75,28 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   };
 
   const handlePostCreation = async () => {
-    const storage = getStorage();
     try {
       setLoading(true);
-      if (postValue.imageRef && authUser?.uid) {
-        const storageRef = ref(
-          storage,
-          `${authUser.uid}/posts/${postValue.imageRef}`
-        );
-        const uploadTask = uploadBytesResumable(
-          storageRef,
-          postValue.image as Blob
-        );
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const percent = Math.round(
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            ); // update progress
-            console.log('perc', percent);
-          },
-          (err) => console.log(err),
-          async () => {
-            // download url
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            if (url) {
-              await addDoc(collection(db, POSTS_COLLECTION), {
-                createdAt: serverTimestamp(),
-                description: postValue.description,
-                image: url,
-                imageRef: postValue.imageRef,
-                likes: 0,
-                link: postValue.link,
-                title: postValue.title,
-                user: authUser.uid,
-                userProfile: authUser.profilePic,
-                username: authUser.username,
-              });
-              modalClose();
-              setLoading(false);
-            }
-          }
-        );
+      if (postValue.image && authUser?.uid) {
+        const urlRef = `${authUser.uid}/posts/${postValue.imageRef}`;
+        uploadImage(urlRef, postValue.image, (url: string) => {
+          createPostWithImage(authUser, url, postValue, () => {
+            modalClose();
+            setLoading(false);
+          });
+        });
+      }
+      if (!postValue.image && authUser?.uid) {
+        createPostWithoutImage(authUser, postValue, () => {
+          modalClose();
+          setLoading(false);
+        });
       }
     } catch (error) {
       console.log('Error', error);
       setLoading(false);
     }
   };
-
-  console.log('laoding', loading);
 
   return (
     <Modal
@@ -186,7 +153,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                 value={postValue.description}
                 onChange={handlePostValueChange}
                 placeholder="Enter description of your post"
-                size="sm"
+                size="md"
               />
               {isImageContainerVisible && (
                 <div
@@ -285,4 +252,4 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     </Modal>
   );
 };
-export default PostModal;
+export default memo(PostModal);
