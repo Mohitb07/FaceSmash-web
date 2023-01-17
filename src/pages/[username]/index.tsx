@@ -105,6 +105,7 @@ const UserProfile = () => {
     return (
       <Feed
         key={feed.key}
+        authUserId={authUser?.uid || ''}
         username={feed.username}
         postImage={feed.image}
         userProfile={feed.userProfile}
