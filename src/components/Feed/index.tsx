@@ -5,12 +5,14 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { TbMessageCircle2 } from 'react-icons/tb';
 import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
-import { Avatar } from '@chakra-ui/react';
+import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { Collapse, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { FeedProps } from '../../interface';
 import Link from 'next/link';
+import { MdDeleteOutline } from 'react-icons/md';
+import { useCreatePost } from '../../hooks/useCreatePost';
 
 dayjs.extend(relativeTime);
 
@@ -26,9 +28,20 @@ const Feed = ({
   userId,
   imageRef,
   link,
+  authUserId,
 }: FeedProps) => {
   const [show, setShow] = useState(false);
   const handleToggle = () => setShow(!show);
+  const { deletePostWithoutImage, deletePostWithImage } = useCreatePost();
+
+  const handlePostDeletion = async (postId: string, imageRef?: string) => {
+    if (authUserId !== userId) return;
+    if (postImage && imageRef) {
+      await deletePostWithImage(postId, `${authUserId}/posts/${imageRef}`);
+    } else {
+      await deletePostWithoutImage(postId);
+    }
+  };
 
   return (
     <div className="md:w-[500px] lg:w-[450px] xl:w-[600px] bg-[#242526] rounded-md">
@@ -39,12 +52,28 @@ const Feed = ({
             <p className="font-bold">{username}</p>
           </div>
         </Link>
-        <BsThreeDotsVertical className="text-xl cursor-pointer" />
+        {authUserId === userId ? (
+          <Menu isLazy>
+            <MenuButton>
+              <BsThreeDotsVertical className="text-xl cursor-pointer" />
+            </MenuButton>
+            <MenuList backgroundColor="#242526" border="none" padding="2">
+              <MenuItem
+                icon={<MdDeleteOutline className="text-lg" />}
+                onClick={() => handlePostDeletion(postId, imageRef)}
+                backgroundColor="transparent"
+                _hover={{ backgroundColor: '#40404F', borderRadius: '3px' }}
+              >
+                <span className="text-gray-400">Delete Post</span>
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        ) : null}
       </header>
       {postImage && (
-        <div className="w-[600px] h-auto bg-red-200">
-          {/* <Image className='w-full h-full' src={postImage} height="100%" width="100vw" alt="post image" /> */}
-          <img src={postImage} alt="post image" />
+        <div className="w-[600px] h-auto">
+          <Image className='w-full h-full' src={postImage} objectFit="cover" height={600} width={600} alt="post image" blurDataURL={postImage}/>
+          {/* <img src={postImage} alt="post image" /> */}
         </div>
       )}
       <div className="p-4 space-y-3 md:space-y-5">
