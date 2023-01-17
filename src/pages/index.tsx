@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 
 import { BsSearch } from 'react-icons/bs';
+import { SlideFade } from '@chakra-ui/react';
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 
 import Brand from '../components/Brand';
 import UserRecommendation from '../components/UserRecommendation';
@@ -10,29 +18,40 @@ import { withAuth } from '../routes/WithProtected';
 import { Main } from '../templates/Main';
 import Navigation from '../common/Navigation';
 import { Post } from '../interface';
-import { useGetPosts } from '../hooks/useGetPosts';
 import EmptyData from '../components/DataList/EmptyData';
 import Footer from '../components/DataList/Footer';
 import Feed from '../components/Feed';
+import { useAuthUser } from '../hooks/useAuthUser';
+import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
+import { db } from '../../firebase';
 
 function Home() {
   const [feedList, setFeedList] = useState<Post[]>([]);
-  const { getPosts, isLoading } = useGetPosts();
+  const [isLoading, setIsLoading] = useState(true);
+  const { authUser } = useAuthUser();
 
   useEffect(() => {
-    const getAllPosts = async () => {
-      const posts = await getPosts();
-      setFeedList(posts);
-    };
-    getAllPosts();
-  }, [getPosts]);
-
-  console.log('posts list', feedList);
+    const q = query(
+      collection(db, POSTS_COLLECTION),
+      orderBy('createdAt', 'desc'),
+      limit(FEED_LIMIT)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const postList = querySnapshot.docs.map((d) => ({
+        ...(d.data() as Post),
+        key: d.id,
+      }));
+      setFeedList(postList);
+      setIsLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   function renderItem<T extends Post>(feed: T) {
     return (
       <Feed
         key={feed.key}
+        authUserId={authUser?.uid || ''}
         username={feed.username}
         postImage={feed.image}
         userProfile={feed.userProfile}
@@ -75,16 +94,20 @@ function Home() {
           </div>
           <div className="flex md:p-10 justify-center items-start gap-10">
             <main className="space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
-              <DataList
-                ListEmptyComponent={EmptyData}
-                ListFooterComponent={Footer}
-                data={feedList}
-                isLoading={isLoading}
-                renderItem={(item: any) => renderItem(item)}
-              />
+              <SlideFade in={isLoading || !isLoading} offsetY="20px">
+                <DataList
+                  ListEmptyComponent={EmptyData}
+                  ListFooterComponent={Footer}
+                  data={feedList}
+                  isLoading={isLoading}
+                  renderItem={(item: any) => renderItem(item)}
+                />
+              </SlideFade>
             </main>
             <aside className="hidden lg:flex flex-col">
-              <UserRecommendation />
+              <SlideFade in={isLoading || !isLoading} offsetY="20px">
+                <UserRecommendation />
+              </SlideFade>
             </aside>
           </div>
         </div>
