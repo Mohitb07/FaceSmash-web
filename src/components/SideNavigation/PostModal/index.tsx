@@ -24,7 +24,7 @@ import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
 
 import { useAuthUser } from '../../../hooks/useAuthUser';
-import { useCreatePost } from '../../../hooks/useCreatePost';
+import { useHandlePost } from '../../../hooks/useHandlePost';
 import { useImageUpload } from '../../../hooks/useImageUpload';
 
 type PostModalProps = {
@@ -52,7 +52,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   const [isLinkVisible, setIsLinkVisible] = useState(false);
   const [isImageContainerVisible, setIsImageContainerVisible] = useState(true);
   const { authUser } = useAuthUser();
-  const { createPostWithImage, createPostWithoutImage } = useCreatePost();
+  const { createPostWithImage, createPostWithoutImage } = useHandlePost();
   const { uploadImage } = useImageUpload();
   const imageInputRef = useRef<HTMLInputElement>(null);
 

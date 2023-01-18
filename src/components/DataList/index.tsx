@@ -3,7 +3,6 @@ import {
   Skeleton,
   SkeletonCircle,
   SkeletonText,
-  SlideFade,
 } from '@chakra-ui/react';
 
 type DataListProps<D> = {
@@ -42,7 +41,7 @@ const DataList = <D extends any>({
       </div>
     );
   }
-  if (data.length === 0) {
+  if (data.length === 0 && !isLoading) {
     return <ListEmptyComponent />;
   }
   return (
