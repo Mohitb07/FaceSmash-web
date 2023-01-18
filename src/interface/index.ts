@@ -38,4 +38,10 @@ export interface User {
     imageRef?: string
     likes: number
     authUserId: string
+    hasLiked: boolean
+  }
+
+  export interface PostLikes {
+    postId: string
+    likes: boolean
   }

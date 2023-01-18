@@ -5,14 +5,16 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { TbMessageCircle2 } from 'react-icons/tb';
 import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
+import { MdDeleteOutline } from 'react-icons/md';
+import { FaHeart } from 'react-icons/fa';
 import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { Collapse, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+
 import { FeedProps } from '../../interface';
 import Link from 'next/link';
-import { MdDeleteOutline } from 'react-icons/md';
-import { useCreatePost } from '../../hooks/useCreatePost';
+import { useHandlePost } from '../../hooks/useHandlePost';
 
 dayjs.extend(relativeTime);
 
@@ -28,11 +30,12 @@ const Feed = ({
   userId,
   imageRef,
   link,
+  hasLiked,
   authUserId,
 }: FeedProps) => {
   const [show, setShow] = useState(false);
   const handleToggle = () => setShow(!show);
-  const { deletePostWithoutImage, deletePostWithImage } = useCreatePost();
+  const { deletePostWithoutImage, deletePostWithImage } = useHandlePost();
 
   const handlePostDeletion = async (postId: string, imageRef?: string) => {
     if (authUserId !== userId) return;
@@ -72,7 +75,15 @@ const Feed = ({
       </header>
       {postImage && (
         <div className="w-[600px] h-auto">
-          <Image className='w-full h-full' src={postImage} objectFit="cover" height={600} width={600} alt="post image" blurDataURL={postImage}/>
+          <Image
+            className="w-full h-full"
+            src={postImage}
+            objectFit="cover"
+            height={600}
+            width={600}
+            alt="post image"
+            blurDataURL={postImage}
+          />
           {/* <img src={postImage} alt="post image" /> */}
         </div>
       )}
@@ -84,7 +95,11 @@ const Feed = ({
             <div className="flex space-y-3 md:space-y-5 justify-between items-center text-2xl md:text-3xl">
               <div className="flex items-center space-x-2 md:space-x-5">
                 <div className="group cursor-pointer">
-                  <FiHeart className="group-hover:opacity-40 group-hover:scale-50 transition-transform ease-in-out duration-200" />
+                  {hasLiked ? (
+                    <FaHeart className="text-red-500 group-hover:opacity-40 group-hover:scale-50 transition-transform ease-in-out duration-200" />
+                  ) : (
+                    <FiHeart className="group-hover:opacity-40 group-hover:scale-50 transition-transform ease-in-out duration-200" />
+                  )}
                 </div>
                 <div className="group cursor-pointer">
                   <TbMessageCircle2 className="-scale-x-100 group-hover:opacity-40" />

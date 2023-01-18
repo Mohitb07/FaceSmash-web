@@ -24,9 +24,11 @@ import Feed from '../components/Feed';
 import { useAuthUser } from '../hooks/useAuthUser';
 import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
 import { db } from '../../firebase';
+import { useHandlePost } from '../hooks/useHandlePost';
 
 function Home() {
   const [feedList, setFeedList] = useState<Post[]>([]);
+  const {userLikedPosts} = useHandlePost()
   const [isLoading, setIsLoading] = useState(true);
   const { authUser } = useAuthUser();
 
@@ -63,6 +65,7 @@ function Home() {
         userId={feed.user}
         postTitle={feed.title}
         postId={feed.key}
+        hasLiked={Boolean(userLikedPosts.find(post => post.postId === feed.key))}
       />
     );
   }
