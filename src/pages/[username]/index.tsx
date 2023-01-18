@@ -8,6 +8,7 @@ import {
   Skeleton,
   Button,
   Avatar,
+  SlideFade,
 } from '@chakra-ui/react';
 
 import DataList from '../../components/DataList';
@@ -19,10 +20,21 @@ import { withAuth } from '../../routes/WithProtected';
 import Sidebar from '../../components/SideNavigation';
 import BottomNavigation from '../../components/BottomNavigation';
 import { useGetUser } from '../../hooks/useGetUser';
-import { useGetPosts } from '../../hooks/useGetPosts';
 import Feed from '../../components/Feed';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
+import { useHandlePost } from '../../hooks/useHandlePost';
+import {
+  collection,
+  query,
+  Unsubscribe,
+  where,
+  limit,
+  orderBy,
+  onSnapshot,
+} from 'firebase/firestore';
+import { FEED_LIMIT, POSTS_COLLECTION } from '../../constant';
+import { db } from '../../../firebase';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
@@ -39,67 +51,79 @@ const DEFAULT_USER_DETAILS: User = {
   username: '',
 };
 
+type UserData = {
+  userDetails: User;
+  feedList: Post[];
+};
+
 const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.user_id;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { authUser } = useAuthUser();
   const { getUserDetail } = useGetUser();
-  const { getUserPosts } = useGetPosts();
-  const [feedList, setFeedList] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState({
-    user: true,
-    posts: true,
-  });
+  const { userLikedPosts } = useHandlePost();
   const [userData, setUserData] = useState<User>(DEFAULT_USER_DETAILS);
-
-  const memoizedFeedList: Post[] = useMemo(() => feedList, [feedList]);
-  const memoizedUserData = useMemo(() => userData, [userData]);
+  const [feedList, setFeedList] = useState<Post[]>([]);
+  const [isFeedLoading, setIsFeedLoading] = useState(true);
+  const [isUserDetailLoading, setIsUserDetailLoading] = useState(true);
 
   useEffect(() => {
-    const getData = async () => {
+    console.log('profile');
+    const getProfileData = async () => {
       try {
         if (userId !== authUser?.uid) {
-          const [userDetailResult, userPostsResult] = await Promise.all([
+          const [userDetailResult] = await Promise.all([
             getUserDetail(userId as string),
-            getUserPosts(userId as string),
           ]);
-          if (userDetailResult.exists()) {
-            setUserData((prev) => ({
-              ...prev,
-              ...userDetailResult.data(),
-              key: userDetailResult.id,
-            }));
-          }
-          const postList = userPostsResult.docs.map((d) => ({
-            ...(d.data() as Post),
-            key: d.id,
-          }));
-          setFeedList(postList);
+          if (!userDetailResult.exists()) return;
+          const user_data = {
+            ...(userDetailResult.data() as User),
+            key: userDetailResult.id,
+          };
+          setUserData(user_data)
         } else {
-          setUserData((prev) => ({
-            ...prev,
-            ...authUser,
-          }));
-          const userPostsResult = await getUserPosts(userId!);
-          const postList = userPostsResult.docs.map((d) => ({
-            ...(d.data() as Post),
-            key: d.id,
-          }));
-          setFeedList(postList);
+          if (authUser) {
+            const user = {
+              ...authUser,
+              key: authUser?.uid,
+            };
+            setUserData(user)
+          }
         }
       } catch (error) {
         throw new Error(`Error ${error}`);
       } finally {
-        setIsLoading({
-          user: false,
-          posts: false,
-        });
+        setIsUserDetailLoading(false);
       }
     };
-    getData();
+    getProfileData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, getUserPosts, getUserDetail]);
+  }, [userId, getUserDetail]);
+
+  useEffect(() => {
+    let unsubscriber: Unsubscribe;
+    try {
+      const userPostsQuery = query(
+        collection(db, POSTS_COLLECTION),
+        where('user', '==', userId),
+        orderBy('createdAt', 'desc'),
+        limit(FEED_LIMIT)
+      );
+      unsubscriber = onSnapshot(userPostsQuery, (querySnapshot) => {
+        const postList = querySnapshot.docs.map((d) => ({
+          ...(d.data() as Post),
+          key: d.id,
+        }));
+        setFeedList(postList)
+        setIsFeedLoading(false);
+      });
+    } catch (error) {
+      console.log('useGetPosts error', error);
+      setIsFeedLoading(false);
+    }
+    return () => unsubscriber();
+  }, [userId]);
 
   function renderItem<T extends Post>(feed: T) {
     return (
@@ -117,9 +141,15 @@ const UserProfile = () => {
         userId={feed.user}
         postTitle={feed.title}
         postId={feed.key}
+        hasLiked={Boolean(
+          userLikedPosts.find((post) => post.postId === feed.key)
+        )}
       />
     );
   }
+
+  const memoizedFeedList: Post[] = useMemo(() => feedList, [feedList]);
+  const memoizedUserData = useMemo(() => userData, [userData]);
 
   return (
     <Main
@@ -141,20 +171,20 @@ const UserProfile = () => {
       <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 md:items-center md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
           <div>
-            {isLoading.user ? (
+            {isUserDetailLoading ? (
               <SkeletonCircle height={200} width={200} />
             ) : (
               // <Avatar height={200} width={200} url={userData.profilePic} />
               <Avatar
                 loading="eager"
                 size="2xl"
-                name="Dan Abrahmov"
+                name={memoizedUserData.username}
                 src={memoizedUserData.profilePic}
                 showBorder
               />
             )}
           </div>
-          <Skeleton isLoaded={!isLoading.user}>
+          <Skeleton isLoaded={!isUserDetailLoading}>
             <div className="flex flex-col space-y-3 md:space-y-6">
               <div className="flex items-center gap-5">
                 <p className="text-3xl md:text-2xl lg:text-3xl xl:text-4xl font-light">
@@ -208,13 +238,15 @@ const UserProfile = () => {
           </div>
         </div>
         <div className="space-y-5 pb-16">
-          <DataList
-            renderItem={(item: any) => renderItem(item)}
-            ListEmptyComponent={EmptyData}
-            ListFooterComponent={Footer}
-            data={memoizedFeedList}
-            isLoading={isLoading.posts}
-          />
+          <SlideFade in={isFeedLoading || !isFeedLoading} offsetY="20px">
+            <DataList
+              renderItem={(item: any) => renderItem(item)}
+              ListEmptyComponent={EmptyData}
+              ListFooterComponent={Footer}
+              data={memoizedFeedList}
+              isLoading={isFeedLoading}
+            />
+          </SlideFade>
         </div>
       </div>
       <Suspense fallback={<div>Loading...</div>}>
