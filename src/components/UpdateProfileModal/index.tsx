@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo, memo } from 'react';
 
 import {
   Avatar,
@@ -9,51 +9,157 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Button as Btn,
+  Button,
   Text,
   Box,
   FormControl,
   FormLabel,
   Input,
 } from '@chakra-ui/react';
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+} from 'firebase/firestore';
 
-import { convertImageObject } from '../../utils/convertImageObject';
-import { DEFAULT_PROFILE_PIC } from '../../constant';
+import {
+  DEFAULT_PROFILE_PIC,
+  POSTS_COLLECTION,
+  USERS_COLLECTION,
+} from '../../constant';
 import { useAuthUser } from '../../hooks/useAuthUser';
+import { useImageUpload } from '../../hooks/useImageUpload';
+import { db } from '../../../firebase';
 
 type UpdateProfileModalProps = {
   onClose: () => void;
   isOpen: boolean;
 };
 
+type UpdateProfileData = {
+  selectedImage: Blob | MediaSource | '';
+  bio: string;
+};
+
+type ProfilePicProps = {
+  username: string;
+  selectedImage?: Blob | MediaSource;
+  defaultImage?: string;
+};
+
+const ProfilePic = ({
+  username,
+  selectedImage,
+  defaultImage,
+}: ProfilePicProps) => {
+  if (selectedImage) {
+    return (
+      <Avatar
+        onError={() => console.log('image error')}
+        loading="lazy"
+        ignoreFallback
+        size="2xl"
+        name={username}
+        src={URL.createObjectURL(selectedImage)}
+      />
+    );
+  } else {
+    return (
+      <Avatar
+        onError={() => console.log('image error')}
+        loading="lazy"
+        ignoreFallback
+        size="2xl"
+        name={username}
+        src={defaultImage}
+      />
+    );
+  }
+};
+
+const MemoizedProfile = memo(ProfilePic);
+
 const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
   const { authUser } = useAuthUser();
   const [loading, setLoading] = useState(false);
-  const [updateProfileFieldData, setUpdateProfileFieldData] = useState({
-    selectedImage: '',
-    bio: authUser?.bio || '',
-  });
+  const [updateProfileFieldData, setUpdateProfileFieldData] =
+    useState<UpdateProfileData>({
+      selectedImage: '',
+      bio: authUser?.bio || '',
+    });
+  const { uploadImage } = useImageUpload();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
     setUpdateProfileFieldData((prev) => ({
       ...prev,
-      selectedImage: convertImageObject(e),
+      bio: e.target.value,
     }));
+
+  const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0];
+    if (file) {
+      setUpdateProfileFieldData((prev) => ({
+        ...prev,
+        selectedImage: file,
+      }));
+    }
   };
 
-  const handleProfileUpdate = () => {
-    setLoading(true);
-    setTimeout(() => {
-      console.log('data', updateProfileFieldData);
+  const handleProfileUpdate = async () => {
+    try {
+      setLoading(true);
+      if (updateProfileFieldData.selectedImage && authUser) {
+        const urlRef = `${authUser.uid}/profilePic/`;
+        uploadImage(
+          urlRef,
+          updateProfileFieldData.selectedImage,
+          async (url: string) => {
+            await updateDoc(doc(db, USERS_COLLECTION, authUser.uid), {
+              profilePic: url,
+            });
+            const batch = writeBatch(db);
+            const q = query(
+              collection(db, POSTS_COLLECTION),
+              where('user', '==', authUser.uid)
+            );
+            const allPosts = await getDocs(q);
+            allPosts.forEach((doc) => {
+              batch.update(doc.ref, { userProfile: url });
+            });
+            batch
+              .commit()
+              .then(() => console.log('successfully updated profile pic'))
+              .catch((err) => console.log('ERROR while updating profile', err));
+          }
+        );
+      }
+      if (updateProfileFieldData.bio && authUser) {
+        await updateDoc(doc(db, USERS_COLLECTION, authUser.uid), {
+          bio: updateProfileFieldData.bio,
+        });
+      }
+    } catch (error) {
+      console.log('upload error', error);
+    } finally {
       setLoading(false);
-      setUpdateProfileFieldData({
-        selectedImage: '',
-        bio: authUser?.bio || '',
-      });
       onClose();
-    }, 2000);
+    }
   };
+
+  const isDisabled =
+    !updateProfileFieldData.bio ||
+    (updateProfileFieldData.bio === authUser?.bio &&
+      !updateProfileFieldData.selectedImage);
+
+  const selectedProfilePic = useMemo(
+    () => updateProfileFieldData.selectedImage,
+    [updateProfileFieldData.selectedImage]
+  );
 
   return (
     <Modal
@@ -79,15 +185,17 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
                     imageInputRef.current && imageInputRef.current.click()
                   }
                 >
-                  <Avatar
-                    size="2xl"
-                    name={authUser?.username}
-                    src={
-                      updateProfileFieldData.selectedImage ||
-                      authUser?.profilePic ||
-                      DEFAULT_PROFILE_PIC
-                    }
-                  />
+                  {selectedProfilePic ? (
+                    <MemoizedProfile
+                      username={authUser?.username || ''}
+                      selectedImage={selectedProfilePic}
+                    />
+                  ) : (
+                    <MemoizedProfile
+                      username={authUser?.username || ''}
+                      defaultImage={authUser?.profilePic || DEFAULT_PROFILE_PIC}
+                    />
+                  )}
                   <Input
                     ref={imageInputRef}
                     hidden
@@ -109,18 +217,13 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
                 rounded="lg"
                 placeholder="Your bio"
                 value={updateProfileFieldData.bio}
-                onChange={(e) =>
-                  setUpdateProfileFieldData((prev) => ({
-                    ...prev,
-                    bio: e.target.value,
-                  }))
-                }
+                onChange={onChangeHandler}
               />
             </FormControl>
           </Box>
         </ModalBody>
         <ModalFooter>
-          <Btn
+          <Button
             disabled={loading}
             color="white"
             colorScheme="ghost"
@@ -128,9 +231,9 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
             onClick={onClose}
           >
             Cancel
-          </Btn>
-          <Btn
-            disabled={!updateProfileFieldData.bio}
+          </Button>
+          <Button
+            disabled={isDisabled}
             onClick={handleProfileUpdate}
             rounded="full"
             color="white"
@@ -139,7 +242,7 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
             isLoading={loading}
           >
             Update
-          </Btn>
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
