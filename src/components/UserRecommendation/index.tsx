@@ -55,7 +55,8 @@ const UserRecommendation = () => {
       <div className="flex items-center gap-5 mt-10">
         <UserCard
           userId={authUser?.uid || ''}
-          size="large"
+          size="lg"
+          fontSize="2xl"
           username={authUser?.username || ''}
           email={authUser?.email || ''}
           profileURL={authUser?.profilePic || ''}
