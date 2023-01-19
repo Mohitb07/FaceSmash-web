@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect, useMemo } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 import { FiSettings } from 'react-icons/fi';
@@ -24,106 +24,21 @@ import Feed from '../../components/Feed';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
 import { useHandlePost } from '../../hooks/useHandlePost';
-import {
-  collection,
-  query,
-  Unsubscribe,
-  where,
-  limit,
-  orderBy,
-  onSnapshot,
-} from 'firebase/firestore';
-import { FEED_LIMIT, POSTS_COLLECTION } from '../../constant';
-import { db } from '../../../firebase';
+import { useGetPosts } from '../../hooks/useGetPosts';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
 );
 // bg-blue-500 md:bg-red-500 lg:bg-green-500 xl:bg-pink-500
-const DEFAULT_USER_DETAILS: User = {
-  bio: '',
-  createdAt: '',
-  email: '',
-  lastSignIn: '',
-  profilePic: '',
-  qusername: '',
-  uid: '',
-  username: '',
-};
-
-type UserData = {
-  userDetails: User;
-  feedList: Post[];
-};
 
 const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.user_id;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { authUser } = useAuthUser();
-  const { getUserDetail } = useGetUser();
+  const { userDetail, isUserDetailLoading } = useGetUser(userId as string);
   const { userLikedPosts } = useHandlePost();
-  const [userData, setUserData] = useState<User>(DEFAULT_USER_DETAILS);
-  const [feedList, setFeedList] = useState<Post[]>([]);
-  const [isFeedLoading, setIsFeedLoading] = useState(true);
-  const [isUserDetailLoading, setIsUserDetailLoading] = useState(true);
-
-  useEffect(() => {
-    console.log('profile');
-    const getProfileData = async () => {
-      try {
-        if (userId !== authUser?.uid) {
-          const [userDetailResult] = await Promise.all([
-            getUserDetail(userId as string),
-          ]);
-          if (!userDetailResult.exists()) return;
-          const user_data = {
-            ...(userDetailResult.data() as User),
-            key: userDetailResult.id,
-          };
-          setUserData(user_data)
-        } else {
-          if (authUser) {
-            const user = {
-              ...authUser,
-              key: authUser?.uid,
-            };
-            setUserData(user)
-          }
-        }
-      } catch (error) {
-        throw new Error(`Error ${error}`);
-      } finally {
-        setIsUserDetailLoading(false);
-      }
-    };
-    getProfileData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, getUserDetail]);
-
-  useEffect(() => {
-    let unsubscriber: Unsubscribe;
-    try {
-      const userPostsQuery = query(
-        collection(db, POSTS_COLLECTION),
-        where('user', '==', userId),
-        orderBy('createdAt', 'desc'),
-        limit(FEED_LIMIT)
-      );
-      unsubscriber = onSnapshot(userPostsQuery, (querySnapshot) => {
-        const postList = querySnapshot.docs.map((d) => ({
-          ...(d.data() as Post),
-          key: d.id,
-        }));
-        setFeedList(postList)
-        setIsFeedLoading(false);
-      });
-    } catch (error) {
-      console.log('useGetPosts error', error);
-      setIsFeedLoading(false);
-    }
-    return () => unsubscriber();
-  }, [userId]);
+  const { postsLoading, userPosts } = useGetPosts(userId as string);
 
   function renderItem<T extends Post>(feed: T) {
     return (
@@ -148,8 +63,8 @@ const UserProfile = () => {
     );
   }
 
-  const memoizedFeedList: Post[] = useMemo(() => feedList, [feedList]);
-  const memoizedUserData = useMemo(() => userData, [userData]);
+  const memoizedFeedList: Post[] = useMemo(() => userPosts, [userPosts]);
+  const memoizedUserData = useMemo(() => userDetail, [userDetail]);
 
   return (
     <Main
@@ -176,7 +91,7 @@ const UserProfile = () => {
             ) : (
               // <Avatar height={200} width={200} url={userData.profilePic} />
               <Avatar
-                loading="eager"
+                loading="lazy"
                 size="2xl"
                 name={memoizedUserData.username}
                 src={memoizedUserData.profilePic}
@@ -238,13 +153,13 @@ const UserProfile = () => {
           </div>
         </div>
         <div className="space-y-5 pb-16">
-          <SlideFade in={isFeedLoading || !isFeedLoading} offsetY="20px">
+          <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
             <DataList
               renderItem={(item: any) => renderItem(item)}
               ListEmptyComponent={EmptyData}
               ListFooterComponent={Footer}
               data={memoizedFeedList}
-              isLoading={isFeedLoading}
+              isLoading={postsLoading}
             />
           </SlideFade>
         </div>
