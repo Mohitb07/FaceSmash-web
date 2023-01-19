@@ -74,18 +74,15 @@ const Feed = ({
         ) : null}
       </header>
       {postImage && (
-        <div className="w-[600px] h-auto">
-          <Image
-            className="w-full h-full"
-            src={postImage}
-            objectFit="cover"
-            height={600}
-            width={600}
-            alt="post image"
-            blurDataURL={postImage}
-          />
-          {/* <img src={postImage} alt="post image" /> */}
-        </div>
+        <Image
+          className="w-full h-full"
+          src={postImage}
+          objectFit="cover"
+          height={600}
+          width={600}
+          alt="post image"
+          blurDataURL={postImage}
+        />
       )}
       <div className="p-4 space-y-3 md:space-y-5">
         <div
