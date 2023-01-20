@@ -17,14 +17,17 @@ import { Post } from '../interface';
 export const useGetPosts = (userId: string) => {
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
+  const [postsCount, setPostsCount] = useState(0)
+  
   useEffect(() => {
+    // when using pagination have to make a seperate query for total posts count
     let unsubscriber: Unsubscribe;
     try {
       const userPostsQuery = query(
         collection(db, POSTS_COLLECTION),
         where('user', '==', userId),
         orderBy('createdAt', 'desc'),
-        limit(FEED_LIMIT)
+        // limit(FEED_LIMIT)
       );
       unsubscriber = onSnapshot(userPostsQuery, (querySnapshot) => {
         const postList = querySnapshot.docs.map((d) => ({
@@ -33,6 +36,7 @@ export const useGetPosts = (userId: string) => {
         }));
         setUserPosts(postList);
         setPostsLoading(false);
+        setPostsCount(querySnapshot.size)
       });
     } catch (error) {
       console.log('useGetPosts error', error);
@@ -42,5 +46,5 @@ export const useGetPosts = (userId: string) => {
     return () => unsubscriber()
   }, [userId]);
 
-  return {userPosts, postsLoading}
+  return {userPosts, postsLoading, postsCount}
 };
