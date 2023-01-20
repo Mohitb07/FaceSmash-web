@@ -15,6 +15,14 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { FeedProps } from '../../interface';
 import Link from 'next/link';
 import { useHandlePost } from '../../hooks/useHandlePost';
+import {
+  doc,
+  getDoc,
+  increment,
+  writeBatch,
+} from 'firebase/firestore';
+import { db } from '../../../firebase';
+import { POSTS_COLLECTION, USERS_COLLECTION } from '../../constant';
 
 dayjs.extend(relativeTime);
 
@@ -44,6 +52,36 @@ const Feed = ({
     } else {
       await deletePostWithoutImage(postId);
     }
+  };
+
+  const handleLikes = async () => {
+    const batch = writeBatch(db);
+    const postLikesSubColRef = doc(
+      db,
+      `${USERS_COLLECTION}/${authUserId}/postlikes/${postId}`
+    );
+    const postRef = doc(db, POSTS_COLLECTION, postId);
+    const data = await getDoc(postLikesSubColRef);
+    // if the user has liked the post
+    if (data.exists()) {
+      batch.delete(postLikesSubColRef);
+      batch.update(postRef, {
+        likes: increment(-1),
+      });
+    }
+    // if the user has not liked the post
+    else {
+      batch.set(postLikesSubColRef, {
+        likes: true,
+        postId: postId,
+      });
+      batch.update(postRef, {
+        likes: increment(1),
+      });
+    }
+    batch
+      .commit()
+      .catch((err) => console.log('some error while liking the post', err));
   };
 
   return (
@@ -91,7 +129,7 @@ const Feed = ({
           <div>
             <div className="flex space-y-3 md:space-y-5 justify-between items-center text-2xl md:text-3xl">
               <div className="flex items-center space-x-2 md:space-x-5">
-                <div className="group cursor-pointer">
+                <div className="group cursor-pointer" onClick={handleLikes}>
                   {hasLiked ? (
                     <FaHeart className="text-red-500 group-hover:opacity-40 group-hover:scale-50 transition-transform ease-in-out duration-200" />
                   ) : (
