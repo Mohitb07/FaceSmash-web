@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { FiSettings } from 'react-icons/fi';
@@ -12,33 +12,39 @@ import {
 } from '@chakra-ui/react';
 
 import DataList from '../../components/DataList';
-import { Meta } from '../../layouts/Meta';
-import { Main } from '../../templates/Main';
-import { useAuthUser } from '../../hooks/useAuthUser';
-import { User, Post } from '../../interface';
-import { withAuth } from '../../routes/WithProtected';
 import Sidebar from '../../components/SideNavigation';
 import BottomNavigation from '../../components/BottomNavigation';
-import { useGetUser } from '../../hooks/useGetUser';
-import Feed from '../../components/Feed';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
+import Feed from '../../components/Feed';
+import ConnectionModal from '../../components/ConnectionsModal';
+import { Meta } from '../../layouts/Meta';
+import { Main } from '../../templates/Main';
+import { Post } from '../../interface';
+import { withAuth } from '../../routes/WithProtected';
+import { useAuthUser } from '../../hooks/useAuthUser';
+import { useGetUser } from '../../hooks/useGetUser';
 import { useHandlePost } from '../../hooks/useHandlePost';
 import { useGetPosts } from '../../hooks/useGetPosts';
+import { useConnection } from '../../hooks/useConnection';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
 );
 // bg-blue-500 md:bg-red-500 lg:bg-green-500 xl:bg-pink-500
 
+type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
+
 const UserProfile = () => {
   const router = useRouter();
-  const userId = router.query.user_id;
+  const userId = router.query.user_id as string;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalType, setModalType] = useState<ModalType>(null);
   const { authUser } = useAuthUser();
-  const { userDetail, isUserDetailLoading } = useGetUser(userId as string);
+  const { userDetail, isUserDetailLoading } = useGetUser(userId);
+  const { connectionsCount } = useConnection(userId);
   const { userLikedPosts } = useHandlePost();
-  const { postsLoading, userPosts } = useGetPosts(userId as string);
+  const { postsLoading, userPosts, postsCount } = useGetPosts(userId);
 
   function renderItem<T extends Post>(feed: T) {
     return (
@@ -66,6 +72,11 @@ const UserProfile = () => {
   const memoizedFeedList: Post[] = useMemo(() => userPosts, [userPosts]);
   const memoizedUserData = useMemo(() => userDetail, [userDetail]);
 
+  const handleModalOpen = (type: ModalType) => {
+    setModalType(type);
+    onOpen();
+  };
+
   return (
     <Main
       meta={
@@ -89,7 +100,6 @@ const UserProfile = () => {
             {isUserDetailLoading ? (
               <SkeletonCircle height={200} width={200} />
             ) : (
-              // <Avatar height={200} width={200} url={userData.profilePic} />
               <Avatar
                 loading="lazy"
                 size="2xl"
@@ -106,24 +116,42 @@ const UserProfile = () => {
                   {memoizedUserData.qusername}
                 </p>
                 <div className="hidden md:block">
-                  <Button colorScheme="brand" color="white" onClick={onOpen}>
+                  <Button
+                    colorScheme="brand"
+                    color="white"
+                    onClick={() => handleModalOpen('Edit profile')}
+                  >
                     Edit profile
                   </Button>
                 </div>
                 <FiSettings className="text-xl xl:text-3xl" />
               </div>
               <div className="block md:hidden">
-                <Button onClick={onOpen}>Edit profile</Button>
+                <Button onClick={() => handleModalOpen('Edit profile')}>
+                  Edit profile
+                </Button>
               </div>
               <div className="text-lg hidden items-center gap-5 md:flex">
                 <p>
-                  <span className="font-semibold mr-2">0</span> posts
+                  <span className="font-semibold mr-2">{postsCount}</span> posts
                 </p>
-                <p>
-                  <span className="font-semibold mr-2">0</span> followers
+                <p
+                  className="cursor-pointer"
+                  onClick={() => handleModalOpen('Followers')}
+                >
+                  <span className="font-semibold mr-2">
+                    {connectionsCount.followers}
+                  </span>{' '}
+                  followers
                 </p>
-                <p>
-                  <span className="font-semibold mr-2">0</span> followings
+                <p
+                  className="cursor-pointer"
+                  onClick={() => handleModalOpen('Following')}
+                >
+                  <span className="font-semibold mr-2">
+                    {connectionsCount.following}
+                  </span>{' '}
+                  followings
                 </p>
               </div>
               <div className="hidden md:flex">
@@ -140,15 +168,21 @@ const UserProfile = () => {
         </div>
         <div className="h-[5rem] grid grid-cols-3 border-y border-slate-700 place-items-center w-full p-1 md:hidden">
           <div className="text-center">
-            <span className="font-semibold">1230</span>
+            <span className="font-semibold">{postsCount}</span>
             <p className="text-slate-400">posts</p>
           </div>
-          <div className="text-center">
-            <span className="font-semibold">120k</span>
+          <div
+            className="text-center"
+            onClick={() => handleModalOpen('Followers')}
+          >
+            <span className="font-semibold">{connectionsCount.followers}</span>
             <p className="text-slate-400">followers</p>
           </div>
-          <div className="text-center">
-            <span className="font-semibold">100</span>
+          <div
+            className="text-center"
+            onClick={() => handleModalOpen('Following')}
+          >
+            <span className="font-semibold">{connectionsCount.following}</span>
             <p className="text-slate-400">following</p>
           </div>
         </div>
@@ -165,7 +199,16 @@ const UserProfile = () => {
         </div>
       </div>
       <Suspense fallback={<div>Loading...</div>}>
-        {isOpen && <UpdateProfileModal onClose={onClose} isOpen={isOpen} />}
+        {isOpen && modalType === 'Edit profile' && (
+          <UpdateProfileModal onClose={onClose} isOpen={isOpen} />
+        )}
+        {isOpen && modalType !== 'Edit profile' && (
+          <ConnectionModal
+            title={modalType!}
+            onClose={onClose}
+            isOpen={isOpen}
+          />
+        )}
       </Suspense>
     </Main>
   );
