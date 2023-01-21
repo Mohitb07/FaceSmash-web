@@ -27,6 +27,10 @@ import { useGetUser } from '../../hooks/useGetUser';
 import { useHandlePost } from '../../hooks/useHandlePost';
 import { useGetPosts } from '../../hooks/useGetPosts';
 import { useConnection } from '../../hooks/useConnection';
+import { db } from '../../../firebase';
+import { doc, writeBatch } from 'firebase/firestore';
+import { USERS_COLLECTION } from '../../constant';
+import { ref } from 'firebase/storage';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
@@ -42,7 +46,8 @@ const UserProfile = () => {
   const [modalType, setModalType] = useState<ModalType>(null);
   const { authUser } = useAuthUser();
   const { userDetail, isUserDetailLoading } = useGetUser(userId);
-  const { connectionsCount } = useConnection(userId);
+  const { connectionsCount, followersList, followingList } =
+    useConnection(userId);
   const { userLikedPosts } = useHandlePost();
   const { postsLoading, userPosts, postsCount } = useGetPosts(userId);
 
@@ -71,10 +76,46 @@ const UserProfile = () => {
 
   const memoizedFeedList: Post[] = useMemo(() => userPosts, [userPosts]);
   const memoizedUserData = useMemo(() => userDetail, [userDetail]);
+  const hasFollowedThisUser = useMemo(
+    () => !!followersList.find((user) => user.uid === authUser?.uid),
+    [authUser?.uid, followersList]
+  );
 
   const handleModalOpen = (type: ModalType) => {
     setModalType(type);
     onOpen();
+  };
+
+  const handleConnections = () => {
+    const batch = writeBatch(db);
+    if (authUser) {
+      const authUserFollowingDocRef = doc(
+        db,
+        `${USERS_COLLECTION}/${authUser.uid}/followings/${userId}`
+      );
+      const profileUserFollowerDocRef = doc(
+        db,
+        `${USERS_COLLECTION}/${userId}/followers/${authUser.uid}`
+      );
+      if (hasFollowedThisUser) {
+        // unfollow
+        batch.delete(authUserFollowingDocRef);
+        batch.delete(profileUserFollowerDocRef);
+      } else {
+        // follow user
+        batch.set(authUserFollowingDocRef, {
+          user: doc(db, `/${USERS_COLLECTION}/${userId}`),
+        });
+        batch.set(profileUserFollowerDocRef, {
+          user: doc(db, `/${USERS_COLLECTION}/${authUser.uid}`),
+        });
+      }
+    }
+    batch
+      .commit()
+      .catch((err) =>
+        console.log('error while following/unfollowing user', err)
+      );
   };
 
   return (
@@ -116,13 +157,23 @@ const UserProfile = () => {
                   {memoizedUserData.qusername}
                 </p>
                 <div className="hidden md:block">
-                  <Button
-                    colorScheme="brand"
-                    color="white"
-                    onClick={() => handleModalOpen('Edit profile')}
-                  >
-                    Edit profile
-                  </Button>
+                  {authUser?.uid === userId ? (
+                    <Button
+                      colorScheme="brand"
+                      color="white"
+                      onClick={() => handleModalOpen('Edit profile')}
+                    >
+                      Edit profile
+                    </Button>
+                  ) : (
+                    <Button
+                      colorScheme="brand"
+                      color="white"
+                      onClick={handleConnections}
+                    >
+                      {hasFollowedThisUser ? 'Unfollow' : 'Follow'}
+                    </Button>
+                  )}
                 </div>
                 <FiSettings className="text-xl xl:text-3xl" />
               </div>
@@ -204,6 +255,7 @@ const UserProfile = () => {
         )}
         {isOpen && modalType !== 'Edit profile' && (
           <ConnectionModal
+            data={modalType === 'Followers' ? followersList : followingList}
             title={modalType!}
             onClose={onClose}
             isOpen={isOpen}
