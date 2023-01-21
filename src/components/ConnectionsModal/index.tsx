@@ -6,21 +6,25 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
 } from '@chakra-ui/react';
 import React from 'react';
+import { User as UserDetail } from '../../interface';
 import User from '../User';
 
 type ConnectionModalProps = {
   title: string;
   onClose: () => void;
   isOpen: boolean;
+  data: UserDetail[];
 };
 
-const ConnectionModal: React.FC<ConnectionModalProps> = ({
+const ConnectionModal = ({
   title,
   onClose,
   isOpen,
-}) => {
+  data = [],
+}: ConnectionModalProps) => {
   return (
     <Modal
       isCentered
@@ -38,15 +42,22 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
         <Divider />
         <ModalCloseButton fontSize="2xl" />
         <ModalBody maxHeight="md">
-          <User
-            size="lg"
-            fontSize="lg"
-            username="Mohit Bisht"
-            profileURL="https://scontent-del1-2.cdninstagram.com/v/t51.2885-19/316214120_182178971063229_4795247802278145839_n.jpg?stp=dst-jpg_s320x320&_nc_ht=scontent-del1-2.cdninstagram.com&_nc_cat=109&_nc_ohc=KqaJhwKaq5MAX--U4tx&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfAaOayf5uQJv9Rm0bIDG8Sj-Q3147LhTUslRxmExtmqMQ&oe=63CEA475&_nc_sid=8fd12b"
-            userId="fadsfsadf"
-            email="bmohit980@gmail.com"
-          />
-          
+          {data.length === 0 && (
+            <Text textAlign="center" fontSize="xl">
+              No {title}
+            </Text>
+          )}
+          {data.map((user) => (
+            <User
+              key={user.uid}
+              size="lg"
+              fontSize="lg"
+              username={user.username}
+              profileURL={user.profilePic}
+              userId={user.uid}
+              email={user.email}
+            />
+          ))}
         </ModalBody>
       </ModalContent>
     </Modal>
