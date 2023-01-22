@@ -10,6 +10,7 @@ import {
   Avatar,
   SlideFade,
 } from '@chakra-ui/react';
+import { doc, writeBatch } from 'firebase/firestore';
 
 import DataList from '../../components/DataList';
 import Sidebar from '../../components/SideNavigation';
@@ -28,9 +29,8 @@ import { useHandlePost } from '../../hooks/useHandlePost';
 import { useGetPosts } from '../../hooks/useGetPosts';
 import { useConnection } from '../../hooks/useConnection';
 import { db } from '../../../firebase';
-import { doc, writeBatch } from 'firebase/firestore';
+
 import { USERS_COLLECTION } from '../../constant';
-import { ref } from 'firebase/storage';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
@@ -49,7 +49,8 @@ const UserProfile = () => {
   const { connectionsCount, followersList, followingList } =
     useConnection(userId);
   const { userLikedPosts } = useHandlePost();
-  const { postsLoading, userPosts, postsCount } = useGetPosts(userId);
+  const { postsLoading, userPosts, postsCount, getPosts, lastVisible } =
+    useGetPosts(userId);
 
   function renderItem<T extends Post>(feed: T) {
     return (
@@ -242,9 +243,13 @@ const UserProfile = () => {
             <DataList
               renderItem={(item: any) => renderItem(item)}
               ListEmptyComponent={EmptyData}
-              ListFooterComponent={Footer}
+              ListFooterComponent={
+                <Footer dataList={memoizedFeedList} loading={postsLoading} />
+              }
               data={memoizedFeedList}
               isLoading={postsLoading}
+              getMore={getPosts}
+              lastVisible={lastVisible}
             />
           </SlideFade>
         </div>

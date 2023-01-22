@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import { BsSearch } from 'react-icons/bs';
 import { SlideFade } from '@chakra-ui/react';
 import {
   collection,
+  DocumentSnapshot,
   limit,
   onSnapshot,
   orderBy,
   query,
+  startAfter,
 } from 'firebase/firestore';
 
 import Brand from '../components/Brand';
@@ -28,27 +30,57 @@ import { useHandlePost } from '../hooks/useHandlePost';
 
 function Home() {
   const [feedList, setFeedList] = useState<Post[]>([]);
-  const {userLikedPosts} = useHandlePost()
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
+  const { userLikedPosts } = useHandlePost();
   const [isLoading, setIsLoading] = useState(true);
   const { authUser } = useAuthUser();
 
+  const getPosts = useCallback(() => {
+    console.log('calling more', lastVisible)
+    setIsLoading(true);
+    const q = query(
+      collection(db, POSTS_COLLECTION),
+      orderBy('createdAt', 'desc'),
+      startAfter(lastVisible),
+      limit(FEED_LIMIT)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const postList = querySnapshot.docs.map((d) => ({
+          ...(d.data() as Post),
+          key: d.id,
+        }));
+        console.log('post list getPosts', postList)
+        setFeedList((prev) => [...prev, ...postList]);
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      }
+      setIsLoading(false);
+    });
+    return unsubscribe
+  }, [lastVisible]);
+
   useEffect(() => {
+    console.log('have lastVisible ? ', lastVisible)
     const q = query(
       collection(db, POSTS_COLLECTION),
       orderBy('createdAt', 'desc'),
       limit(FEED_LIMIT)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const postList = querySnapshot.docs.map((d) => ({
-        ...(d.data() as Post),
-        key: d.id,
-      }));
-      setFeedList(postList);
+      if (!querySnapshot.empty) {
+        const postList = querySnapshot.docs.map((d) => ({
+          ...(d.data() as Post),
+          key: d.id,
+        }));
+        console.log('post list effect', postList)
+        setFeedList(postList);
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      }
       setIsLoading(false);
     });
     return () => unsubscribe();
   }, []);
-
+   
   function renderItem<T extends Post>(feed: T) {
     return (
       <Feed
@@ -65,7 +97,9 @@ function Home() {
         userId={feed.user}
         postTitle={feed.title}
         postId={feed.key}
-        hasLiked={Boolean(userLikedPosts.find(post => post.postId === feed.key))}
+        hasLiked={Boolean(
+          userLikedPosts.find((post) => post.postId === feed.key)
+        )}
       />
     );
   }
@@ -100,10 +134,14 @@ function Home() {
               <SlideFade in={isLoading || !isLoading} offsetY="20px">
                 <DataList
                   ListEmptyComponent={EmptyData}
-                  ListFooterComponent={Footer}
+                  ListFooterComponent={
+                    <Footer dataList={feedList} loading={isLoading} />
+                  }
                   data={feedList}
                   isLoading={isLoading}
                   renderItem={(item: any) => renderItem(item)}
+                  getMore={getPosts}
+                  lastVisible={lastVisible}
                 />
               </SlideFade>
             </main>
