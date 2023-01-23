@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo, memo } from 'react';
+import React, { useRef, useState, memo } from 'react';
 
 import {
   Avatar,
@@ -34,6 +34,7 @@ import {
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { useImageUpload } from '../../hooks/useImageUpload';
 import { db } from '../../../firebase';
+import { convertImageObject } from '../../utils/convertImageObject';
 
 type UpdateProfileModalProps = {
   onClose: () => void;
@@ -101,7 +102,7 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
     }));
 
   const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files![0];
+    const file = convertImageObject(e);
     if (file) {
       setUpdateProfileFieldData((prev) => ({
         ...prev,
@@ -156,11 +157,6 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
     (updateProfileFieldData.bio === authUser?.bio &&
       !updateProfileFieldData.selectedImage);
 
-  const selectedProfilePic = useMemo(
-    () => updateProfileFieldData.selectedImage,
-    [updateProfileFieldData.selectedImage]
-  );
-
   return (
     <Modal
       isCentered
@@ -185,10 +181,10 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
                     imageInputRef.current && imageInputRef.current.click()
                   }
                 >
-                  {selectedProfilePic ? (
+                  {updateProfileFieldData.selectedImage ? (
                     <MemoizedProfile
                       username={authUser?.username || ''}
-                      selectedImage={selectedProfilePic}
+                      selectedImage={updateProfileFieldData.selectedImage}
                     />
                   ) : (
                     <MemoizedProfile

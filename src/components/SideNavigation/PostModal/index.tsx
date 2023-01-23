@@ -26,6 +26,7 @@ import { BsImages } from 'react-icons/bs';
 import { useAuthUser } from '../../../hooks/useAuthUser';
 import { useHandlePost } from '../../../hooks/useHandlePost';
 import { useImageUpload } from '../../../hooks/useImageUpload';
+import { convertImageObject } from '../../../utils/convertImageObject';
 
 type PostModalProps = {
   isModalOpen: boolean;
@@ -66,12 +67,14 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   };
 
   const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files![0];
-    setPostValue((prev) => ({
-      ...prev,
-      image: file,
-      imageRef: `${file.name}${file.lastModified}`,
-    }));
+    const file = convertImageObject(e);
+    if (file) {
+      setPostValue((prev) => ({
+        ...prev,
+        image: file,
+        imageRef: `${file.name}${file.lastModified}`,
+      }));
+    }
   };
 
   const handlePostCreation = async () => {
