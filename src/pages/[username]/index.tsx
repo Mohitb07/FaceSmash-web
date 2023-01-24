@@ -18,7 +18,7 @@ import BottomNavigation from '../../components/BottomNavigation';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
 import Feed from '../../components/Feed';
-import ConnectionModal from '../../components/ConnectionsModal';
+
 import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 import { Post } from '../../interface';
@@ -29,13 +29,12 @@ import { useHandlePost } from '../../hooks/useHandlePost';
 import { useGetPosts } from '../../hooks/useGetPosts';
 import { useConnection } from '../../hooks/useConnection';
 import { db } from '../../../firebase';
-
 import { USERS_COLLECTION } from '../../constant';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
 );
-// bg-blue-500 md:bg-red-500 lg:bg-green-500 xl:bg-pink-500
+const ConnectionModal = lazy(() => import('../../components/ConnectionsModal'))
 
 type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
 
@@ -139,17 +138,16 @@ const UserProfile = () => {
       <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 md:items-center md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
           <div>
-            {isUserDetailLoading ? (
-              <SkeletonCircle height={200} width={200} />
-            ) : (
+            <Skeleton borderRadius="full" isLoaded={!isUserDetailLoading}>
               <Avatar
                 loading="lazy"
                 size="2xl"
+                ignoreFallback
                 name={memoizedUserData.username}
                 src={memoizedUserData.profilePic}
                 showBorder
               />
-            )}
+            </Skeleton>
           </div>
           <Skeleton isLoaded={!isUserDetailLoading}>
             <div className="flex flex-col space-y-3 md:space-y-6">
