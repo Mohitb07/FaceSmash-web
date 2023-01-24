@@ -8,10 +8,10 @@ import {
   Text,
   useBoolean,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 
 import { withPublic } from '../../routes/WithPublic';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
-import { useRouter } from 'next/router';
 import { useRegister } from '../../hooks/useRegister';
 import AuthLayout from '../../layouts/Auth';
 
@@ -26,7 +26,7 @@ const Register = () => {
   });
   const [charactersLeft, setCharactersLeft] = useState(30);
   const [isShown, setIsShown] = useBoolean(false);
-  const { loading, error, onSignUp, setError } = useRegister(router);
+  const { loading, error, onSignUp } = useRegister(router);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRegisterFieldData((prev) => ({
