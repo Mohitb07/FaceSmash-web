@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, { memo, useState, useCallback } from 'react';
 
 import {
   Drawer,
@@ -6,10 +6,21 @@ import {
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
+  Text,
+  Spinner,
+  Flex,
+  InputGroup,
+  InputLeftElement,
+  Input,
 } from '@chakra-ui/react';
 import { BsSearch } from 'react-icons/bs';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
-import User from '../../../components/User';
+import { debounce } from '../../../utils/debounce';
+import { USERS_COLLECTION } from '../../../constant';
+import { db } from '../../../../firebase';
+import User from '../../User';
+import { User as UserDetail } from '../../../interface';
 
 type SearchDrawerProps = {
   isSearchDrawerOpen: boolean;
@@ -20,6 +31,44 @@ const SearchDrawer = ({
   isSearchDrawerOpen = false,
   searchDrawerClose,
 }: SearchDrawerProps) => {
+  const [searchValue, setSearchValue] = useState('');
+  const [userList, setUserList] = useState<UserDetail[]>([]);
+  const [isLoading, setLoading] = useState(false);
+
+  const onSearchQueryChange = async (data = '') => {
+    try {
+      if (!data.trim()) return;
+      const q = query(
+        collection(db, USERS_COLLECTION),
+        where('qusername', '>=', data),
+        where('qusername', '<=', data + '\uf8ff')
+      );
+      const querySnap = await getDocs(q);
+      const list = querySnap.docs.map((user) => user.data() as UserDetail);
+      setUserList(list);
+    } catch (error) {
+      console.error('error while fetching search query', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const _debounceSearchField = useCallback(
+    debounce(onSearchQueryChange, 1000),
+    []
+  );
+
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    userList.length > 0 && setUserList([]);
+    const searchQuery = e.target.value;
+    setSearchValue(searchQuery);
+    if (searchQuery.trim()) {
+      setLoading(true);
+      _debounceSearchField(searchQuery);
+    }
+  };
+
   return (
     <Drawer
       placement="left"
@@ -30,20 +79,45 @@ const SearchDrawer = ({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerHeader borderBottomWidth="1px">
-          <h2 className="text-3xl">Search</h2>
-          <div>
-            <div className="flex w-full py-3 px-2 my-5 items-center bg-gray-800 rounded-md">
-              <BsSearch className="text-xl text-slate-300 mx-3" />
-              <input
-                className="w-full bg-transparent outline-none border-none"
-                type="text"
-                placeholder="Search User..."
-              />
-            </div>
-          </div>
+          <Text fontSize="3xl">Search</Text>
+          <InputGroup mt="5">
+            <InputLeftElement pointerEvents="none">
+              <BsSearch className="text-lg text-slate-300 mt-2" />
+            </InputLeftElement>
+            <Input
+              value={searchValue}
+              type="text"
+              errorBorderColor="crimson"
+              focusBorderColor="brand.100"
+              colorScheme="brand"
+              placeholder="Search User..."
+              onChange={onChangeHandler}
+              variant="filled"
+              size="lg"
+            />
+          </InputGroup>
         </DrawerHeader>
         <DrawerBody>
-          <p className="text-xl">Recent</p>
+          {isLoading && (
+            <Flex mt="10" justifyContent="center">
+              <Spinner size="lg" />
+            </Flex>
+          )}
+          {!isLoading && userList.length > 0 && (
+            <Text fontSize="xl">Result ({userList.length})</Text>
+          )}
+          {!isLoading && searchValue.length > 0 && userList.length === 0 && (
+            <Text fontSize="xl">No result found for: {searchValue}</Text>
+          )}
+          {userList.map((user) => (
+            <User
+              key={user.uid}
+              profileURL={user.profilePic}
+              userId={user.uid}
+              email={user.email}
+              username={user.username}
+            />
+          ))}
         </DrawerBody>
       </DrawerContent>
     </Drawer>
