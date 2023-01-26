@@ -3,7 +3,6 @@ import { lazy, Suspense, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { FiSettings } from 'react-icons/fi';
 import {
-  SkeletonCircle,
   useDisclosure,
   Skeleton,
   Button,
@@ -18,7 +17,6 @@ import BottomNavigation from '../../components/BottomNavigation';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
 import Feed from '../../components/Feed';
-
 import { Meta } from '../../layouts/Meta';
 import { Main } from '../../templates/Main';
 import { Post } from '../../interface';

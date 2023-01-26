@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   collection,
   getDoc,
@@ -5,7 +7,7 @@ import {
   query,
   Unsubscribe,
 } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+
 import { db } from '../../firebase';
 import { USERS_COLLECTION } from '../constant';
 import { User } from '../interface';
