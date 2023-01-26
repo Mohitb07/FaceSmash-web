@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 import {
   query,
@@ -22,15 +22,19 @@ export const useGetPosts = (userId: string) => {
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
   const [postsCount, setPostsCount] = useState(0);
 
+  const userQuery = useMemo(
+    () =>
+      query(
+        collection(db, POSTS_COLLECTION),
+        where('user', '==', userId),
+        orderBy('createdAt', 'desc')
+      ),
+    [userId]
+  );
+
   const getPosts = useCallback(() => {
     setPostsLoading(true);
-    const q = query(
-      collection(db, POSTS_COLLECTION),
-      where('user', '==', userId),
-      orderBy('createdAt', 'desc'),
-      startAfter(lastVisible),
-      limit(4)
-    );
+    const q = query(userQuery, startAfter(lastVisible), limit(FEED_LIMIT));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       if (!querySnapshot.empty) {
         const postList = querySnapshot.docs.map((d) => ({
@@ -43,18 +47,16 @@ export const useGetPosts = (userId: string) => {
       setPostsLoading(false);
     });
     return unsubscribe;
-  }, [lastVisible, userId]);
+  }, [lastVisible, userQuery]);
 
   useEffect(() => {
-    // when using pagination have to make a seperate query for total posts count
     let unsubscriber: Unsubscribe;
+    let unsubscriberPostsCount: Unsubscribe;
     try {
-      const userPostsQuery = query(
-        collection(db, POSTS_COLLECTION),
-        where('user', '==', userId),
-        orderBy('createdAt', 'desc'),
-        limit(4)
-      );
+      unsubscriberPostsCount = onSnapshot(userQuery, (querySnapshot) => {
+        setPostsCount(querySnapshot.size);
+      });
+      const userPostsQuery = query(userQuery, limit(FEED_LIMIT));
       unsubscriber = onSnapshot(userPostsQuery, (querySnapshot) => {
         const postList = querySnapshot.docs.map((d) => ({
           ...(d.data() as Post),
@@ -63,15 +65,16 @@ export const useGetPosts = (userId: string) => {
         setUserPosts(postList);
         setPostsLoading(false);
         setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setPostsCount(querySnapshot.size);
       });
     } catch (error) {
       console.log('useGetPosts error', error);
       setPostsLoading(false);
     }
 
-    return () => unsubscriber();
-  }, [userId]);
+    return () => {
+      unsubscriber(), unsubscriberPostsCount();
+    };
+  }, [userId, userQuery]);
 
   return { userPosts, postsLoading, postsCount, getPosts, lastVisible };
 };
