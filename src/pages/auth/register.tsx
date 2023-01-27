@@ -17,7 +17,6 @@ import AuthLayout from '../../layouts/Auth';
 
 
 const Register = () => {
-  const router = useRouter();
   const [registerFieldData, setRegisterFieldData] = useState({
     username: '',
     email: '',
@@ -26,7 +25,7 @@ const Register = () => {
   });
   const [charactersLeft, setCharactersLeft] = useState(30);
   const [isShown, setIsShown] = useBoolean(false);
-  const { loading, error, onSignUp } = useRegister(router);
+  const { loading, error, onSignUp } = useRegister();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRegisterFieldData((prev) => ({

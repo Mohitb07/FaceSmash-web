@@ -16,12 +16,11 @@ import { useLogin } from '../../hooks/useLogin';
 import AuthLayout from '../../layouts/Auth';
 
 const Login = () => {
-  const router = useRouter();
   const [loginFieldData, setLoginFieldData] = useState({
     email: '',
     password: '',
   });
-  const { loading, error, onSignIn, setError } = useLogin(router);
+  const { loading, error, onSignIn, setError } = useLogin();
   const [isShown, setIsShown] = useBoolean(false);
 
   useEffect(() => {
