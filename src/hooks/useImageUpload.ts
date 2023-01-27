@@ -1,10 +1,11 @@
+import { useState } from 'react';
+
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
 } from 'firebase/storage';
-import { useState } from 'react';
 
 export const useImageUpload = () => {
   const [progress, setProgress] = useState(0);
@@ -28,11 +29,15 @@ export const useImageUpload = () => {
       },
       (err) => setError(err.message),
       async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        if (url) {
-          if (typeof cb === 'function') {
-            cb(url);
+        try {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          if (url) {
+            if (typeof cb === 'function') {
+              cb(url);
+            }
           }
+        } catch (error) {
+          console.log('ERROR while downloading image url', error)
         }
       }
     );
