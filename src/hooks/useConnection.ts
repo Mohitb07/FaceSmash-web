@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 
 import {
   collection,
+  DocumentData,
   getDoc,
   onSnapshot,
   query,
+  QuerySnapshot,
   Unsubscribe,
 } from 'firebase/firestore';
 
@@ -20,6 +22,12 @@ export const useConnection = (userId: string) => {
     followers: 0,
   });
 
+  const promiseResolver = async (querySnap: QuerySnapshot<DocumentData>) => {
+    const promises = querySnap.docs.map((d) => getDoc(d.data().user));
+    const result = await Promise.all(promises);
+    return result.map((d) => d.data() as User);
+  };
+
   useEffect(() => {
     let unsubscribeFollowingData: Unsubscribe;
     let unsubscribeFollowersData: Unsubscribe;
@@ -30,14 +38,12 @@ export const useConnection = (userId: string) => {
       unsubscribeFollowingData = onSnapshot(
         followingSubColRef,
         async (querySnap) => {
-          const promises = querySnap.docs.map((d) => getDoc(d.data().user));
-          const result = await Promise.all(promises);
-          const list = result.map((d) => d.data() as User);
+          const list = await promiseResolver(querySnap);
           setFollowingList(list);
-          setConnectionCount(prev => ({
+          setConnectionCount((prev) => ({
             ...prev,
-            following: querySnap.size
-          }))
+            following: querySnap.size,
+          }));
         }
       );
 
@@ -47,14 +53,12 @@ export const useConnection = (userId: string) => {
       unsubscribeFollowersData = onSnapshot(
         followersSubColRef,
         async (querySnap) => {
-          const promises = querySnap.docs.map((d) => getDoc(d.data().user));
-          const result = await Promise.all(promises);
-          const list = result.map((d) => d.data() as User);
+          const list = await promiseResolver(querySnap);
           setFollowersList(list);
-          setConnectionCount(prev => ({
+          setConnectionCount((prev) => ({
             ...prev,
-            followers: querySnap.size
-          }))
+            followers: querySnap.size,
+          }));
         }
       );
     }
@@ -64,5 +68,5 @@ export const useConnection = (userId: string) => {
     };
   }, [userId]);
 
-  return {connectionsCount, followersList, followingList}
+  return { connectionsCount, followersList, followingList };
 };
