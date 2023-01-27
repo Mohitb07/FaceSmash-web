@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -6,7 +7,7 @@ import {
   sendEmailVerification,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { NextRouter } from 'next/router';
+
 import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '../constant';
 import { db } from '../../firebase';
 
@@ -15,7 +16,7 @@ const DEFAULT_ERROR_VALUE = {
   password: '',
 };
 
-export const useRegister = (router: NextRouter) => {
+export const useRegister = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(DEFAULT_ERROR_VALUE);
 
@@ -43,7 +44,6 @@ export const useRegister = (router: NextRouter) => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log('user registered');
         createUserAttempt(userCredential, username);
       })
       .catch((error) => {

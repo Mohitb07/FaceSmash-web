@@ -1,13 +1,13 @@
 import { useState } from 'react';
+
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { NextRouter } from 'next/router';
 
 const DEFAULT_ERROR_VALUE = {
   email: '',
   password: '',
 };
 
-export const useLogin = (router: NextRouter) => {
+export const useLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(DEFAULT_ERROR_VALUE);
 

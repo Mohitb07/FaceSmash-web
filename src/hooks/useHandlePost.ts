@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { Unsubscribe } from 'firebase/auth';
 import {
   addDoc,
@@ -9,7 +11,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
-import { useEffect, useState } from 'react';
+
 import { db } from '../../firebase';
 import { PostValue } from '../components/SideNavigation/PostModal';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../constant';
@@ -80,9 +82,8 @@ export const useHandlePost = () => {
   const deletePostWithoutImage = async (postId: string) => {
     try {
       await deleteDoc(doc(db, POSTS_COLLECTION, postId));
-      console.log('post deleted successfully');
     } catch (error) {
-      console.log('some error while deleting post', error);
+      console.log('ERROR while deleting post', error);
     }
   };
 
@@ -91,11 +92,9 @@ export const useHandlePost = () => {
     const imageRef = ref(storage, postImageRef);
     try {
       await deleteObject(imageRef);
-      console.log('image deleted');
       await deletePostWithoutImage(postId);
-      console.log('post deleted successfully');
     } catch (error) {
-      console.log('some error while deleting post', error);
+      console.log('ERROR while deleting post', error);
     }
   };
 
