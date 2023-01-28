@@ -138,7 +138,7 @@ function Home() {
             </div>
           </div>
           <div className="flex md:p-10 justify-center items-start gap-10">
-            <main className="space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
+            <main className="space-y-5 pb-16 md:ml-[20%] xl:ml-[10%] w-full md:w-auto">
               <SlideFade in={isLoading || !isLoading} offsetY="20px">
                 <DataList
                   ListEmptyComponent={EmptyData}
