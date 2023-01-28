@@ -1,10 +1,15 @@
-import { Box, Text } from '@chakra-ui/react';
 import React from 'react';
+
+import { Box, Flex, Text } from '@chakra-ui/react';
+import {CgFeed} from 'react-icons/cg'
 
 const EmptyData = () => {
     return (
         <Box>
-            <Text>Empty List</Text>
+             <Flex direction="column" mt="10" justifyContent="center" alignItems="center">
+                <CgFeed fontSize={120}/>
+                <Text fontSize={20}>Empty Feed</Text>
+            </Flex>
         </Box>
     )
 }
