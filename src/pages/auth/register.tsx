@@ -8,7 +8,6 @@ import {
   Text,
   useBoolean,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 
 import { withPublic } from '../../routes/WithPublic';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
