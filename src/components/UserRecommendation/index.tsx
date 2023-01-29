@@ -1,6 +1,8 @@
+import React, { useState, useEffect } from 'react';
+
 import { Spinner } from '@chakra-ui/react';
 import { collection, getDocs, query } from 'firebase/firestore';
-import React, { useState, useEffect } from 'react';
+
 import { db } from '../../../firebase';
 import { USERS_COLLECTION } from '../../constant';
 import { useAuthUser } from '../../hooks/useAuthUser';
@@ -35,6 +37,7 @@ const UserRecommendation = () => {
         }
         setRandomSuggestion(userList);
       } catch (error) {
+        console.log('ERROR while fetching random user data', error)
       } finally {
         setIsLoading(false);
       }
