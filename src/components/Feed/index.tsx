@@ -7,7 +7,13 @@ import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
 import { MdDeleteOutline } from 'react-icons/md';
 import { FaHeart } from 'react-icons/fa';
-import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import {
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from '@chakra-ui/react';
 import { Collapse, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -15,12 +21,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { FeedProps } from '../../interface';
 import Link from 'next/link';
 import { useHandlePost } from '../../hooks/useHandlePost';
-import {
-  doc,
-  getDoc,
-  increment,
-  writeBatch,
-} from 'firebase/firestore';
+import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../../constant';
 
@@ -94,8 +95,8 @@ const Feed = ({
           </div>
         </Link>
         {authUserId === userId ? (
-          <Menu isLazy>
-            <MenuButton>
+          <Menu isLazy closeOnSelect placement="bottom-end">
+            <MenuButton aria-label="Options">
               <BsThreeDotsVertical className="text-xl cursor-pointer" />
             </MenuButton>
             <MenuList backgroundColor="#242526" border="none" padding="2">
