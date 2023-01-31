@@ -21,7 +21,8 @@ const Button = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex justify-${position} items-center rounded-lg py-2 text-base font-semibold tracking-wide text-white ${
+      // eslint-disable-next-line tailwindcss/no-custom-classname
+      className={`justify-${position} flex items-center rounded-lg py-2 text-base font-semibold tracking-wide text-white ${
         disabled ? 'bg-primary-800' : 'bg-primary-100'
       } ${style}`}
     >

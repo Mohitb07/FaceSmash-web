@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-
 import { Spinner } from '@chakra-ui/react';
 import { collection, getDocs, query } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 
 import { db } from '../../../firebase';
 import { USERS_COLLECTION } from '../../constant';
 import { useAuthUser } from '../../hooks/useAuthUser';
-import { User } from '../../interface';
+import type { User } from '../../interface';
 import UserCard from '../User';
 
 const UserRecommendation = () => {
@@ -26,6 +25,8 @@ const UserRecommendation = () => {
               ...(d.data() as User),
               key: d.id,
             };
+          } else {
+            return null;
           }
         });
         const filteredUsersList = unfilteredUsersList.filter(Boolean);
@@ -37,7 +38,7 @@ const UserRecommendation = () => {
         }
         setRandomSuggestion(userList);
       } catch (error) {
-        console.log('ERROR while fetching random user data', error)
+        console.log('ERROR while fetching random user data', error);
       } finally {
         setIsLoading(false);
       }
@@ -47,7 +48,7 @@ const UserRecommendation = () => {
 
   if (isLoading) {
     return (
-      <div className="w-[20rem] flex items-center justify-center h-[15rem]">
+      <div className="flex h-[15rem] w-[20rem] items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -55,7 +56,7 @@ const UserRecommendation = () => {
 
   return (
     <>
-      <div className="flex items-center gap-5 mt-10">
+      <div className="mt-10 flex items-center gap-5">
         <UserCard
           userId={authUser?.uid || ''}
           size="lg"
@@ -66,7 +67,7 @@ const UserRecommendation = () => {
         />
       </div>
       <div className="mt-5">
-        <p className="text-xl text-gray-500 font-semibold tracking-wider">
+        <p className="text-xl font-semibold tracking-wider text-gray-500">
           Suggestions for you
         </p>
         <div>

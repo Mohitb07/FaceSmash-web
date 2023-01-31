@@ -1,18 +1,14 @@
-import { useEffect, useState } from 'react';
-
-import {
-  collection,
+import type {
   DocumentData,
-  getDoc,
-  onSnapshot,
-  query,
   QuerySnapshot,
   Unsubscribe,
 } from 'firebase/firestore';
+import { collection, getDoc, onSnapshot, query } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 
 import { db } from '../../firebase';
 import { USERS_COLLECTION } from '../constant';
-import { User } from '../interface';
+import type { User } from '../interface';
 
 export const useConnection = (userId: string) => {
   const [followersList, setFollowersList] = useState<User[]>([]);
@@ -64,7 +60,8 @@ export const useConnection = (userId: string) => {
     }
     getData();
     return () => {
-      unsubscribeFollowingData(), unsubscribeFollowersData();
+      unsubscribeFollowingData();
+      unsubscribeFollowersData();
     };
   }, [userId]);
 

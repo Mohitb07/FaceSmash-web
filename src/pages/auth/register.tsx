@@ -1,19 +1,17 @@
-import React, { useState } from 'react';
-
 import {
-  Input,
   Button,
+  Input,
   InputGroup,
   InputRightElement,
   Text,
   useBoolean,
 } from '@chakra-ui/react';
+import React, { useState } from 'react';
 
-import { withPublic } from '../../routes/WithPublic';
 import { FIREBASE_ERRORS } from '../../../firebase/error';
 import { useRegister } from '../../hooks/useRegister';
 import AuthLayout from '../../layouts/Auth';
-
+import { withPublic } from '../../routes/WithPublic';
 
 const Register = () => {
   const [registerFieldData, setRegisterFieldData] = useState({

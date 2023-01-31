@@ -1,38 +1,37 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
-
-import { useRouter } from 'next/router';
-import { FiSettings } from 'react-icons/fi';
 import {
-  useDisclosure,
-  Skeleton,
-  Button,
   Avatar,
+  Button,
+  Skeleton,
   SlideFade,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { doc, writeBatch } from 'firebase/firestore';
+import { useRouter } from 'next/router';
+import { lazy, Suspense, useMemo, useState } from 'react';
+import { FiSettings } from 'react-icons/fi';
 
-import DataList from '../../components/DataList';
-import Sidebar from '../../components/SideNavigation';
+import { db } from '../../../firebase';
 import BottomNavigation from '../../components/BottomNavigation';
+import DataList from '../../components/DataList';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
 import Feed from '../../components/Feed';
-import { Meta } from '../../layouts/Meta';
-import { Main } from '../../templates/Main';
-import { Post } from '../../interface';
-import { withAuth } from '../../routes/WithProtected';
+import Sidebar from '../../components/SideNavigation';
+import { USERS_COLLECTION } from '../../constant';
 import { useAuthUser } from '../../hooks/useAuthUser';
+import { useConnection } from '../../hooks/useConnection';
+import { useGetPosts } from '../../hooks/useGetPosts';
 import { useGetUser } from '../../hooks/useGetUser';
 import { useHandlePost } from '../../hooks/useHandlePost';
-import { useGetPosts } from '../../hooks/useGetPosts';
-import { useConnection } from '../../hooks/useConnection';
-import { db } from '../../../firebase';
-import { USERS_COLLECTION } from '../../constant';
+import type { Post } from '../../interface';
+import { Meta } from '../../layouts/Meta';
+import { withAuth } from '../../routes/WithProtected';
+import { Main } from '../../templates/Main';
 
 const UpdateProfileModal = lazy(
   () => import('../../components/UpdateProfileModal')
 );
-const ConnectionModal = lazy(() => import('../../components/ConnectionsModal'))
+const ConnectionModal = lazy(() => import('../../components/ConnectionsModal'));
 
 type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
 
@@ -62,7 +61,7 @@ const UserProfile = () => {
         link={feed.link}
         imageRef={feed.imageRef}
         likes={feed.likes}
-        userId={feed.user}
+        userId={feed.uid}
         postTitle={feed.title}
         postId={feed.key}
         hasLiked={Boolean(
@@ -129,12 +128,12 @@ const UserProfile = () => {
         <div>
           <Sidebar />
         </div>
-        <div className="bg-slate-900 fixed z-50 bottom-0 w-full">
+        <div className="fixed bottom-0 z-50 w-full bg-slate-900">
           <BottomNavigation />
         </div>
       </div>
-      <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-10 md:items-center md:p-10 lg:ml-[10%] xl:ml-0">
-        <div className="flex items-center gap-5 lg:gap-10 xl:gap-20 p-3">
+      <div className="flex flex-col justify-start space-y-3 md:items-center md:justify-center md:space-y-10 md:p-10 lg:ml-[10%] xl:ml-0">
+        <div className="flex items-center gap-5 p-3 lg:gap-10 xl:gap-20">
           <div>
             <Skeleton borderRadius="full" isLoaded={!isUserDetailLoading}>
               <Avatar
@@ -150,7 +149,7 @@ const UserProfile = () => {
           <Skeleton isLoaded={!isUserDetailLoading}>
             <div className="flex flex-col space-y-3 md:space-y-6">
               <div className="flex items-center gap-5">
-                <p className="text-3xl md:text-2xl lg:text-3xl xl:text-4xl font-light">
+                <p className="text-3xl font-light md:text-2xl lg:text-3xl xl:text-4xl">
                   {memoizedUserData.qusername}
                 </p>
                 <div className="hidden md:block">
@@ -179,15 +178,15 @@ const UserProfile = () => {
                   Edit profile
                 </Button>
               </div>
-              <div className="text-lg hidden items-center gap-5 md:flex">
+              <div className="hidden items-center gap-5 text-lg md:flex">
                 <p>
-                  <span className="font-semibold mr-2">{postsCount}</span> posts
+                  <span className="mr-2 font-semibold">{postsCount}</span> posts
                 </p>
                 <p
                   className="cursor-pointer"
                   onClick={() => handleModalOpen('Followers')}
                 >
-                  <span className="font-semibold mr-2">
+                  <span className="mr-2 font-semibold">
                     {connectionsCount.followers}
                   </span>{' '}
                   followers
@@ -196,7 +195,7 @@ const UserProfile = () => {
                   className="cursor-pointer"
                   onClick={() => handleModalOpen('Following')}
                 >
-                  <span className="font-semibold mr-2">
+                  <span className="mr-2 font-semibold">
                     {connectionsCount.following}
                   </span>{' '}
                   followings
@@ -208,13 +207,13 @@ const UserProfile = () => {
             </div>
           </Skeleton>
         </div>
-        <div className="flex flex-col md:hidden text-left w-full px-5">
+        <div className="flex w-full flex-col px-5 text-left md:hidden">
           <span className="text-lg font-semibold">
             {memoizedUserData?.qusername}
           </span>
           <span className="text-base">{memoizedUserData?.bio}</span>
         </div>
-        <div className="h-[5rem] grid grid-cols-3 border-y border-slate-700 place-items-center w-full p-1 md:hidden">
+        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-700 p-1 md:hidden">
           <div className="text-center">
             <span className="font-semibold">{postsCount}</span>
             <p className="text-slate-400">posts</p>

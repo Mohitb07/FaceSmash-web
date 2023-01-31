@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
-
 import { useToast } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { FiWifi, FiWifiOff } from 'react-icons/fi';
 
 export const useCheckOnlineStatus = () => {

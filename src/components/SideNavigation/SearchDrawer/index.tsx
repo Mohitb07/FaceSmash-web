@@ -1,26 +1,25 @@
-import React, { memo, useState, useCallback } from 'react';
-
 import {
   Drawer,
   DrawerBody,
+  DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  Text,
-  Spinner,
   Flex,
+  Input,
   InputGroup,
   InputLeftElement,
-  Input,
+  Spinner,
+  Text,
 } from '@chakra-ui/react';
-import { BsSearch } from 'react-icons/bs';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import React, { memo, useCallback, useState } from 'react';
+import { BsSearch } from 'react-icons/bs';
 
-import { debounce } from '../../../utils/debounce';
-import { USERS_COLLECTION } from '../../../constant';
 import { db } from '../../../../firebase';
+import { USERS_COLLECTION } from '../../../constant';
+import type { User as UserDetail } from '../../../interface';
+import { debounce } from '../../../utils/debounce';
 import User from '../../User';
-import { User as UserDetail } from '../../../interface';
 
 type SearchDrawerProps = {
   isSearchDrawerOpen: boolean;
@@ -54,18 +53,20 @@ const SearchDrawer = ({
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const _debounceSearchField = useCallback(
+  const debounceSearchField = useCallback(
     debounce(onSearchQueryChange, 1000),
     []
   );
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    userList.length > 0 && setUserList([]);
+    if (userList.length > 0) {
+      setUserList([]);
+    }
     const searchQuery = e.target.value;
     setSearchValue(searchQuery);
     if (searchQuery.trim()) {
       setLoading(true);
-      _debounceSearchField(searchQuery);
+      debounceSearchField(searchQuery);
     }
   };
 
@@ -82,7 +83,7 @@ const SearchDrawer = ({
           <Text fontSize="3xl">Search</Text>
           <InputGroup mt="5">
             <InputLeftElement pointerEvents="none">
-              <BsSearch className="text-lg text-slate-300 mt-2" />
+              <BsSearch className="mt-2 text-lg text-slate-300" />
             </InputLeftElement>
             <Input
               value={searchValue}
@@ -116,6 +117,7 @@ const SearchDrawer = ({
               userId={user.uid}
               email={user.email}
               username={user.username}
+              onClose={searchDrawerClose}
             />
           ))}
         </DrawerBody>

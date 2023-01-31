@@ -1,5 +1,5 @@
+import type { DocumentSnapshot, Unsubscribe } from 'firebase/firestore';
 import React, { useEffect } from 'react';
-import { DocumentSnapshot, Unsubscribe } from 'firebase/firestore';
 
 type DataListProps<D> = {
   data: D[];

@@ -1,29 +1,22 @@
-import React, { useState } from 'react';
-
-import Image from 'next/image';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { TbMessageCircle2 } from 'react-icons/tb';
-import { FiHeart, FiBookmark } from 'react-icons/fi';
-import { HiOutlinePaperAirplane } from 'react-icons/hi';
-import { MdDeleteOutline } from 'react-icons/md';
-import { FaHeart } from 'react-icons/fa';
-import {
-  Avatar,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
+import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { Collapse, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-
-import { FeedProps } from '../../interface';
-import Link from 'next/link';
-import { useHandlePost } from '../../hooks/useHandlePost';
 import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FaHeart } from 'react-icons/fa';
+import { FiBookmark, FiHeart } from 'react-icons/fi';
+import { HiOutlinePaperAirplane } from 'react-icons/hi';
+import { MdDeleteOutline } from 'react-icons/md';
+import { TbMessageCircle2 } from 'react-icons/tb';
+
 import { db } from '../../../firebase';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../../constant';
+import { useHandlePost } from '../../hooks/useHandlePost';
+import type { FeedProps } from '../../interface';
 
 dayjs.extend(relativeTime);
 
@@ -38,7 +31,7 @@ const Feed = ({
   postTitle,
   userId,
   imageRef,
-  link,
+  // link,
   hasLiked,
   authUserId,
 }: FeedProps) => {
@@ -46,12 +39,12 @@ const Feed = ({
   const handleToggle = () => setShow(!show);
   const { deletePostWithoutImage, deletePostWithImage } = useHandlePost();
 
-  const handlePostDeletion = async (postId: string, imageRef?: string) => {
+  const handlePostDeletion = async (pid: string, imgRef?: string) => {
     if (authUserId !== userId) return;
-    if (postImage && imageRef) {
-      await deletePostWithImage(postId, `${authUserId}/posts/${imageRef}`);
+    if (postImage && imgRef) {
+      await deletePostWithImage(pid, `${authUserId}/posts/${imgRef}`);
     } else {
-      await deletePostWithoutImage(postId);
+      await deletePostWithoutImage(pid);
     }
   };
 
@@ -86,18 +79,20 @@ const Feed = ({
   };
 
   return (
-    <div className="md:w-[500px] lg:w-[450px] xl:w-[600px] bg-[#242526] rounded-md">
-      <header className="flex items-center justify-between p-3 h-[4rem] md:h-[5rem]">
-        <Link href={`${username}?user_id=${userId}`}>
-          <div className="flex items-center space-x-3 cursor-pointer">
-            <Avatar size="sm" name="Mohit Bisht" src={userProfile || ''} />
-            <p className="font-bold">{username}</p>
-          </div>
-        </Link>
+    <div className="rounded-md bg-[#242526] md:w-[500px] lg:w-[450px] xl:w-[600px]">
+      <header className="flex h-[4rem] items-center justify-between p-3 md:h-[5rem]">
+        {userProfile && username && (
+          <Link href={`${username}?user_id=${userId}`}>
+            <div className="flex cursor-pointer items-center space-x-3">
+              <Avatar ignoreFallback size="sm" src={userProfile || ''} />
+              <p className="font-bold">{username}</p>
+            </div>
+          </Link>
+        )}
         {authUserId === userId ? (
           <Menu isLazy closeOnSelect placement="bottom-end">
             <MenuButton aria-label="Options">
-              <BsThreeDotsVertical className="text-xl cursor-pointer" />
+              <BsThreeDotsVertical className="cursor-pointer text-xl" />
             </MenuButton>
             <MenuList backgroundColor="#242526" border="none" padding="2">
               <MenuItem
@@ -114,7 +109,7 @@ const Feed = ({
       </header>
       {postImage && (
         <Image
-          className="w-full h-full"
+          className="h-full w-full"
           src={postImage}
           objectFit="cover"
           height={600}
@@ -123,18 +118,18 @@ const Feed = ({
           blurDataURL={postImage}
         />
       )}
-      <div className="p-4 space-y-3 md:space-y-5">
+      <div className="space-y-3 p-4 md:space-y-5">
         <div
           className={`flex flex-col ${!postImage ? 'flex-col-reverse' : ''}`}
         >
           <div>
-            <div className="flex space-y-3 md:space-y-5 justify-between items-center text-2xl md:text-3xl">
+            <div className="flex items-center justify-between space-y-3 text-2xl md:space-y-5 md:text-3xl">
               <div className="flex items-center space-x-2 md:space-x-5">
                 <div className="group cursor-pointer" onClick={handleLikes}>
                   {hasLiked ? (
-                    <FaHeart className="text-red-500 group-hover:opacity-40 group-hover:scale-50 transition-transform ease-in-out duration-200" />
+                    <FaHeart className="text-red-500 transition-transform duration-200 ease-in-out group-hover:scale-50 group-hover:opacity-40" />
                   ) : (
-                    <FiHeart className="group-hover:opacity-40 group-hover:scale-50 transition-transform ease-in-out duration-200" />
+                    <FiHeart className="transition-transform duration-200 ease-in-out group-hover:scale-50 group-hover:opacity-40" />
                   )}
                 </div>
                 <div className="group cursor-pointer">
@@ -149,7 +144,7 @@ const Feed = ({
               </div>
             </div>
             <div>
-              <span className="text-base md:text-xl font-semibold">
+              <span className="text-base font-semibold md:text-xl">
                 {likes} likes
               </span>
             </div>
@@ -176,7 +171,7 @@ const Feed = ({
           </div>
         </div>
         <div>
-          <span className="text-slate-400 text-sm md:text-base">
+          <span className="text-sm text-slate-400 md:text-base">
             {dayjs(createdAt?.toDate()).fromNow()}
           </span>
         </div>

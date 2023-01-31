@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-
+import { Avatar } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Avatar } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
+
 import PostModal from '../SideNavigation/PostModal';
 
 const BottomNavigation = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   const modalClose = () => {
@@ -20,7 +20,7 @@ const BottomNavigation = () => {
   };
 
   return (
-    <div className="grid grid-cols-4 p-2 place-items-center md:hidden h-14 w-full">
+    <div className="grid h-14 w-full grid-cols-4 place-items-center p-2 md:hidden">
       <div>
         <Link href="/">
           {router.pathname === '/' ? (
@@ -34,8 +34,11 @@ const BottomNavigation = () => {
         <BsSearch className="text-xl" />
       </div>
       <div>
-        <HiOutlinePlusCircle onClick={() => setIsModalOpen(true)} className="text-2xl" />
-        <PostModal isModalOpen={isModalOpen} modalClose={modalClose}/>
+        <HiOutlinePlusCircle
+          onClick={() => setIsModalOpen(true)}
+          className="text-2xl"
+        />
+        <PostModal isModalOpen={isModalOpen} modalClose={modalClose} />
       </div>
       <div>
         <Link href="/mohitbisht1903">

@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-
 import { Spinner } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 
 import { useAuthUser } from '../hooks/useAuthUser';
 
@@ -13,23 +12,22 @@ export const withPublic = (Component: () => JSX.Element) => {
       if (authUser && !loading) {
         router.replace('/');
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authUser]);
 
     if (loading) {
       return (
-        <div className="h-screen w-screen z-50 flex justify-center items-center bg-red-500">
+        <div className="z-50 flex h-screen w-screen items-center justify-center bg-red-500">
           <Spinner size="xl" />
         </div>
       );
     }
 
-    if(!authUser && !loading){
-      console.log('executed', authUser, loading)
+    if (!authUser && !loading) {
+      console.log('executed', authUser, loading);
       return <Component {...props} />;
     }
 
     return null;
   };
 };
-

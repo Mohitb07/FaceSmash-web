@@ -9,7 +9,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React from 'react';
-import { User as UserDetail } from '../../interface';
+
+import type { User as UserDetail } from '../../interface';
 import User from '../User';
 
 type ConnectionModalProps = {
@@ -56,6 +57,7 @@ const ConnectionModal = ({
               profileURL={user.profilePic}
               userId={user.uid}
               email={user.email}
+              onClose={onClose}
             />
           ))}
         </ModalBody>

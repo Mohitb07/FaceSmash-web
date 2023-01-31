@@ -1,13 +1,14 @@
-import React, { MouseEventHandler, ReactElement, ReactNode } from 'react';
+import type { MouseEventHandler, ReactElement, ReactNode } from 'react';
+import React from 'react';
 
-type NavItem = {
+type NavItemProp = {
   icon?: ReactElement;
   label: string;
   children?: ReactNode;
-  onClick?: MouseEventHandler<HTMLLIElement>
+  onClick?: MouseEventHandler<HTMLLIElement>;
 };
 
-const NavItem: React.FC<NavItem> = ({ icon, label, onClick, children }) => {
+const NavItem: React.FC<NavItemProp> = ({ icon, label, onClick, children }) => {
   return children ? (
     <li onClick={onClick} className="nav-item group">
       {children}

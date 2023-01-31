@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
-
-import { useRouter } from 'next/router';
 import { Spinner } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/react';
 import { getAuth, sendEmailVerification, signOut } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-import AuthLayout from '../../layouts/Auth';
 import { useAuthUser } from '../../hooks/useAuthUser';
+import AuthLayout from '../../layouts/Auth';
 import { withAuth } from '../../routes/WithProtected';
 
 const Verification = () => {
@@ -114,7 +113,7 @@ const Verification = () => {
           </Button>
         </div>
         <span
-          className={`flex font-bold items-center justify-center ${currentStatus.statusColor} mt-5`}
+          className={`flex items-center justify-center font-bold ${currentStatus.statusColor} mt-5`}
         >
           {currentStatus.status}
         </span>
@@ -130,8 +129,8 @@ const Verification = () => {
         containerStyle="h-screen md:h-[400px]"
       >
         <div className="mt-5 flex flex-col space-y-6">
-          <h1 className="text-xl text-center">You are already verified</h1>
-          <div className="flex justify-center items-center gap-5">
+          <h1 className="text-center text-xl">You are already verified</h1>
+          <div className="flex items-center justify-center gap-5">
             <Spinner />
             <h2 className="text-center">Redirecting...</h2>
           </div>
@@ -140,7 +139,7 @@ const Verification = () => {
     );
   } else {
     return (
-      <div className="h-screen w-screen z-50 flex justify-center items-center bg-slate-800">
+      <div className="z-50 flex h-screen w-screen items-center justify-center bg-slate-800">
         <Spinner size="xl" />
       </div>
     );

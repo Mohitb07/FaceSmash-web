@@ -10,7 +10,7 @@ const Footer = ({ dataList = [], loading }: FooterProps) => {
   let content;
   if (loading) {
     content = (
-      <div className="w-full md:w-[500px] space-y-5 lg:w-[450px] xl:w-[600px] rounded-md">
+      <div className="w-full space-y-5 rounded-md md:w-[500px] lg:w-[450px] xl:w-[600px]">
         <div className="space-y-2">
           <SkeletonCircle height="14" width="14" />
           <Skeleton height="500px"></Skeleton>

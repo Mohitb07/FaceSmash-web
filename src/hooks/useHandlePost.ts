@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-
-import { Unsubscribe } from 'firebase/auth';
+import type { Unsubscribe } from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -11,34 +9,37 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
+import { useEffect, useState } from 'react';
 
 import { db } from '../../firebase';
-import { PostValue } from '../components/SideNavigation/PostModal';
+import type { PostValue } from '../components/SideNavigation/PostModal';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../constant';
-import { PostLikes, User } from '../interface';
+import type { PostLikes, User } from '../interface';
 import { useAuthUser } from './useAuthUser';
 
 export const useHandlePost = () => {
-  const [userLikedPosts, setUserLikedPosts] = useState<PostLikes[]>([])
-  const {authUser} = useAuthUser()
-  
+  const [userLikedPosts, setUserLikedPosts] = useState<PostLikes[]>([]);
+  const { authUser } = useAuthUser();
+
   useEffect(() => {
-    let unsubscriber: Unsubscribe
+    let unsubscriber: Unsubscribe;
     const getUserLikedPosts = () => {
-      const q = query(collection(db, `${USERS_COLLECTION}/${authUser?.uid}/postlikes`))
+      const q = query(
+        collection(db, `${USERS_COLLECTION}/${authUser?.uid}/postlikes`)
+      );
       unsubscriber = onSnapshot(q, (querySnap) => {
-        const list = querySnap.docs.map(d => ({
-          ...(d.data() as PostLikes)
-        }))
-        setUserLikedPosts(list)
-      })      
-    }
-    getUserLikedPosts()
+        const list = querySnap.docs.map((d) => ({
+          ...(d.data() as PostLikes),
+        }));
+        setUserLikedPosts(list);
+      });
+    };
+    getUserLikedPosts();
     return () => {
-      unsubscriber()
-    }
-  }, [authUser?.uid])
-  
+      unsubscriber();
+    };
+  }, [authUser?.uid]);
+
   const createPostWithImage = async (
     user: User,
     url: string,
@@ -50,9 +51,8 @@ export const useHandlePost = () => {
       createdAt: serverTimestamp(),
       image: url,
       likes: 0,
-      user: user.uid,
-      userProfile: user.profilePic,
-      username: user.username,
+      user: doc(db, `/${USERS_COLLECTION}/${user.uid}`),
+      uid: user.uid,
     });
     if (typeof cb === 'function') {
       cb();
@@ -70,9 +70,8 @@ export const useHandlePost = () => {
       imageRef: null,
       createdAt: serverTimestamp(),
       likes: 0,
-      user: user.uid,
-      userProfile: user.profilePic,
-      username: user.username,
+      user: doc(db, `/${USERS_COLLECTION}/${user.uid}`),
+      uid: user.uid,
     });
     if (typeof cb === 'function') {
       cb();

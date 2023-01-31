@@ -1,15 +1,14 @@
-import { useState } from 'react';
-
+import type { UserCredential } from 'firebase/auth';
 import {
-  getAuth,
   createUserWithEmailAndPassword,
-  UserCredential,
+  getAuth,
   sendEmailVerification,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { useState } from 'react';
 
-import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '../constant';
 import { db } from '../../firebase';
+import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '../constant';
 
 const DEFAULT_ERROR_VALUE = {
   email: '',
@@ -33,7 +32,7 @@ export const useRegister = () => {
         profilePic: DEFAULT_PROFILE_PIC,
       });
       console.log('successfully created');
-    } catch (error) {
+    } catch (err) {
       console.log('registration error', error);
     }
   };
@@ -46,24 +45,24 @@ export const useRegister = () => {
       .then((userCredential) => {
         createUserAttempt(userCredential, username);
       })
-      .catch((error) => {
-        console.log('error', error.message);
-        if (error.code === 'auth/invalid-email') {
+      .catch((err) => {
+        console.log('error', err.message);
+        if (err.code === 'auth/invalid-email') {
           setError((prev) => ({
             ...prev,
-            email: error.message,
+            email: err.message,
           }));
         }
-        if (error.code === 'auth/email-already-in-use') {
+        if (err.code === 'auth/email-already-in-use') {
           setError((prev) => ({
             ...prev,
-            email: error.message,
+            email: err.message,
           }));
         }
-        if (error.code === 'auth/weak-password') {
+        if (err.code === 'auth/weak-password') {
           setError((prev) => ({
             ...prev,
-            password: error.message,
+            password: err.message,
           }));
         }
       })

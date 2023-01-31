@@ -1,6 +1,5 @@
-import { useState } from 'react';
-
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useState } from 'react';
 
 const DEFAULT_ERROR_VALUE = {
   email: '',
@@ -17,22 +16,22 @@ export const useLogin = () => {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log('user logged in');
+        console.log('user logged in', userCredential);
       })
-      .catch((error) => {
-        console.log('error', error);
-        if (error.code === 'auth/invalid-email') {
+      .catch((err) => {
+        console.log('error', err);
+        if (err.code === 'auth/invalid-email') {
           setError((prev) => ({
             ...prev,
-            email: error.message,
+            email: err.message,
           }));
         } else if (
-          error.code === 'auth/user-not-found' ||
-          error.code === 'auth/wrong-password'
+          err.code === 'auth/user-not-found' ||
+          err.code === 'auth/wrong-password'
         ) {
           setError({
-            email: error.message,
-            password: error.message,
+            email: err.message,
+            password: err.message,
           });
         } else {
           console.log('SOME OTHER ERROR', error);

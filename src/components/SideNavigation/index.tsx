@@ -1,25 +1,24 @@
-import React, { lazy, Suspense, useState } from 'react';
-
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { TiHome } from 'react-icons/ti';
-import { VscHome } from 'react-icons/vsc';
-import { BsSearch } from 'react-icons/bs';
-import { RxHamburgerMenu } from 'react-icons/rx';
-import { HiOutlinePlusCircle } from 'react-icons/hi';
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Avatar,
-  Modal,
-  Spinner,
-  ModalBody,
   Drawer,
   DrawerContent,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Modal,
+  ModalBody,
+  Spinner,
 } from '@chakra-ui/react';
 import { getAuth, signOut } from 'firebase/auth';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { lazy, Suspense, useState } from 'react';
+import { BsSearch } from 'react-icons/bs';
+import { HiOutlinePlusCircle } from 'react-icons/hi';
+import { RxHamburgerMenu } from 'react-icons/rx';
+import { TiHome } from 'react-icons/ti';
+import { VscHome } from 'react-icons/vsc';
 
 import Brand from '../../components/Brand';
 import NavItem from '../../components/NavItem';
@@ -33,8 +32,8 @@ const Sidebar = () => {
   const auth = getAuth();
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {authUser} = useAuthUser()
-  
+  const { authUser } = useAuthUser();
+
   const searchDrawerClose = () => {
     if (isSearchDrawerOpen) {
       setIsSearchDrawerOpen(false);
@@ -59,14 +58,14 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="hidden md:flex fixed h-full flex-col justify-between bg-[#0b0b0b] pt-[5rem] px-[2rem] pb-[2rem]">
+    <div className="fixed hidden h-full flex-col justify-between bg-[#0b0b0b] px-[2rem] pt-[5rem] pb-[2rem] md:flex">
       <nav>
         <div className="hidden lg:block">
           <Brand styles="mb-[3rem] ml-[1rem]" />
         </div>
 
         <div className="block lg:hidden">
-          <h1 className="text-6xl text-center font-bold text-white mb-[3rem]">
+          <h1 className="mb-[3rem] text-center text-6xl font-bold text-white">
             <span className="text-primary-100">F</span>
           </h1>
         </div>
@@ -76,9 +75,9 @@ const Sidebar = () => {
             <NavItem
               icon={
                 router.pathname === '/' ? (
-                  <TiHome className="text-3xl hover-animation" />
+                  <TiHome className="hover-animation text-3xl" />
                 ) : (
-                  <VscHome className="text-3xl hover-animation" />
+                  <VscHome className="hover-animation text-3xl" />
                 )
               }
               label="Home"
@@ -86,12 +85,12 @@ const Sidebar = () => {
           </Link>
           <NavItem
             onClick={() => setIsSearchDrawerOpen(true)}
-            icon={<BsSearch className="text-2xl hover-animation" />}
+            icon={<BsSearch className="hover-animation text-2xl" />}
             label="Search"
           />
           <NavItem
             onClick={() => setIsModalOpen(true)}
-            icon={<HiOutlinePlusCircle className="text-2xl hover-animation" />}
+            icon={<HiOutlinePlusCircle className="hover-animation text-2xl" />}
             label="Create"
           />
           <Link href={`${authUser?.qusername}?user_id=${authUser?.uid}`}>
@@ -113,7 +112,7 @@ const Sidebar = () => {
           <MenuButton>
             <ul>
               <li className="nav-item">
-                <RxHamburgerMenu className="text-3xl hover-animation" />{' '}
+                <RxHamburgerMenu className="hover-animation text-3xl" />{' '}
                 <span className="hidden lg:block">More</span>
               </li>
             </ul>

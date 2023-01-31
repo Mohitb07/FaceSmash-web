@@ -1,25 +1,24 @@
-import React, { useRef, useState, memo } from 'react';
-
-import Image from 'next/image';
 import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  IconButton,
+  Input,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  Textarea,
-  Button,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
-  IconButton,
-  Flex,
+  Textarea,
 } from '@chakra-ui/react';
+import Image from 'next/image';
+import React, { memo, useRef, useState } from 'react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
 
@@ -160,7 +159,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
               />
               {isImageContainerVisible && (
                 <div
-                  className="mt-5 border-2 border-dashed border-slate-600 rounded-md overflow-hidden min-h-[5rem] px-3"
+                  className="mt-5 min-h-[5rem] overflow-hidden rounded-md border-2 border-dashed border-slate-600 px-3"
                   onClick={() =>
                     imageInputRef.current && imageInputRef.current.click()
                   }
@@ -176,7 +175,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                     </Text>
                   )}
                   {postValue.image && (
-                    <div className="flex justify-center items-center p-2">
+                    <div className="flex items-center justify-center p-2">
                       <Image
                         src={URL.createObjectURL(postValue.image)}
                         height={300}

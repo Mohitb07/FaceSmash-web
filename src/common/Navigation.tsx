@@ -1,5 +1,5 @@
-import BottomNavigation from '../components/BottomNavigation';
-import Sidebar from '../components/SideNavigation';
+import BottomNavigation from '@/components/BottomNavigation';
+import Sidebar from '@/components/SideNavigation';
 
 const Navigation = () => {
   return (
@@ -7,7 +7,7 @@ const Navigation = () => {
       <div>
         <Sidebar />
       </div>
-      <div className="bg-slate-900 fixed z-50 bottom-0 w-full">
+      <div className="fixed bottom-0 z-50 w-full bg-slate-900">
         <BottomNavigation />
       </div>
     </>

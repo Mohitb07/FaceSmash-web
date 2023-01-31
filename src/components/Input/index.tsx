@@ -5,18 +5,18 @@ type InputProps = {
   placeholder: string;
   isError?: boolean;
   errorText?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 const Input: React.FC<InputProps> = ({
   type = 'text',
   placeholder = '',
   isError = false,
-  errorText = "",
+  errorText = '',
   onChange,
 }) => {
   return (
-    <div className='flex flex-col'>
+    <div className="flex flex-col">
       <input
         type={type}
         className={`rounded-md border ${
@@ -25,7 +25,9 @@ const Input: React.FC<InputProps> = ({
         placeholder={placeholder}
         onChange={onChange}
       />
-      {isError && <span className="text-base ml-[1rem] text-red-500">{errorText}</span>}
+      {isError && (
+        <span className="ml-[1rem] text-base text-red-500">{errorText}</span>
+      )}
     </div>
   );
 };

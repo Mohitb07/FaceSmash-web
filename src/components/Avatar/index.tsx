@@ -5,10 +5,10 @@ type AvatarProps = {
   url: string;
   height?: number;
   width?: number;
-  styles?: string
+  styles?: string;
 };
 
-const Avatar = ({ url, height=30, width=30, styles = "" }: AvatarProps) => {
+const Avatar = ({ url, height = 30, width = 30, styles = '' }: AvatarProps) => {
   return (
     <Image
       className={`rounded-full ${styles}`}
