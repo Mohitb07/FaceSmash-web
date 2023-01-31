@@ -1,32 +1,32 @@
-import { useEffect, useState, useCallback } from 'react';
-
-import { BsSearch } from 'react-icons/bs';
 import { SlideFade } from '@chakra-ui/react';
+import type { DocumentSnapshot } from 'firebase/firestore';
 import {
   collection,
-  DocumentSnapshot,
+  getDoc,
   limit,
   onSnapshot,
   orderBy,
   query,
   startAfter,
 } from 'firebase/firestore';
+import { useCallback, useEffect, useState } from 'react';
+import { BsSearch } from 'react-icons/bs';
 
-import Brand from '../components/Brand';
-import UserRecommendation from '../components/UserRecommendation';
-import DataList from '../components/DataList';
-import { Meta } from '../layouts/Meta';
-import { withAuth } from '../routes/WithProtected';
-import { Main } from '../templates/Main';
+import { db } from '../../firebase';
 import Navigation from '../common/Navigation';
-import { Post } from '../interface';
+import Brand from '../components/Brand';
+import DataList from '../components/DataList';
 import EmptyData from '../components/DataList/EmptyData';
 import Footer from '../components/DataList/Footer';
 import Feed from '../components/Feed';
-import { useAuthUser } from '../hooks/useAuthUser';
+import UserRecommendation from '../components/UserRecommendation';
 import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
-import { db } from '../../firebase';
+import { useAuthUser } from '../hooks/useAuthUser';
 import { useHandlePost } from '../hooks/useHandlePost';
+import type { Post, User } from '../interface';
+import { Meta } from '../layouts/Meta';
+import { withAuth } from '../routes/WithProtected';
+import { Main } from '../templates/Main';
 
 function Home() {
   const [feedList, setFeedList] = useState<Post[]>([]);
@@ -45,12 +45,21 @@ function Home() {
     );
     const unsubscribe = onSnapshot(
       q,
-      (querySnapshot) => {
+      async (querySnapshot) => {
         if (!querySnapshot.empty) {
-          const postList = querySnapshot.docs.map((d) => ({
-            ...(d.data() as Post),
-            key: d.id,
-          }));
+          const postUserPromises = querySnapshot.docs.map((d) =>
+            getDoc(d.data().user)
+          );
+          const rawResult = await Promise.all(postUserPromises);
+          const result: User[] = rawResult.map((d) => d.data() as User);
+          const postList = querySnapshot.docs.map((d, index) => {
+            return {
+              ...(d.data() as Post),
+              username: result[index].username,
+              userProfile: result[index].profilePic,
+              key: d.id,
+            };
+          });
           setFeedList((prev) => [...prev, ...postList]);
           setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
         }
@@ -71,12 +80,21 @@ function Home() {
     );
     const unsubscribe = onSnapshot(
       q,
-      (querySnapshot) => {
+      async (querySnapshot) => {
         if (!querySnapshot.empty) {
-          const postList = querySnapshot.docs.map((d) => ({
-            ...(d.data() as Post),
-            key: d.id,
-          }));
+          const postUserPromises = querySnapshot.docs.map((d) =>
+            getDoc(d.data().user)
+          );
+          const rawResult = await Promise.all(postUserPromises);
+          const result: User[] = rawResult.map((d) => d.data() as User);
+          const postList = querySnapshot.docs.map((d, index) => {
+            return {
+              ...(d.data() as Post),
+              username: result[index].username,
+              userProfile: result[index].profilePic,
+              key: d.id,
+            };
+          });
           setFeedList(postList);
           setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
         }
@@ -102,7 +120,7 @@ function Home() {
         link={feed.link}
         imageRef={feed.imageRef}
         likes={feed.likes}
-        userId={feed.user}
+        userId={feed.uid}
         postTitle={feed.title}
         postId={feed.key}
         hasLiked={Boolean(
@@ -124,21 +142,21 @@ function Home() {
       <Navigation />
       <div className="h-screen">
         <div>
-          <header className="block md:hidden text-center">
+          <header className="block text-center md:hidden">
             <Brand />
           </header>
           <div className="px-5">
-            <div className="flex w-full md:hidden py-4 px-2 my-5 items-center bg-gray-800 rounded-md">
-              <BsSearch className="text-xl text-slate-300 mx-3" />
+            <div className="my-5 flex w-full items-center rounded-md bg-gray-800 py-4 px-2 md:hidden">
+              <BsSearch className="mx-3 text-xl text-slate-300" />
               <input
-                className="w-full bg-transparent outline-none border-none"
+                className="w-full border-none bg-transparent outline-none"
                 type="text"
                 placeholder="Search User..."
               />
             </div>
           </div>
-          <div className="flex md:p-10 justify-center items-start gap-10">
-            <main className="space-y-5 pb-16 md:ml-[20%] xl:ml-[10%] w-full md:w-auto">
+          <div className="flex items-start justify-center gap-10 md:p-10">
+            <main className="w-full space-y-5 pb-16 md:ml-[20%] md:w-auto xl:ml-[10%]">
               <SlideFade in={isLoading || !isLoading} offsetY="20px">
                 <DataList
                   ListEmptyComponent={EmptyData}
@@ -153,7 +171,7 @@ function Home() {
                 />
               </SlideFade>
             </main>
-            <aside className="hidden lg:flex flex-col">
+            <aside className="hidden flex-col lg:flex">
               <SlideFade in={isLoading || !isLoading} offsetY="20px">
                 <UserRecommendation />
               </SlideFade>

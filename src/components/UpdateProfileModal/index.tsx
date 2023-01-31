@@ -1,7 +1,10 @@
-import React, { useRef, useState, memo } from 'react';
-
 import {
   Avatar,
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,31 +12,15 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Button,
   Text,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
 } from '@chakra-ui/react';
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  writeBatch,
-} from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
+import React, { memo, useRef, useState } from 'react';
 
-import {
-  DEFAULT_PROFILE_PIC,
-  POSTS_COLLECTION,
-  USERS_COLLECTION,
-} from '../../constant';
+import { db } from '../../../firebase';
+import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '../../constant';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { useImageUpload } from '../../hooks/useImageUpload';
-import { db } from '../../../firebase';
 import { convertImageObject } from '../../utils/convertImageObject';
 
 type UpdateProfileModalProps = {
@@ -123,19 +110,6 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
             await updateDoc(doc(db, USERS_COLLECTION, authUser.uid), {
               profilePic: url,
             });
-            const batch = writeBatch(db);
-            const q = query(
-              collection(db, POSTS_COLLECTION),
-              where('user', '==', authUser.uid)
-            );
-            const allPosts = await getDocs(q);
-            allPosts.forEach((doc) => {
-              batch.update(doc.ref, { userProfile: url });
-            });
-            batch
-              .commit()
-              .then(() => console.log('successfully updated profile pic'))
-              .catch((err) => console.log('ERROR while updating profile', err));
           }
         );
       }
@@ -174,9 +148,9 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
           <Box p={1}>
             <FormControl isInvalid={false}>
               <FormLabel mt={5}>Change profile pic</FormLabel>
-              <div className="overflow-hidden px-3 flex justify-center">
+              <div className="flex justify-center overflow-hidden px-3">
                 <div
-                  className="cursor-pointer inline-block"
+                  className="inline-block cursor-pointer"
                   onClick={() =>
                     imageInputRef.current && imageInputRef.current.click()
                   }
