@@ -17,7 +17,15 @@ module.exports = withBundleAnalyzer({
   // You can remove `basePath` if you don't need it.
   reactStrictMode: true,
   images: {
-    domains: ['','static.cdninstagram.com', 'lh3.googleusercontent.com', 'scontent-del1-2.cdninstagram.com', 'projects.websetters.in', 'firebasestorage.googleapis.com', 'encrypted-tbn0.gstatic.com']
+    domains: [
+      '',
+      'static.cdninstagram.com',
+      'lh3.googleusercontent.com',
+      'scontent-del1-2.cdninstagram.com',
+      'projects.websetters.in',
+      'firebasestorage.googleapis.com',
+      'encrypted-tbn0.gstatic.com',
+    ],
   },
 });
 
