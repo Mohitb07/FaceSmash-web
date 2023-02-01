@@ -1,58 +1,71 @@
 import { Avatar } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
 
-import PostModal from '../SideNavigation/PostModal';
+import type { User } from '@/interface';
 
-const BottomNavigation = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+type BottomNavigationProps = {
+  user: User | null;
+  setIsSearchDrawerOpen: (value: boolean) => void;
+  setIsModalOpen: (value: boolean) => void;
+};
+
+const BottomNavigation = ({
+  user,
+  setIsModalOpen,
+  setIsSearchDrawerOpen,
+}: BottomNavigationProps) => {
   const router = useRouter();
-
-  const modalClose = () => {
-    if (isModalOpen) {
-      setIsModalOpen(false);
-    }
-  };
-
   return (
-    <div className="grid h-14 w-full grid-cols-4 place-items-center p-2 md:hidden">
-      <div>
-        <Link href="/">
-          {router.pathname === '/' ? (
-            <TiHome className="text-2xl" />
-          ) : (
-            <VscHome className="text-2xl" />
-          )}
-        </Link>
-      </div>
-      <div>
-        <BsSearch className="text-xl" />
-      </div>
-      <div>
-        <HiOutlinePlusCircle
-          onClick={() => setIsModalOpen(true)}
-          className="text-2xl"
-        />
-        <PostModal isModalOpen={isModalOpen} modalClose={modalClose} />
-      </div>
-      <div>
-        <Link href="/mohitbisht1903">
-          <Avatar
-            ring={router.pathname === '/[username]' ? 2 : 0}
-            ringColor="white"
-            className="hover-animation"
-            size="xs"
-            name="Mohit Bisht"
-            src="https://lh3.googleusercontent.com/ogw/AOh-ky2wAgtbl4h_XUEs5x-5xfgBLXa_Aq0k6ahwaOxCgw=s32-c-mo"
+    <nav className="fixed bottom-0 z-50 w-full bg-slate-900">
+      <ul className="grid h-14 w-full grid-cols-4 place-items-center p-2 md:hidden">
+        <li>
+          <Link href="/">
+            {router.pathname === '/' ? (
+              <TiHome className="text-2xl" />
+            ) : (
+              <VscHome className="text-2xl" />
+            )}
+          </Link>
+        </li>
+        <li>
+          <BsSearch
+            onClick={() => setIsSearchDrawerOpen(true)}
+            className="text-xl"
           />
-        </Link>
-      </div>
-    </div>
+        </li>
+        <li>
+          <div>
+            <HiOutlinePlusCircle
+              onClick={() => setIsModalOpen(true)}
+              className="text-2xl"
+            />
+          </div>
+        </li>
+        <li>
+          <Link href={`${user?.qusername}?user_id=${user?.uid}`}>
+            <Avatar
+              ring={
+                router.pathname === '/[username]' &&
+                router.query.user_id === user?.uid
+                  ? 2
+                  : 0
+              }
+              ringColor="white"
+              className="hover-animation"
+              size="xs"
+              name={user?.username}
+              src={user?.profilePic}
+            />
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };
 export default BottomNavigation;

@@ -1,50 +1,32 @@
-import {
-  Avatar,
-  Drawer,
-  DrawerContent,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  Spinner,
-} from '@chakra-ui/react';
+import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { getAuth, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { lazy, Suspense, useState } from 'react';
+import React from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
 
+import type { User } from '@/interface';
+
 import Brand from '../../components/Brand';
 import NavItem from '../../components/NavItem';
-import { useAuthUser } from '../../hooks/useAuthUser';
 
-const PostModal = lazy(() => import('./PostModal'));
-const SearchDrawer = lazy(() => import('./SearchDrawer'));
+type SidebarProps = {
+  user: User | null;
+  setIsSearchDrawerOpen: (value: boolean) => void;
+  setIsModalOpen: (value: boolean) => void;
+};
 
-const Sidebar = () => {
+const Sidebar = ({
+  user,
+  setIsModalOpen,
+  setIsSearchDrawerOpen,
+}: SidebarProps) => {
   const router = useRouter();
   const auth = getAuth();
-  const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { authUser } = useAuthUser();
-
-  const searchDrawerClose = () => {
-    if (isSearchDrawerOpen) {
-      setIsSearchDrawerOpen(false);
-    }
-  };
-
-  const modalClose = () => {
-    if (isModalOpen) {
-      setIsModalOpen(false);
-    }
-  };
 
   const mutation = () => {
     signOut(auth)
@@ -93,15 +75,20 @@ const Sidebar = () => {
             icon={<HiOutlinePlusCircle className="hover-animation text-2xl" />}
             label="Create"
           />
-          <Link href={`${authUser?.qusername}?user_id=${authUser?.uid}`}>
+          <Link href={`${user?.qusername}?user_id=${user?.uid}`}>
             <NavItem label="Profile">
               <Avatar
-                ring={router.pathname === '/[username]' ? 2 : 0}
+                ring={
+                  router.pathname === '/[username]' &&
+                  router.query.user_id === user?.uid
+                    ? 2
+                    : 0
+                }
                 ringColor="white"
                 className="hover-animation"
                 size="xs"
-                name="Mohit Bisht"
-                src={authUser?.profilePic}
+                name={user?.username}
+                src={user?.profilePic}
               />
             </NavItem>
           </Link>
@@ -124,35 +111,6 @@ const Sidebar = () => {
           </MenuList>
         </Menu>
       </div>
-      <Suspense
-        fallback={
-          <Drawer isOpen={true} onClose={() => {}}>
-            <DrawerContent>
-              <Spinner />
-            </DrawerContent>
-          </Drawer>
-        }
-      >
-        {isSearchDrawerOpen && (
-          <SearchDrawer
-            isSearchDrawerOpen={isSearchDrawerOpen}
-            searchDrawerClose={searchDrawerClose}
-          />
-        )}
-      </Suspense>
-      <Suspense
-        fallback={
-          <Modal isOpen={true} onClose={() => {}}>
-            <ModalBody>
-              <Spinner />
-            </ModalBody>
-          </Modal>
-        }
-      >
-        {isModalOpen && (
-          <PostModal isModalOpen={isModalOpen} modalClose={modalClose} />
-        )}
-      </Suspense>
     </div>
   );
 };
