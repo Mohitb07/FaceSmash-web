@@ -10,13 +10,13 @@ import { useRouter } from 'next/router';
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { FiSettings } from 'react-icons/fi';
 
+import Navigation from '@/common/Navigation';
+
 import { db } from '../../../firebase';
-import BottomNavigation from '../../components/BottomNavigation';
 import DataList from '../../components/DataList';
 import EmptyData from '../../components/DataList/EmptyData';
 import Footer from '../../components/DataList/Footer';
 import Feed from '../../components/Feed';
-import Sidebar from '../../components/SideNavigation';
 import { USERS_COLLECTION } from '../../constant';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { useConnection } from '../../hooks/useConnection';
@@ -125,12 +125,7 @@ const UserProfile = () => {
       }
     >
       <div>
-        <div>
-          <Sidebar />
-        </div>
-        <div className="fixed bottom-0 z-50 w-full bg-slate-900">
-          <BottomNavigation />
-        </div>
+        <Navigation />
       </div>
       <div className="flex flex-col justify-start space-y-3 md:items-center md:justify-center md:space-y-10 md:p-10 lg:ml-[10%] xl:ml-0">
         <div className="flex items-center gap-5 p-3 lg:gap-10 xl:gap-20">
