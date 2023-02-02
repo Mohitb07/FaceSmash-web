@@ -1,8 +1,8 @@
 import {
-  Drawer,
-  DrawerContent,
+  Flex,
   Modal,
   ModalBody,
+  ModalOverlay,
   Spinner,
 } from '@chakra-ui/react';
 import { lazy, Suspense, useState } from 'react';
@@ -49,14 +49,16 @@ const Navigation = () => {
           setIsSearchDrawerOpen={setIsSearchDrawerOpen}
         />
       </div>
-
       <Suspense
         fallback={
-          <Drawer placement="left" size="md" isOpen={true} onClose={() => {}}>
-            <DrawerContent>
-              <Spinner />
-            </DrawerContent>
-          </Drawer>
+          <Modal isCentered size="full" isOpen={true} onClose={() => {}}>
+            <ModalOverlay />
+            <ModalBody>
+              <Flex justifyContent="center" alignItems="center">
+                <Spinner />
+              </Flex>
+            </ModalBody>
+          </Modal>
         }
       >
         {isSearchDrawerOpen && (
@@ -68,9 +70,12 @@ const Navigation = () => {
       </Suspense>
       <Suspense
         fallback={
-          <Modal isOpen={true} onClose={() => {}}>
+          <Modal isCentered size="full" isOpen={true} onClose={() => {}}>
+            <ModalOverlay />
             <ModalBody>
-              <Spinner />
+              <Flex justifyContent="center" alignItems="center">
+                <Spinner />
+              </Flex>
             </ModalBody>
           </Modal>
         }
