@@ -1,19 +1,12 @@
 import { SlideFade } from '@chakra-ui/react';
-import type { DocumentSnapshot } from 'firebase/firestore';
-import {
-  collection,
-  getDoc,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  startAfter,
-} from 'firebase/firestore';
-import { useCallback, useEffect, useState } from 'react';
+import { collection, limit, orderBy, query } from 'firebase/firestore';
+import { useCallback, useEffect, useMemo } from 'react';
 import { BsSearch } from 'react-icons/bs';
 
+import Navigation from '@/common/Navigation';
+import { useGetPosts } from '@/hooks/useGetPosts';
+
 import { db } from '../../firebase';
-import Navigation from '../common/Navigation';
 import Brand from '../components/Brand';
 import DataList from '../components/DataList';
 import EmptyData from '../components/DataList/EmptyData';
@@ -23,87 +16,30 @@ import UserRecommendation from '../components/UserRecommendation';
 import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
 import { useAuthUser } from '../hooks/useAuthUser';
 import { useHandlePost } from '../hooks/useHandlePost';
-import type { Post, User } from '../interface';
+import type { Post } from '../interface';
 import { Meta } from '../layouts/Meta';
 import { withAuth } from '../routes/WithProtected';
 import { Main } from '../templates/Main';
 
 function Home() {
-  const [feedList, setFeedList] = useState<Post[]>([]);
-  const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
   const { userLikedPosts } = useHandlePost();
-  const [isLoading, setIsLoading] = useState(true);
   const { authUser } = useAuthUser();
+  const {
+    getInitialPosts,
+    getPosts,
+    memoizedPosts,
+    lastVisible,
+    postsLoading,
+  } = useGetPosts();
 
-  const getPosts = useCallback(() => {
-    setIsLoading(true);
-    const q = query(
-      collection(db, POSTS_COLLECTION),
-      orderBy('createdAt', 'desc'),
-      startAfter(lastVisible),
-      limit(FEED_LIMIT)
-    );
-    const unsubscribe = onSnapshot(
-      q,
-      async (querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const postUserPromises = querySnapshot.docs.map((d) =>
-            getDoc(d.data().user)
-          );
-          const rawResult = await Promise.all(postUserPromises);
-          const result: User[] = rawResult.map((d) => d.data() as User);
-          const postList = querySnapshot.docs.map((d, index) => {
-            return {
-              ...(d.data() as Post),
-              username: result[index].username,
-              userProfile: result[index].profilePic,
-              key: d.id,
-            };
-          });
-          setFeedList((prev) => [...prev, ...postList]);
-          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        }
-        setIsLoading(false);
-      },
-      (err) => {
-        console.log('error while fetching posts', err);
-      }
-    );
-    return unsubscribe;
-  }, [lastVisible]);
+  const userQuery = useMemo(
+    () => query(collection(db, POSTS_COLLECTION), orderBy('createdAt', 'desc')),
+    []
+  );
 
   useEffect(() => {
-    const q = query(
-      collection(db, POSTS_COLLECTION),
-      orderBy('createdAt', 'desc'),
-      limit(FEED_LIMIT)
-    );
-    const unsubscribe = onSnapshot(
-      q,
-      async (querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const postUserPromises = querySnapshot.docs.map((d) =>
-            getDoc(d.data().user)
-          );
-          const rawResult = await Promise.all(postUserPromises);
-          const result: User[] = rawResult.map((d) => d.data() as User);
-          const postList = querySnapshot.docs.map((d, index) => {
-            return {
-              ...(d.data() as Post),
-              username: result[index].username,
-              userProfile: result[index].profilePic,
-              key: d.id,
-            };
-          });
-          setFeedList(postList);
-          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        }
-        setIsLoading(false);
-      },
-      (err) => {
-        console.log('error while fetching posts', err);
-      }
-    );
+    const q = query(userQuery, limit(FEED_LIMIT));
+    const unsubscribe = getInitialPosts(q);
     return () => unsubscribe();
   }, []);
 
@@ -129,6 +65,8 @@ function Home() {
       />
     );
   }
+
+  const paginateMoreData = useCallback(() => getPosts(userQuery), [getPosts]);
 
   return (
     <Main
@@ -157,22 +95,22 @@ function Home() {
           </div>
           <div className="flex items-start justify-center gap-10 md:p-10">
             <main className="w-full space-y-5 pb-16 md:ml-[20%] md:w-auto xl:ml-[10%]">
-              <SlideFade in={isLoading || !isLoading} offsetY="20px">
+              <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
                 <DataList
                   ListEmptyComponent={EmptyData}
                   ListFooterComponent={
-                    <Footer dataList={feedList} loading={isLoading} />
+                    <Footer dataList={memoizedPosts} loading={postsLoading} />
                   }
-                  data={feedList}
-                  isLoading={isLoading}
+                  data={memoizedPosts}
+                  isLoading={postsLoading}
                   renderItem={(item: any) => renderItem(item)}
-                  getMore={getPosts}
+                  getMore={paginateMoreData}
                   lastVisible={lastVisible}
                 />
               </SlideFade>
             </main>
             <aside className="hidden flex-col lg:flex">
-              <SlideFade in={isLoading || !isLoading} offsetY="20px">
+              <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
                 <UserRecommendation />
               </SlideFade>
             </aside>

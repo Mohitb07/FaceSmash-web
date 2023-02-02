@@ -1,96 +1,94 @@
-import type { DocumentSnapshot, Unsubscribe } from 'firebase/firestore';
+import type { DocumentData, DocumentSnapshot, Query } from 'firebase/firestore';
 import {
-  collection,
   getDoc,
   limit,
   onSnapshot,
-  orderBy,
   query,
   startAfter,
-  where,
 } from 'firebase/firestore';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { db } from '../../firebase';
-import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
-import type { Post, User } from '../interface';
+import { FEED_LIMIT } from '@/constant';
+import type { Post, User } from '@/interface';
 
-export const useGetPosts = (userId: string) => {
+export const useGetPosts = () => {
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
-  const [postsCount, setPostsCount] = useState(0);
 
-  const userQuery = useMemo(
-    () =>
-      query(
-        collection(db, POSTS_COLLECTION),
-        where('uid', '==', userId),
-        orderBy('createdAt', 'desc')
-      ),
-    [userId]
+  const getPosts = useCallback(
+    (initialQuery: Query<DocumentData>) => {
+      setPostsLoading(true);
+      const q = query(initialQuery, startAfter(lastVisible), limit(FEED_LIMIT));
+      const unsubscribe = onSnapshot(
+        q,
+        async (querySnapshot) => {
+          if (!querySnapshot.empty) {
+            const postUserPromises = querySnapshot.docs.map((d) =>
+              getDoc(d.data().user)
+            );
+            const rawResult = await Promise.all(postUserPromises);
+            const result: User[] = rawResult.map((d) => d.data() as User);
+            const postList = querySnapshot.docs.map((d, index) => {
+              return {
+                ...(d.data() as Post),
+                username: result[index].username,
+                userProfile: result[index].profilePic,
+                key: d.id,
+              };
+            });
+            setUserPosts((prev) => [...prev, ...postList]);
+            setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+          }
+          setPostsLoading(false);
+        },
+        (err) => {
+          console.log('ERROR in useGetPosts', err);
+          setPostsLoading(false);
+        }
+      );
+      return unsubscribe;
+    },
+    [lastVisible]
   );
 
-  const getPosts = useCallback(() => {
+  const getInitialPosts = useCallback((q: Query<DocumentData>) => {
     setPostsLoading(true);
-    const q = query(userQuery, startAfter(lastVisible), limit(FEED_LIMIT));
-    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-      if (!querySnapshot.empty) {
-        const postUserPromises = querySnapshot.docs.map((d) =>
-          getDoc(d.data().user)
-        );
-        const rawResult = await Promise.all(postUserPromises);
-        const result: User[] = rawResult.map((d) => d.data() as User);
-        const postList = querySnapshot.docs.map((d, index) => ({
-          ...(d.data() as Post),
-          username: result[index].username,
-          userProfile: result[index].profilePic,
-          key: d.id,
-        }));
-        setUserPosts((prev) => [...prev, ...postList]);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      }
-      setPostsLoading(false);
-    });
-    return unsubscribe;
-  }, [lastVisible, userQuery]);
-
-  useEffect(() => {
-    let unsubscriber: Unsubscribe;
-    let unsubscriberPostsCount: Unsubscribe;
-    try {
-      unsubscriberPostsCount = onSnapshot(userQuery, (querySnapshot) => {
-        setPostsCount(querySnapshot.size);
-      });
-      const userPostsQuery = query(userQuery, limit(FEED_LIMIT));
-      unsubscriber = onSnapshot(userPostsQuery, async (querySnapshot) => {
-        const postUserPromises = querySnapshot.docs.map((d) =>
-          getDoc(d.data().user)
-        );
-        const rawResult = await Promise.all(postUserPromises);
-        const result: User[] = rawResult.map((d) => d.data() as User);
-        console.log('result', result);
-        const postList = querySnapshot.docs.map((d, index) => ({
-          ...(d.data() as Post),
-          username: result[index].username,
-          userProfile: result[index].profilePic,
-          key: d.id,
-        }));
-        console.log('effect list', postList);
-        setUserPosts(postList);
+    const unsub = onSnapshot(
+      query(q, limit(FEED_LIMIT)),
+      async (querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const postUserPromises = querySnapshot.docs.map((d) =>
+            getDoc(d.data().user)
+          );
+          const rawResult = await Promise.all(postUserPromises);
+          const result: User[] = rawResult.map((d) => d.data() as User);
+          const postList = querySnapshot.docs.map((d, index) => ({
+            ...(d.data() as Post),
+            username: result[index].username,
+            userProfile: result[index].profilePic,
+            key: d.id,
+          }));
+          setUserPosts(postList);
+          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        }
         setPostsLoading(false);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      });
-    } catch (error) {
-      console.log('useGetPosts error', error);
-      setPostsLoading(false);
-    }
+      },
+      (err) => {
+        console.log('ERROR in getInitialPost', err);
+        setPostsLoading(false);
+      }
+    );
+    return unsub;
+  }, []);
 
-    return () => {
-      unsubscriber();
-      unsubscriberPostsCount();
-    };
-  }, [userId, userQuery]);
+  const memoizedPosts = useMemo(() => userPosts, [userPosts]);
 
-  return { userPosts, postsLoading, postsCount, getPosts, lastVisible };
+  return {
+    memoizedPosts,
+    postsLoading,
+    getPosts,
+    lastVisible,
+    getInitialPosts,
+  };
 };

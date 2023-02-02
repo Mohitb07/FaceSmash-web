@@ -5,33 +5,42 @@ import {
   SlideFade,
   useDisclosure,
 } from '@chakra-ui/react';
-import { doc, writeBatch } from 'firebase/firestore';
+import type { Unsubscribe } from 'firebase/firestore';
+import { collection, orderBy, query, where } from 'firebase/firestore';
+import { doc, onSnapshot, writeBatch } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { lazy, Suspense, useMemo, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { FiSettings } from 'react-icons/fi';
 
 import Navigation from '@/common/Navigation';
+import DataList from '@/components/DataList';
+import EmptyData from '@/components/DataList/EmptyData';
+import Footer from '@/components/DataList/Footer';
+import Feed from '@/components/Feed';
+import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { useConnection } from '@/hooks/useConnection';
+import { useGetPosts } from '@/hooks/useGetPosts';
+import { useGetUser } from '@/hooks/useGetUser';
+import { useHandlePost } from '@/hooks/useHandlePost';
+import type { Post } from '@/interface';
+import { Meta } from '@/layouts/Meta';
+import { withAuth } from '@/routes/WithProtected';
+import { Main } from '@/templates/Main';
 
 import { db } from '../../../firebase';
-import DataList from '../../components/DataList';
-import EmptyData from '../../components/DataList/EmptyData';
-import Footer from '../../components/DataList/Footer';
-import Feed from '../../components/Feed';
-import { USERS_COLLECTION } from '../../constant';
-import { useAuthUser } from '../../hooks/useAuthUser';
-import { useConnection } from '../../hooks/useConnection';
-import { useGetPosts } from '../../hooks/useGetPosts';
-import { useGetUser } from '../../hooks/useGetUser';
-import { useHandlePost } from '../../hooks/useHandlePost';
-import type { Post } from '../../interface';
-import { Meta } from '../../layouts/Meta';
-import { withAuth } from '../../routes/WithProtected';
-import { Main } from '../../templates/Main';
 
 const UpdateProfileModal = lazy(
-  () => import('../../components/UpdateProfileModal')
+  () => import('@/components/UpdateProfileModal')
 );
-const ConnectionModal = lazy(() => import('../../components/ConnectionsModal'));
+const ConnectionModal = lazy(() => import('@/components/ConnectionsModal'));
 
 type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
 
@@ -45,8 +54,43 @@ const UserProfile = () => {
   const { connectionsCount, followersList, followingList } =
     useConnection(userId);
   const { userLikedPosts } = useHandlePost();
-  const { postsLoading, userPosts, postsCount, getPosts, lastVisible } =
-    useGetPosts(userId);
+  const {
+    postsLoading,
+    memoizedPosts,
+    getPosts,
+    lastVisible,
+    getInitialPosts,
+  } = useGetPosts();
+  const [postsCount, setPostsCount] = useState(0);
+
+  const userQuery = useMemo(
+    () =>
+      query(
+        collection(db, POSTS_COLLECTION),
+        where('uid', '==', userId),
+        orderBy('createdAt', 'desc')
+      ),
+    [userId]
+  );
+
+  useEffect(() => {
+    let unsubscriber: Unsubscribe;
+    let unsubscriberPostsCount: Unsubscribe;
+    unsubscriberPostsCount = onSnapshot(
+      userQuery,
+      (querySnapshot) => {
+        setPostsCount(querySnapshot.size);
+      },
+      (err) => {
+        console.log('ERROR in useGetPosts effect', err);
+      }
+    );
+    unsubscriber = getInitialPosts(userQuery);
+    return () => {
+      unsubscriber();
+      unsubscriberPostsCount();
+    };
+  }, [userId, userQuery]);
 
   function renderItem<T extends Post>(feed: T) {
     return (
@@ -71,12 +115,12 @@ const UserProfile = () => {
     );
   }
 
-  const memoizedFeedList: Post[] = useMemo(() => userPosts, [userPosts]);
   const memoizedUserData = useMemo(() => userDetail, [userDetail]);
   const hasFollowedThisUser = useMemo(
     () => !!followersList.find((user) => user.uid === authUser?.uid),
     [authUser?.uid, followersList]
   );
+  const paginateMoreData = useCallback(() => getPosts(userQuery), [getPosts]);
 
   const handleModalOpen = (type: ModalType) => {
     setModalType(type);
@@ -234,11 +278,11 @@ const UserProfile = () => {
               renderItem={(item: any) => renderItem(item)}
               ListEmptyComponent={EmptyData}
               ListFooterComponent={
-                <Footer dataList={memoizedFeedList} loading={postsLoading} />
+                <Footer dataList={memoizedPosts} loading={postsLoading} />
               }
-              data={memoizedFeedList}
+              data={memoizedPosts}
               isLoading={postsLoading}
-              getMore={getPosts}
+              getMore={paginateMoreData}
               lastVisible={lastVisible}
             />
           </SlideFade>
