@@ -2,11 +2,12 @@ import { Spinner } from '@chakra-ui/react';
 import { collection, getDocs, query } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 
+import UserCard from '@/components/User';
+import { USERS_COLLECTION } from '@/constant';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import type { User } from '@/interface';
+
 import { db } from '../../../firebase';
-import { USERS_COLLECTION } from '../../constant';
-import { useAuthUser } from '../../hooks/useAuthUser';
-import type { User } from '../../interface';
-import UserCard from '../User';
 
 const UserRecommendation = () => {
   const { authUser } = useAuthUser();

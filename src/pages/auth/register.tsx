@@ -8,10 +8,11 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
+import { useRegister } from '@/hooks/useRegister';
+import AuthLayout from '@/layouts/Auth';
+import { withPublic } from '@/routes/WithPublic';
+
 import { FIREBASE_ERRORS } from '../../../firebase/error';
-import { useRegister } from '../../hooks/useRegister';
-import AuthLayout from '../../layouts/Auth';
-import { withPublic } from '../../routes/WithPublic';
 
 const Register = () => {
   const [registerFieldData, setRegisterFieldData] = useState({

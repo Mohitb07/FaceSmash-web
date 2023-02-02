@@ -22,10 +22,10 @@ import React, { memo, useRef, useState } from 'react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
 
-import { useAuthUser } from '../../../hooks/useAuthUser';
-import { useHandlePost } from '../../../hooks/useHandlePost';
-import { useImageUpload } from '../../../hooks/useImageUpload';
-import { convertImageObject } from '../../../utils/convertImageObject';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { useHandlePost } from '@/hooks/useHandlePost';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { convertImageObject } from '@/utils/convertImageObject';
 
 type PostModalProps = {
   isModalOpen: boolean;

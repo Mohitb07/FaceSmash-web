@@ -17,11 +17,12 @@ import {
 import { doc, updateDoc } from 'firebase/firestore';
 import React, { memo, useRef, useState } from 'react';
 
+import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '@/constant';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { convertImageObject } from '@/utils/convertImageObject';
+
 import { db } from '../../../firebase';
-import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '../../constant';
-import { useAuthUser } from '../../hooks/useAuthUser';
-import { useImageUpload } from '../../hooks/useImageUpload';
-import { convertImageObject } from '../../utils/convertImageObject';
 
 type UpdateProfileModalProps = {
   onClose: () => void;

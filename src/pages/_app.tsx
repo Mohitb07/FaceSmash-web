@@ -6,9 +6,9 @@ import type { AppProps } from 'next/app';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 
-import UserDataProvider from '../context/authUser';
-import { useCheckOnlineStatus } from '../hooks/useCheckOnlineStatus';
-import { theme } from '../theme';
+import UserDataProvider from '@/context/authUser';
+import { useCheckOnlineStatus } from '@/hooks/useCheckOnlineStatus';
+import { theme } from '@/theme';
 
 NProgress.configure({ showSpinner: false });
 

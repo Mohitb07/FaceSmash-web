@@ -4,9 +4,9 @@ import { getAuth, sendEmailVerification, signOut } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { useAuthUser } from '../../hooks/useAuthUser';
-import AuthLayout from '../../layouts/Auth';
-import { withAuth } from '../../routes/WithProtected';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import AuthLayout from '@/layouts/Auth';
+import { withAuth } from '@/routes/WithProtected';
 
 const Verification = () => {
   const router = useRouter();

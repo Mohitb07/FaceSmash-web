@@ -7,8 +7,9 @@ import {
 import { doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 
+import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '@/constant';
+
 import { db } from '../../firebase';
-import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '../constant';
 
 const DEFAULT_ERROR_VALUE = {
   email: '',

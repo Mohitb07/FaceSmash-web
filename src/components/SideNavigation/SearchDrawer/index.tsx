@@ -15,11 +15,12 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { memo, useCallback, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 
+import User from '@/components/User';
+import { USERS_COLLECTION } from '@/constant';
+import type { User as UserDetail } from '@/interface';
+import { debounce } from '@/utils/debounce';
+
 import { db } from '../../../../firebase';
-import { USERS_COLLECTION } from '../../../constant';
-import type { User as UserDetail } from '../../../interface';
-import { debounce } from '../../../utils/debounce';
-import User from '../../User';
 
 type SearchDrawerProps = {
   isSearchDrawerOpen: boolean;

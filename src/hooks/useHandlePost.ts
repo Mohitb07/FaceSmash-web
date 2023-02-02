@@ -11,11 +11,12 @@ import {
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 
+import type { PostValue } from '@/components/SideNavigation/PostModal';
+import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import type { PostLikes, User } from '@/interface';
+
 import { db } from '../../firebase';
-import type { PostValue } from '../components/SideNavigation/PostModal';
-import { POSTS_COLLECTION, USERS_COLLECTION } from '../constant';
-import type { PostLikes, User } from '../interface';
-import { useAuthUser } from './useAuthUser';
 
 export const useHandlePost = () => {
   const [userLikedPosts, setUserLikedPosts] = useState<PostLikes[]>([]);

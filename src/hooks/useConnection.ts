@@ -6,9 +6,10 @@ import type {
 import { collection, getDoc, onSnapshot, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
+import { USERS_COLLECTION } from '@/constant';
+import type { User } from '@/interface';
+
 import { db } from '../../firebase';
-import { USERS_COLLECTION } from '../constant';
-import type { User } from '../interface';
 
 export const useConnection = (userId: string) => {
   const [followersList, setFollowersList] = useState<User[]>([]);

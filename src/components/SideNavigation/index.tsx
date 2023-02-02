@@ -9,10 +9,9 @@ import { RxHamburgerMenu } from 'react-icons/rx';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
 
+import Brand from '@/components/Brand';
+import NavItem from '@/components/NavItem';
 import type { User } from '@/interface';
-
-import Brand from '../../components/Brand';
-import NavItem from '../../components/NavItem';
 
 type SidebarProps = {
   user: User | null;

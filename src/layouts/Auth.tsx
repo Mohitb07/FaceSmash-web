@@ -2,8 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-import { Main } from '../templates/Main';
-import { Meta } from './Meta';
+import { Meta } from '@/layouts/Meta';
+import { Main } from '@/templates/Main';
 
 type LayoutProps = {
   children: React.ReactNode;

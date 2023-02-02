@@ -8,10 +8,11 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
+import { useLogin } from '@/hooks/useLogin';
+import AuthLayout from '@/layouts/Auth';
+import { withPublic } from '@/routes/WithPublic';
+
 import { FIREBASE_ERRORS } from '../../../firebase/error';
-import { useLogin } from '../../hooks/useLogin';
-import AuthLayout from '../../layouts/Auth';
-import { withPublic } from '../../routes/WithPublic';
 
 const Login = () => {
   const [loginFieldData, setLoginFieldData] = useState({

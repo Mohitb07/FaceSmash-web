@@ -10,8 +10,8 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-import type { User as UserDetail } from '../../interface';
-import User from '../User';
+import User from '@/components/User';
+import type { User as UserDetail } from '@/interface';
 
 type ConnectionModalProps = {
   title: string;

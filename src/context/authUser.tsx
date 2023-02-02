@@ -7,8 +7,9 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { ReactNode } from 'react';
 import { createContext, useEffect, useState } from 'react';
 
+import type { User as IUser } from '@/interface';
+
 import { db } from '../../firebase';
-import type { User as IUser } from '../interface';
 
 type UserState = {
   authUser: IUser | null;

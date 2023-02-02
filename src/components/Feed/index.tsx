@@ -13,10 +13,11 @@ import { HiOutlinePaperAirplane } from 'react-icons/hi';
 import { MdDeleteOutline } from 'react-icons/md';
 import { TbMessageCircle2 } from 'react-icons/tb';
 
+import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
+import { useHandlePost } from '@/hooks/useHandlePost';
+import type { FeedProps } from '@/interface';
+
 import { db } from '../../../firebase';
-import { POSTS_COLLECTION, USERS_COLLECTION } from '../../constant';
-import { useHandlePost } from '../../hooks/useHandlePost';
-import type { FeedProps } from '../../interface';
 
 dayjs.extend(relativeTime);
 

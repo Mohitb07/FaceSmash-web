@@ -2,7 +2,7 @@ import { Spinner } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
-import { useAuthUser } from '../hooks/useAuthUser';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export const withAuth = (Component: () => JSX.Element) => {
   return function WithAuthRouteProtection(props: any) {

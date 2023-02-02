@@ -2,9 +2,10 @@ import type { Unsubscribe } from 'firebase/firestore';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
+import { USERS_COLLECTION } from '@/constant';
+import type { User } from '@/interface';
+
 import { db } from '../../firebase';
-import { USERS_COLLECTION } from '../constant';
-import type { User } from '../interface';
 
 const DEFAULT_USER_DETAILS: User = {
   bio: '',
