@@ -4,8 +4,10 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   onSnapshot,
   query,
+  runTransaction,
   serverTimestamp,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
@@ -14,12 +16,12 @@ import { useEffect, useState } from 'react';
 import type { PostValue } from '@/components/SideNavigation/PostModal';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import type { PostLikes, User } from '@/interface';
+import type { User } from '@/interface';
 
 import { db } from '../../firebase';
 
 export const useHandlePost = () => {
-  const [userLikedPosts, setUserLikedPosts] = useState<PostLikes[]>([]);
+  const [userLikedPosts, setUserLikedPosts] = useState<Set<string>>(new Set());
   const { authUser } = useAuthUser();
 
   useEffect(() => {
@@ -29,10 +31,9 @@ export const useHandlePost = () => {
         collection(db, `${USERS_COLLECTION}/${authUser?.uid}/postlikes`)
       );
       unsubscriber = onSnapshot(q, (querySnap) => {
-        const list = querySnap.docs.map((d) => ({
-          ...(d.data() as PostLikes),
-        }));
-        setUserLikedPosts(list);
+        const list: string[] = querySnap.docs.map((d) => d.data().postId);
+        const setList = new Set(list);
+        setUserLikedPosts(setList);
       });
     };
     getUserLikedPosts();
@@ -80,21 +81,46 @@ export const useHandlePost = () => {
   };
 
   const deletePostWithoutImage = async (postId: string) => {
+    const postRef = doc(db, POSTS_COLLECTION, postId);
     try {
-      await deleteDoc(doc(db, POSTS_COLLECTION, postId));
+      await deleteDoc(postRef);
     } catch (error) {
       console.log('ERROR while deleting post', error);
     }
   };
 
+  const backupPost = async (postId: string) => {
+    const docRef = doc(db, POSTS_COLLECTION, postId);
+    const data = await getDoc(docRef);
+    if (!data.exists()) {
+      throw new Error('Post does not exist');
+    }
+    const post = data.data();
+    return post;
+  };
+
   const deletePostWithImage = async (postId: string, postImageRef: string) => {
+    const backup = await backupPost(postId);
     const storage = getStorage();
     const imageRef = ref(storage, postImageRef);
+    const docRef = doc(db, POSTS_COLLECTION, postId);
+    let isPostDeleted = false;
     try {
+      await runTransaction(db, async (transaction) => {
+        const sfDoc = await transaction.get(docRef);
+        if (!sfDoc.exists()) {
+          throw new Error('Post does not exist!');
+        }
+        transaction.delete(docRef);
+      });
+      isPostDeleted = true;
       await deleteObject(imageRef);
-      await deletePostWithoutImage(postId);
     } catch (error) {
       console.log('ERROR while deleting post', error);
+      if (isPostDeleted) {
+        await addDoc(collection(db, POSTS_COLLECTION), backup);
+        console.log('backup error', backup);
+      }
     }
   };
 
