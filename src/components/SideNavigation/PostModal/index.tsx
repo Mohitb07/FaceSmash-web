@@ -6,7 +6,6 @@ import {
   FormErrorMessage,
   FormLabel,
   IconButton,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -22,6 +21,7 @@ import React, { memo, useRef, useState } from 'react';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
 
+import Input from '@/components/Input';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHandlePost } from '@/hooks/useHandlePost';
 import { useImageUpload } from '@/hooks/useImageUpload';
@@ -40,26 +40,30 @@ export type PostValue = {
   imageRef: string;
 };
 
-const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
-  const [postValue, setPostValue] = useState<PostValue>({
+const CreatePostModal = ({
+  isModalOpen = false,
+  modalClose,
+}: PostModalProps) => {
+  const [postData, setPostData] = useState<PostValue>({
     title: '',
     description: '',
     image: '',
     link: '',
     imageRef: '',
   });
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLinkVisible, setIsLinkVisible] = useState(false);
   const [isImageContainerVisible, setIsImageContainerVisible] = useState(true);
   const { authUser } = useAuthUser();
   const { createPostWithImage, createPostWithoutImage } = useHandlePost();
   const { uploadImage } = useImageUpload();
+
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handlePostValueChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setPostValue((prev) => ({
+    setPostData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -68,7 +72,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
   const handleImageProcessing = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = convertImageObject(e);
     if (file) {
-      setPostValue((prev) => ({
+      setPostData((prev) => ({
         ...prev,
         image: file,
         imageRef: `${file.name}${file.lastModified}`,
@@ -78,32 +82,32 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
 
   const handlePostCreation = async () => {
     try {
-      setLoading(true);
-      if (postValue.image && authUser?.uid) {
-        const urlRef = `${authUser.uid}/posts/${postValue.imageRef}`;
-        uploadImage(urlRef, postValue.image, (url: string) => {
-          createPostWithImage(authUser, url, postValue, () => {
+      setIsLoading(true);
+      if (postData.image && authUser?.uid) {
+        const urlRef = `${authUser.uid}/posts/${postData.imageRef}`;
+        uploadImage(urlRef, postData.image, (url: string) => {
+          createPostWithImage(authUser, url, postData, () => {
             modalClose();
-            setLoading(false);
+            setIsLoading(false);
           });
         });
       }
-      if (!postValue.image && authUser?.uid) {
-        createPostWithoutImage(authUser, postValue, () => {
+      if (!postData.image && authUser?.uid) {
+        createPostWithoutImage(authUser, postData, () => {
           modalClose();
-          setLoading(false);
+          setIsLoading(false);
         });
       }
     } catch (error) {
       console.log('Error', error);
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <Modal
       isCentered
-      isOpen={isModalOpen || loading}
+      isOpen={isModalOpen || isLoading}
       onClose={modalClose}
       size="4xl"
     >
@@ -112,18 +116,16 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
         <ModalHeader>
           <Text fontSize="2xl">Create new post</Text>
         </ModalHeader>
-        <ModalCloseButton disabled={loading} />
+        <ModalCloseButton disabled={isLoading} />
         <ModalBody>
           <Box p={1}>
             <FormControl isRequired isInvalid={false}>
               <FormLabel>Title</FormLabel>
               <Input
-                disabled={loading}
+                isDisabled={isLoading}
                 autoFocus
                 name="title"
-                focusBorderColor="brand.100"
-                rounded="lg"
-                value={postValue.title}
+                value={postData.title}
                 placeholder="Enter title of your post"
                 onChange={handlePostValueChange}
               />
@@ -131,12 +133,10 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                 <div className="mt-5">
                   <FormLabel>Link</FormLabel>
                   <Input
-                    disabled={loading}
+                    isDisabled={isLoading}
                     name="link"
                     type="url"
-                    focusBorderColor="brand.100"
-                    rounded="lg"
-                    value={postValue.link}
+                    value={postData.link}
                     placeholder="Provide link"
                     onChange={handlePostValueChange}
                   />
@@ -145,14 +145,14 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
               <FormErrorMessage>Your First name is invalid</FormErrorMessage>
               <FormLabel mt={5}>Description</FormLabel>
               <Textarea
-                disabled={loading}
+                disabled={isLoading}
                 name="description"
                 rounded="lg"
                 focusBorderColor="brand.100"
                 colorScheme="brand"
                 rows={10}
                 _placeholder={{ fontSize: 18 }}
-                value={postValue.description}
+                value={postData.description}
                 onChange={handlePostValueChange}
                 placeholder="Enter description of your post"
                 size="md"
@@ -164,7 +164,7 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                     imageInputRef.current && imageInputRef.current.click()
                   }
                 >
-                  {!postValue.image && (
+                  {!postData.image && (
                     <Text
                       textAlign="center"
                       mt={4}
@@ -174,10 +174,10 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                       Select Image from your system
                     </Text>
                   )}
-                  {postValue.image && (
+                  {postData.image && (
                     <div className="flex items-center justify-center p-2">
                       <Image
-                        src={URL.createObjectURL(postValue.image)}
+                        src={URL.createObjectURL(postData.image)}
                         height={300}
                         width={600}
                         alt="post image"
@@ -190,11 +190,9 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
                     accept="image/*"
                     ref={imageInputRef}
                     hidden
-                    disabled={loading}
+                    isDisabled={isLoading}
                     name="image"
                     type="file"
-                    focusBorderColor="brand.100"
-                    rounded="lg"
                     onChange={handleImageProcessing}
                   />
                 </div>
@@ -230,7 +228,8 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            disabled={loading}
+            aria-label="Close modal"
+            disabled={isLoading}
             color="white"
             colorScheme="ghost"
             mr={3}
@@ -239,13 +238,14 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
             Cancel
           </Button>
           <Button
-            disabled={!postValue.description || !postValue.title}
+            aria-label="Create post"
+            disabled={!postData.description || !postData.title}
             onClick={handlePostCreation}
             rounded="full"
             color="white"
             colorScheme="brand"
             variant="solid"
-            isLoading={loading}
+            isLoading={isLoading}
           >
             Create
           </Button>
@@ -254,4 +254,4 @@ const PostModal = ({ isModalOpen = false, modalClose }: PostModalProps) => {
     </Modal>
   );
 };
-export default memo(PostModal);
+export default memo(CreatePostModal);
