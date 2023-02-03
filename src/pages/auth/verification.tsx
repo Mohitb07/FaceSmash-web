@@ -1,9 +1,9 @@
 import { Spinner } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
 import { getAuth, sendEmailVerification, signOut } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import Button from '@/components/Button';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import AuthLayout from '@/layouts/Auth';
 import { withAuth } from '@/routes/WithProtected';
@@ -84,8 +84,6 @@ const Verification = () => {
           </h1>
           <Button
             isLoading={resendLoading}
-            color="white"
-            colorScheme="brand"
             size="md"
             isDisabled={verificationLoading || resendLoading || loading}
             onClick={handleSendVerificationEmail}
@@ -94,8 +92,6 @@ const Verification = () => {
           </Button>
           <Button
             isLoading={verificationLoading}
-            color="white"
-            colorScheme="brand"
             size="md"
             isDisabled={verificationLoading || resendLoading || loading}
             onClick={handleCheckVerificationStatus}
@@ -103,8 +99,6 @@ const Verification = () => {
             Already Verified?
           </Button>
           <Button
-            color="white"
-            colorScheme="gray"
             size="md"
             isDisabled={verificationLoading || resendLoading || loading}
             onClick={handleLogOut}

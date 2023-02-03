@@ -1,34 +1,22 @@
+import type { ButtonProps } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import React from 'react';
 
-type ButtonProps = {
-  label: string;
-  style?: string;
-  disabled?: boolean;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
-  leftIcon?: JSX.Element;
-  position?: 'start' | 'center' | 'end';
-};
+type StyledButtonProps = {
+  children: any;
+} & ButtonProps;
 
-const Button = ({
-  label = '',
-  onClick = () => {},
-  disabled = false,
-  leftIcon,
-  position = 'center',
-  style = '',
-}: ButtonProps) => {
+const StyledButton: React.FC<StyledButtonProps> = ({ children, ...props }) => {
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      // eslint-disable-next-line tailwindcss/no-custom-classname
-      className={`justify-${position} flex items-center rounded-lg py-2 text-base font-semibold tracking-wide text-white ${
-        disabled ? 'bg-primary-800' : 'bg-primary-100'
-      } ${style}`}
+    <Button
+      {...props}
+      rounded="full"
+      color="white"
+      colorScheme="brand"
+      variant="solid"
     >
-      {leftIcon && <span className="mx-5">{leftIcon}</span>}
-      {label}
-    </button>
+      {children}
+    </Button>
   );
 };
-export default Button;
+export default StyledButton;

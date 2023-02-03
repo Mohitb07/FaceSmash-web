@@ -1,6 +1,4 @@
 import {
-  Button,
-  Input,
   InputGroup,
   InputRightElement,
   Text,
@@ -8,6 +6,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
+import Button from '@/components/Button';
+import Input from '@/components/Input';
 import { useLogin } from '@/hooks/useLogin';
 import AuthLayout from '@/layouts/Auth';
 import { withPublic } from '@/routes/WithPublic';
@@ -64,14 +64,9 @@ const Login = () => {
             isDisabled={loading}
             value={loginFieldData.email}
             onChange={handleChange}
-            errorBorderColor="crimson"
             isInvalid={Boolean(error.email)}
-            focusBorderColor="brand.100"
             id="email"
             name="email"
-            size="lg"
-            colorScheme="brand"
-            variant="filled"
             placeholder="Email"
             type="email"
           />
@@ -90,14 +85,9 @@ const Login = () => {
             <Input
               isDisabled={loading}
               value={loginFieldData.password}
-              errorBorderColor="crimson"
               isInvalid={Boolean(error.password)}
-              focusBorderColor="brand.100"
               id="password"
               name="password"
-              size="lg"
-              colorScheme="brand"
-              variant="filled"
               placeholder="Password"
               type={isShown ? 'text' : 'password'}
               onChange={handleChange}
@@ -118,8 +108,6 @@ const Login = () => {
         </div>
         <Button
           isLoading={loading}
-          color="white"
-          colorScheme="brand"
           size="md"
           isDisabled={disableLoginBtn}
           onClick={onSignInAttempt}

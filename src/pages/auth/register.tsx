@@ -1,6 +1,4 @@
 import {
-  Button,
-  Input,
   InputGroup,
   InputRightElement,
   Text,
@@ -8,6 +6,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
+import Button from '@/components/Button';
+import Input from '@/components/Input';
 import { useRegister } from '@/hooks/useRegister';
 import AuthLayout from '@/layouts/Auth';
 import { withPublic } from '@/routes/WithPublic';
@@ -64,14 +64,9 @@ const Register = () => {
             isDisabled={loading}
             value={registerFieldData.username}
             onChange={handleUsername}
-            errorBorderColor="crimson"
             isInvalid={charactersLeft === 0}
-            focusBorderColor="brand.100"
             id="username"
             name="username"
-            size="lg"
-            colorScheme="brand"
-            variant="filled"
             placeholder="Enter your username"
             type="text"
           />
@@ -91,14 +86,9 @@ const Register = () => {
             isDisabled={loading}
             value={registerFieldData.email}
             onChange={handleChange}
-            errorBorderColor="crimson"
             isInvalid={Boolean(error.email)}
-            focusBorderColor="brand.100"
             id="email"
             name="email"
-            size="lg"
-            colorScheme="brand"
-            variant="filled"
             placeholder="Email"
             type="email"
           />
@@ -116,14 +106,9 @@ const Register = () => {
             <Input
               isDisabled={loading}
               value={registerFieldData.password}
-              errorBorderColor="crimson"
               isInvalid={Boolean(error.password)}
-              focusBorderColor="brand.100"
               id="password"
               name="password"
-              size="lg"
-              colorScheme="brand"
-              variant="filled"
               placeholder="Password"
               type={isShown ? 'text' : 'password'}
               onChange={handleChange}
@@ -150,16 +135,11 @@ const Register = () => {
             <Input
               isDisabled={loading}
               value={registerFieldData.confirmPassword}
-              errorBorderColor="crimson"
               isInvalid={
                 registerFieldData.confirmPassword.length > 0 && !isPasswordMatch
               }
-              focusBorderColor="brand.100"
               id="confirmPassword"
               name="confirmPassword"
-              size="lg"
-              colorScheme="brand"
-              variant="filled"
               placeholder="Re-Enter your password"
               type={isShown ? 'text' : 'password'}
               onChange={handleChange}
@@ -180,9 +160,6 @@ const Register = () => {
         </div>
         <Button
           isLoading={loading}
-          color="white"
-          colorScheme="brand"
-          size="md"
           isDisabled={loading}
           onClick={() =>
             onSignUp(
