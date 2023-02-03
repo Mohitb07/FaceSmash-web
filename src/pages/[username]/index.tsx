@@ -108,9 +108,7 @@ const UserProfile = () => {
         userId={feed.uid}
         postTitle={feed.title}
         postId={feed.key}
-        hasLiked={Boolean(
-          userLikedPosts.find((post) => post.postId === feed.key)
-        )}
+        hasLiked={userLikedPosts.has(feed.key)}
       />
     );
   }

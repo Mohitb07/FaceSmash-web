@@ -1,7 +1,6 @@
 import { SlideFade } from '@chakra-ui/react';
 import { collection, limit, orderBy, query } from 'firebase/firestore';
-import { useCallback, useEffect, useMemo } from 'react';
-import { BsSearch } from 'react-icons/bs';
+import { useCallback, useEffect } from 'react';
 
 import Navigation from '@/common/Navigation';
 import { useGetPosts } from '@/hooks/useGetPosts';
@@ -21,6 +20,11 @@ import { Meta } from '../layouts/Meta';
 import { withAuth } from '../routes/WithProtected';
 import { Main } from '../templates/Main';
 
+const userQuery = query(
+  collection(db, POSTS_COLLECTION),
+  orderBy('createdAt', 'desc')
+);
+
 function Home() {
   const { userLikedPosts } = useHandlePost();
   const { authUser } = useAuthUser();
@@ -31,11 +35,6 @@ function Home() {
     lastVisible,
     postsLoading,
   } = useGetPosts();
-
-  const userQuery = useMemo(
-    () => query(collection(db, POSTS_COLLECTION), orderBy('createdAt', 'desc')),
-    []
-  );
 
   useEffect(() => {
     const q = query(userQuery, limit(FEED_LIMIT));
@@ -59,9 +58,7 @@ function Home() {
         userId={feed.uid}
         postTitle={feed.title}
         postId={feed.key}
-        hasLiked={Boolean(
-          userLikedPosts.find((post) => post.postId === feed.key)
-        )}
+        hasLiked={userLikedPosts.has(feed.key)}
       />
     );
   }
@@ -83,16 +80,6 @@ function Home() {
           <header className="block text-center md:hidden">
             <Brand />
           </header>
-          <div className="px-5">
-            <div className="my-5 flex w-full items-center rounded-md bg-gray-800 py-4 px-2 md:hidden">
-              <BsSearch className="mx-3 text-xl text-slate-300" />
-              <input
-                className="w-full border-none bg-transparent outline-none"
-                type="text"
-                placeholder="Search User..."
-              />
-            </div>
-          </div>
           <div className="flex items-start justify-center gap-10 md:p-10">
             <main className="w-full space-y-5 pb-16 md:ml-[20%] md:w-auto xl:ml-[10%]">
               <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
