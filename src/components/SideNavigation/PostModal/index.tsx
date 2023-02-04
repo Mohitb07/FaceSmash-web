@@ -40,6 +40,31 @@ export type PostValue = {
   imageRef: string;
 };
 
+const PostImage = ({
+  selectedImage,
+}: {
+  selectedImage: Blob | MediaSource;
+}) => {
+  if (selectedImage) {
+    return (
+      <div className="flex items-center justify-center p-2">
+        <Image
+          src={URL.createObjectURL(selectedImage)}
+          height={300}
+          width={600}
+          alt="post image"
+          objectFit="cover"
+          className="rounded-2xl"
+        />
+      </div>
+    );
+  } else {
+    return null;
+  }
+};
+
+const MemoizedPostImage = memo(PostImage);
+
 const CreatePostModal = ({
   isModalOpen = false,
   modalClose,
@@ -174,18 +199,9 @@ const CreatePostModal = ({
                       Select Image from your system
                     </Text>
                   )}
-                  {postData.image && (
-                    <div className="flex items-center justify-center p-2">
-                      <Image
-                        src={URL.createObjectURL(postData.image)}
-                        height={300}
-                        width={600}
-                        alt="post image"
-                        objectFit="cover"
-                        className="rounded-2xl"
-                      />
-                    </div>
-                  )}
+                  {postData.image ? (
+                    <MemoizedPostImage selectedImage={postData.image} />
+                  ) : null}
                   <Input
                     accept="image/*"
                     ref={imageInputRef}
