@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import type { Unsubscribe } from 'firebase/firestore';
 import { collection, orderBy, query, where } from 'firebase/firestore';
-import { doc, onSnapshot, writeBatch } from 'firebase/firestore';
+import { onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import {
   lazy,
@@ -24,25 +24,21 @@ import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
 import Footer from '@/components/DataList/Footer';
 import Feed from '@/components/Feed';
-import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
+import ProfileButton from '@/components/ProfileButton';
+import { POSTS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useConnection } from '@/hooks/useConnection';
 import { useGetPosts } from '@/hooks/useGetPosts';
 import { useGetUser } from '@/hooks/useGetUser';
 import { useHandlePost } from '@/hooks/useHandlePost';
-import type { Post } from '@/interface';
+import type { ModalType, Post } from '@/interface';
 import { Meta } from '@/layouts/Meta';
 import { withAuth } from '@/routes/WithProtected';
 import { Main } from '@/templates/Main';
 
 import { db } from '../../../firebase';
 
-const UpdateProfileModal = lazy(
-  () => import('@/components/UpdateProfileModal')
-);
 const ConnectionModal = lazy(() => import('@/components/ConnectionsModal'));
-
-type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
 
 const UserProfile = () => {
   const router = useRouter();
@@ -125,38 +121,6 @@ const UserProfile = () => {
     onOpen();
   };
 
-  const handleConnections = () => {
-    const batch = writeBatch(db);
-    if (authUser) {
-      const authUserFollowingDocRef = doc(
-        db,
-        `${USERS_COLLECTION}/${authUser.uid}/followings/${userId}`
-      );
-      const profileUserFollowerDocRef = doc(
-        db,
-        `${USERS_COLLECTION}/${userId}/followers/${authUser.uid}`
-      );
-      if (hasFollowedThisUser) {
-        // unfollow
-        batch.delete(authUserFollowingDocRef);
-        batch.delete(profileUserFollowerDocRef);
-      } else {
-        // follow user
-        batch.set(authUserFollowingDocRef, {
-          user: doc(db, `/${USERS_COLLECTION}/${userId}`),
-        });
-        batch.set(profileUserFollowerDocRef, {
-          user: doc(db, `/${USERS_COLLECTION}/${authUser.uid}`),
-        });
-      }
-    }
-    batch
-      .commit()
-      .catch((err) =>
-        console.log('error while following/unfollowing user', err)
-      );
-  };
-
   return (
     <Main
       meta={
@@ -189,25 +153,10 @@ const UserProfile = () => {
                 <p className="text-3xl font-light md:text-2xl lg:text-3xl xl:text-4xl">
                   {memoizedUserData.qusername}
                 </p>
-                <div className="hidden md:block">
-                  {authUser?.uid === userId ? (
-                    <Button
-                      colorScheme="brand"
-                      color="white"
-                      onClick={() => handleModalOpen('Edit profile')}
-                    >
-                      Edit profile
-                    </Button>
-                  ) : (
-                    <Button
-                      colorScheme="brand"
-                      color="white"
-                      onClick={handleConnections}
-                    >
-                      {hasFollowedThisUser ? 'Unfollow' : 'Follow'}
-                    </Button>
-                  )}
-                </div>
+                <ProfileButton
+                  hasFollowedThisUser={hasFollowedThisUser}
+                  userId={userId}
+                />
                 <FiSettings className="text-xl xl:text-3xl" />
               </div>
               <div className="block md:hidden">
@@ -287,9 +236,9 @@ const UserProfile = () => {
         </div>
       </div>
       <Suspense fallback={<div>Loading...</div>}>
-        {isOpen && modalType === 'Edit profile' && (
+        {/* {isOpen && modalType === 'Edit profile' && (
           <UpdateProfileModal onClose={onClose} isOpen={isOpen} />
-        )}
+        )} */}
         {isOpen && modalType !== 'Edit profile' && (
           <ConnectionModal
             data={modalType === 'Followers' ? followersList : followingList}
