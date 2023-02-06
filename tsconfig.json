@@ -30,8 +30,7 @@
       "@/*": ["./src/*"],
       "@/public/*": ["./public/*"]
     }
-    
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["./out/**/*", "./node_modules/**/*"],
+  "exclude": ["./out/**/*", "./node_modules/**/*"]
 }
