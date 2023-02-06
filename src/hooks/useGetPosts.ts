@@ -57,6 +57,9 @@ export const useGetPosts = () => {
     const unsub = onSnapshot(
       query(q, limit(FEED_LIMIT)),
       async (querySnapshot) => {
+        if (querySnapshot.empty) {
+          setUserPosts([]);
+        }
         if (!querySnapshot.empty) {
           const postUserPromises = querySnapshot.docs.map((d) =>
             getDoc(d.data().user)
