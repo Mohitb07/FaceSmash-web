@@ -2,7 +2,7 @@ import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { getAuth, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { memo } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { RxHamburgerMenu } from 'react-icons/rx';
@@ -113,4 +113,4 @@ const Sidebar = ({
     </div>
   );
 };
-export default Sidebar;
+export default memo(Sidebar);

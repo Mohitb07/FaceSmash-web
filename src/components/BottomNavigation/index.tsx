@@ -1,7 +1,7 @@
 import { Avatar } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { memo } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { TiHome } from 'react-icons/ti';
@@ -68,4 +68,4 @@ const BottomNavigation = ({
     </nav>
   );
 };
-export default BottomNavigation;
+export default memo(BottomNavigation);

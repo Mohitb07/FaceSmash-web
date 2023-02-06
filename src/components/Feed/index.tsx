@@ -145,9 +145,9 @@ const Feed = ({
               <div className="flex items-center space-x-2 md:space-x-5">
                 <div className="group cursor-pointer" onClick={handleLikes}>
                   {hasLiked ? (
-                    <FaHeart className="text-red-500 transition-transform duration-200 ease-in-out group-hover:scale-50 group-hover:opacity-40" />
+                    <FaHeart className="text-red-500 group-hover:opacity-40" />
                   ) : (
-                    <FiHeart className="transition-transform duration-200 ease-in-out group-hover:scale-50 group-hover:opacity-40" />
+                    <FiHeart className="group-hover:opacity-40" />
                   )}
                 </div>
                 <div className="group cursor-pointer">

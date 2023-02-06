@@ -46,3 +46,5 @@ export interface PostLikes {
   postId: string;
   likes: boolean;
 }
+
+export type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
