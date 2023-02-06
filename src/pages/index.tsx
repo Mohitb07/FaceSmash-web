@@ -3,22 +3,22 @@ import { collection, limit, orderBy, query } from 'firebase/firestore';
 import { useCallback, useEffect } from 'react';
 
 import Navigation from '@/common/Navigation';
+import Brand from '@/components/Brand';
+import DataList from '@/components/DataList';
+import EmptyData from '@/components/DataList/EmptyData';
+import Footer from '@/components/DataList/Footer';
+import Feed from '@/components/Feed';
+import UserRecommendation from '@/components/UserRecommendation';
+import { FEED_LIMIT, POSTS_COLLECTION } from '@/constant';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { useGetPosts } from '@/hooks/useGetPosts';
+import { useHandlePost } from '@/hooks/useHandlePost';
+import type { Post } from '@/interface';
+import { Meta } from '@/layouts/Meta';
+import { withAuth } from '@/routes/WithProtected';
+import { Main } from '@/templates/Main';
 
 import { db } from '../../firebase';
-import Brand from '../components/Brand';
-import DataList from '../components/DataList';
-import EmptyData from '../components/DataList/EmptyData';
-import Footer from '../components/DataList/Footer';
-import Feed from '../components/Feed';
-import UserRecommendation from '../components/UserRecommendation';
-import { FEED_LIMIT, POSTS_COLLECTION } from '../constant';
-import { useAuthUser } from '../hooks/useAuthUser';
-import { useHandlePost } from '../hooks/useHandlePost';
-import type { Post } from '../interface';
-import { Meta } from '../layouts/Meta';
-import { withAuth } from '../routes/WithProtected';
-import { Main } from '../templates/Main';
 
 const userQuery = query(
   collection(db, POSTS_COLLECTION),
