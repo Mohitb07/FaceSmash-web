@@ -107,7 +107,7 @@ const Verification = () => {
           </Button>
         </div>
         <span
-          className={`flex items-center justify-center font-bold ${currentStatus.statusColor} mt-5`}
+          className={`flex-container font-bold ${currentStatus.statusColor} mt-5`}
         >
           {currentStatus.status}
         </span>
@@ -124,7 +124,7 @@ const Verification = () => {
       >
         <div className="mt-5 flex flex-col space-y-6">
           <h1 className="text-center text-xl">You are already verified</h1>
-          <div className="flex items-center justify-center gap-5">
+          <div className="flex-container gap-5">
             <Spinner />
             <h2 className="text-center">Redirecting...</h2>
           </div>
@@ -133,7 +133,7 @@ const Verification = () => {
     );
   } else {
     return (
-      <div className="z-50 flex h-screen w-screen items-center justify-center bg-slate-800">
+      <div className="flex-container bg-color z-50 h-screen w-screen">
         <Spinner size="xl" />
       </div>
     );

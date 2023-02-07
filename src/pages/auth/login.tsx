@@ -57,7 +57,7 @@ const Login = () => {
     >
       <div className="mt-5 flex flex-col space-y-2">
         <div className="flex flex-col space-y-1">
-          <label htmlFor="email" className="text-[#8E8FAB]">
+          <label htmlFor="email" className="form-label-text">
             Email
           </label>
           <Input
@@ -78,7 +78,7 @@ const Login = () => {
         </div>
 
         <div className="flex flex-col space-y-1 pb-10">
-          <label htmlFor="password" className="text-[#8E8FAB]">
+          <label htmlFor="password" className="form-label-text">
             Password
           </label>
           <InputGroup size="lg">

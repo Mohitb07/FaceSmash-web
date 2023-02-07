@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({
         />
       }
     >
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex-container min-h-screen">
         <div className="hidden items-center  justify-center pt-16 lg:flex">
           <Image
             src="https://static.cdninstagram.com/rsrc.php/v3/y4/r/ItTndlZM2n2.png"
@@ -42,7 +42,7 @@ const Layout: React.FC<LayoutProps> = ({
         </div>
         <div>
           <div
-            className={`h-screen w-screen bg-[#19181A] p-5 md:h-auto md:w-[500px] md:p-16 ${containerStyle}`}
+            className={`bg-color h-screen w-screen p-5 md:h-auto md:w-[500px] md:p-16 ${containerStyle}`}
           >
             <header>
               <h1 className="text-center text-5xl font-bold text-white">
@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="flex-1">{children}</div>
             <div className="mt-10 text-center md:hidden">
               <Link href={footerLink}>
-                <h1 className="text-sm text-[#8E8FAB]">
+                <h1 className="form-label-text text-sm">
                   {footerText}{' '}
                   <span className="font-bold text-primary-100">
                     {footerLabel}
@@ -61,9 +61,11 @@ const Layout: React.FC<LayoutProps> = ({
               </Link>
             </div>
           </div>
-          <div className="mt-5 hidden h-20 w-[500px] items-center justify-center bg-[#19181A] md:flex">
+          <div
+            className={`md:flex-container bg-color mt-5 hidden h-20 w-[500px]`}
+          >
             <Link href={footerLink}>
-              <h1 className="text-lg text-[#8E8FAB]">
+              <h1 className="form-label-text text-lg">
                 {footerText}{' '}
                 <span className="cursor-pointer font-bold text-primary-100">
                   {footerLabel}

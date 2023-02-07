@@ -41,4 +41,13 @@ a {
   .hover-animation {
     @apply transition-transform duration-300 ease-in-out group-hover:scale-125;
   }
+  .form-label-text {
+    @apply text-[#8E8FAB]
+  }
+  .flex-container {
+    @apply flex items-center justify-center
+  }
+  .bg-color{
+    @apply bg-[#181920]
+  }
 }
