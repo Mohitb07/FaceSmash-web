@@ -117,15 +117,12 @@ const Feed = ({
         ) : null}
       </header>
       {postImage && (
-        <div className="relative">
+        <div className="relative aspect-auto min-h-[600px]">
           <Image
-            className="h-full w-full"
             src={postImage}
-            objectFit="cover"
-            height={600}
-            width={600}
             alt="post image"
             blurDataURL={postImage}
+            layout="fill"
           />
           {link && (
             <div className="absolute top-3 right-3 cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
