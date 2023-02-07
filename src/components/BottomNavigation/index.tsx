@@ -48,11 +48,16 @@ const BottomNavigation = ({
           </div>
         </li>
         <li>
-          <Link href={`${user?.qusername}?user_id=${user?.uid}`}>
+          <Link
+            href={{
+              pathname: '/[username]',
+              query: { username: user?.qusername, userId: user?.uid },
+            }}
+          >
             <Avatar
               ring={
                 router.pathname === '/[username]' &&
-                router.query.user_id === user?.uid
+                router.query.userId === user?.uid
                   ? 2
                   : 0
               }

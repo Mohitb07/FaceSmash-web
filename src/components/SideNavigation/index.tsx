@@ -26,12 +26,10 @@ const Sidebar = ({
 }: SidebarProps) => {
   const router = useRouter();
   const auth = getAuth();
-
-  const mutation = () => {
+  const signOutUser = () => {
     signOut(auth)
       .then(() => {
         console.log('user logged out');
-        router.replace('/auth/login');
       })
       .catch((error) => {
         console.log('error while signing out', error);
@@ -74,12 +72,18 @@ const Sidebar = ({
             icon={<HiOutlinePlusCircle className="hover-animation text-2xl" />}
             label="Create"
           />
-          <Link href={`${user?.qusername}?user_id=${user?.uid}`}>
+          <Link
+            href={{
+              pathname: '/[username]',
+              query: { username: user?.qusername, userId: user?.uid },
+            }}
+          >
             <NavItem label="Profile">
               <Avatar
+                role="navigation"
                 ring={
                   router.pathname === '/[username]' &&
-                  router.query.user_id === user?.uid
+                  router.query.userId === user?.uid
                     ? 2
                     : 0
                 }
@@ -104,7 +108,7 @@ const Sidebar = ({
             </ul>
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => mutation()}>
+            <MenuItem onClick={signOutUser}>
               <span className="text-red-500">Log Out</span>
             </MenuItem>
           </MenuList>

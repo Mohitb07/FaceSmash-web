@@ -42,7 +42,7 @@ const ConnectionModal = lazy(() => import('@/components/ConnectionsModal'));
 
 const UserProfile = () => {
   const router = useRouter();
-  const userId = router.query.user_id as string;
+  const userId = router.query.userId as string;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<ModalType>(null);
   const { authUser } = useAuthUser();
