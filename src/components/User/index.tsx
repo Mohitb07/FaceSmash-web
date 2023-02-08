@@ -23,7 +23,12 @@ const User = ({
   onClose,
 }: UserProps) => {
   return (
-    <Link href={`${username}?user_id=${userId}`}>
+    <Link
+      href={{
+        pathname: '/[username]',
+        query: { username, userId },
+      }}
+    >
       <div
         onClick={onClose}
         className="mt-5 flex cursor-pointer items-center gap-5"

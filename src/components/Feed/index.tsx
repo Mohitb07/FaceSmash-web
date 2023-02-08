@@ -1,17 +1,10 @@
-import {
-  Avatar,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
+import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { Collapse, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
 import Image from 'next/image';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { BiLink } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -91,7 +84,12 @@ const Feed = ({
     <div className="rounded-md bg-[#242526] md:w-[500px] lg:w-[450px] xl:w-[600px]">
       <header className="flex h-[4rem] items-center justify-between p-3 md:h-[5rem]">
         {userProfile && username && (
-          <Link as={NextLink} href={`${username}?user_id=${userId}`}>
+          <Link
+            href={{
+              pathname: '/[username]',
+              query: { username, userId },
+            }}
+          >
             <div className="flex cursor-pointer items-center space-x-3">
               <Avatar ignoreFallback size="sm" src={userProfile || ''} />
               <p className="font-bold">{username}</p>
@@ -126,9 +124,9 @@ const Feed = ({
           />
           {link && (
             <div className="absolute top-3 right-3 cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
-              <Link href={link} isExternal>
+              <a href={link} target="_blank" rel="noopener noreferrer">
                 <BiLink fontSize={20} />
-              </Link>
+              </a>
             </div>
           )}
         </div>
@@ -168,20 +166,20 @@ const Feed = ({
             {link && !postImage && (
               <div className="flex justify-start">
                 <div className="inline-block cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
-                  <Link href={link} isExternal>
+                  <a href={link} target="_blank" rel="noopener noreferrer">
                     <BiLink fontSize={20} />
-                  </Link>
+                  </a>
                 </div>
               </div>
             )}
             {link ? (
               <div className="inline-block">
-                <Link href={link} isExternal>
-                  <Text fontSize="3xl">{postTitle}</Text>
-                </Link>
+                <a href={link} target="_blank" rel="noopener noreferrer">
+                  <Text fontSize="2xl">{postTitle}</Text>
+                </a>
               </div>
             ) : (
-              <Text fontSize="3xl">{postTitle}</Text>
+              <Text fontSize="2xl">{postTitle}</Text>
             )}
             <Collapse startingHeight={25} in={show}>
               <p className="text-base md:text-base">
