@@ -49,31 +49,33 @@ const UserRecommendation = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[15rem] w-[20rem] items-center justify-center">
+      <div className="flex h-[15rem] w-[15rem] items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
   }
 
   return (
-    <>
+    <div className="h-auto w-[15rem]">
       <div className="mt-10 flex items-center gap-5">
         <UserCard
           userId={authUser?.uid || ''}
-          size="lg"
-          fontSize="2xl"
+          size="md"
+          fontSize="medium"
           username={authUser?.username || ''}
           email={authUser?.email || ''}
           profileURL={authUser?.profilePic || ''}
         />
       </div>
       <div className="mt-5">
-        <p className="text-xl font-semibold tracking-wider text-gray-500">
+        <p className="text-base font-semibold tracking-wider text-gray-500">
           Suggestions for you
         </p>
         <div>
           {randomSuggestion.map((user) => (
             <UserCard
+              size="sm"
+              fontSize="sm"
               key={user.uid}
               userId={user.uid}
               username={user.username}
@@ -83,7 +85,7 @@ const UserRecommendation = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 export default UserRecommendation;

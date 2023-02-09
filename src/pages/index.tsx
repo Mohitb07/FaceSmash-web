@@ -80,8 +80,8 @@ function Home() {
           <header className="block text-center md:hidden">
             <Brand />
           </header>
-          <div className="flex items-start justify-center gap-10 md:p-10">
-            <main className="w-full space-y-5 pb-16 md:ml-[20%] md:w-auto xl:ml-[10%]">
+          <div className="flex justify-center gap-10 md:p-10">
+            <main className="w-auto space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
               <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
                 <DataList
                   ListEmptyComponent={EmptyData}
