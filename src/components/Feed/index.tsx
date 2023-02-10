@@ -12,7 +12,9 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
+import { BiLink } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaHeart } from 'react-icons/fa';
 import { FiBookmark, FiHeart } from 'react-icons/fi';
@@ -39,7 +41,7 @@ const Feed = ({
   postTitle,
   userId,
   imageRef,
-  // link,
+  link,
   hasLiked,
   authUserId,
 }: FeedProps) => {
@@ -213,16 +215,32 @@ const Feed = ({
     //     </div>
     //   </div>
     // </div>
-    <article className="bg-color relative h-auto w-full pb-5 md:w-[480px]">
+    <article className="bg-color relative h-auto w-full rounded-md pb-5 md:w-[480px]">
       <div>
         <div className="p-2">
-          <div className="flex items-center">
-            <header className="flex flex-1 items-center space-x-2">
+          <header className="flex items-center">
+            <div className="flex flex-1 items-center space-x-2">
               <div role="button">
-                <Avatar ignoreFallback size="sm" src={userProfile} />
+                <Link
+                  href={{
+                    pathname: '/[username]',
+                    query: { username, userId },
+                  }}
+                >
+                  <Avatar ignoreFallback size="sm" src={userProfile} />
+                </Link>
               </div>
               <div className="flex items-center space-x-3">
-                <span className="text-sm font-semibold">{username}</span>
+                <span role="button" className="text-sm font-semibold">
+                  <Link
+                    href={{
+                      pathname: '/[username]',
+                      query: { username, userId },
+                    }}
+                  >
+                    {username}
+                  </Link>
+                </span>
                 <div className="space-x-2 text-sm">
                   <span className="text-slate-400">•</span>
                   <span className="text-slate-400">
@@ -230,9 +248,9 @@ const Feed = ({
                   </span>
                 </div>
               </div>
-            </header>
-            <div>
-              {true ? (
+            </div>
+            <nav role="menu">
+              {authUserId === userId ? (
                 <Menu isLazy closeOnSelect placement="bottom-end">
                   <MenuButton aria-label="Options">
                     <BsThreeDotsVertical className="cursor-pointer text-xl" />
@@ -247,20 +265,25 @@ const Feed = ({
                         borderRadius: '3px',
                       }}
                     >
-                      <span className="text-gray-400">Delete Post</span>
+                      <button
+                        aria-label="delete post"
+                        className="bg-none text-gray-400"
+                      >
+                        Delete Post
+                      </button>
                     </MenuItem>
                   </MenuList>
                 </Menu>
               ) : null}
-            </div>
-          </div>
+            </nav>
+          </header>
         </div>
 
         {postImage && (
           <div>
             <div style={{ position: 'relative', paddingTop }}>
               <Image
-                alt=""
+                alt="user post"
                 src={postImage}
                 layout="fill"
                 objectFit="contain"
@@ -272,70 +295,98 @@ const Feed = ({
                   );
                 }}
               />
+              {link && (
+                <div className="absolute top-3 right-3 cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
+                  <a href={link} target="_blank" rel="noopener noreferrer">
+                    <BiLink fontSize={20} />
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        <div className="px-2">
-          <div className="flex text-2xl">
-            <div className="flex flex-1 space-x-3 pt-3">
-              <section>
-                <span>
-                  <button onClick={handleLikes}>
-                    {hasLiked ? (
-                      <FaHeart className="text-red-500 group-hover:opacity-40" />
-                    ) : (
-                      <FiHeart className="group-hover:opacity-40" />
-                    )}
-                  </button>
-                </span>
-              </section>
+        <div
+          className={`flex flex-col px-2 ${
+            !postImage ? 'flex-col-reverse' : ''
+          }`}
+        >
+          <div>
+            <div className="flex text-2xl">
+              <div className="flex flex-1 space-x-3 pt-3">
+                <section>
+                  <span>
+                    <button onClick={handleLikes}>
+                      {hasLiked ? (
+                        <FaHeart className="text-red-500 group-hover:opacity-40" />
+                      ) : (
+                        <FiHeart className="group-hover:opacity-40" />
+                      )}
+                    </button>
+                  </span>
+                </section>
+                <section>
+                  <span>
+                    <button>
+                      <TbMessageCircle2 className="-scale-x-100 group-hover:opacity-40" />
+                    </button>
+                  </span>
+                </section>
+                <section>
+                  <span>
+                    <button>
+                      <HiOutlinePaperAirplane className="rotate-90 group-hover:opacity-40" />
+                    </button>
+                  </span>
+                </section>
+              </div>
               <section>
                 <span>
                   <button>
-                    <TbMessageCircle2 className="-scale-x-100 group-hover:opacity-40" />
-                  </button>
-                </span>
-              </section>
-              <section>
-                <span>
-                  <button>
-                    <HiOutlinePaperAirplane className="rotate-90 group-hover:opacity-40" />
+                    <FiBookmark className="group-hover:opacity-40" />
                   </button>
                 </span>
               </section>
             </div>
-            <section>
-              <span>
-                <button>
-                  <FiBookmark className="group-hover:opacity-40" />
-                </button>
-              </span>
-            </section>
-          </div>
 
-          <div>
-            <span className="text-sm font-medium md:text-xl">{likes}</span>
-            <span className="ml-2">likes</span>
-          </div>
-
-          <p className="text-xl md:text-2xl">{postTitle}</p>
-          <Collapse startingHeight={20} in={show}>
-            <p className="text-sm">
-              <span className="mr-2 font-semibold tracking-wide">
-                {username}
+            <div>
+              <span className="text-base font-semibold md:text-lg">
+                {likes} likes
               </span>
-              <span>{description}</span>
-            </p>
-          </Collapse>
-          {description.length > 30 && (
-            <Text
-              className="cursor-pointer text-sm font-bold text-gray-400"
-              onClick={setShow.toggle}
-            >
-              Show {show ? 'Less' : 'More'}
-            </Text>
-          )}
+            </div>
+          </div>
+          <div className="space-y-3">
+            {link && !postImage && (
+              <div role="link" className="flex justify-start">
+                <div className="inline-block cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
+                  <a href={link} target="_blank" rel="noopener noreferrer">
+                    <BiLink fontSize={20} />
+                  </a>
+                </div>
+              </div>
+            )}
+            <p className="text-xl leading-8 md:text-2xl">{postTitle}</p>
+            <div>
+              <Collapse startingHeight={20} in={show}>
+                <p className="text-sm">
+                  <span className="mr-2 font-semibold tracking-wide">
+                    {username}
+                  </span>
+                  <span>{description}</span>
+                </p>
+              </Collapse>
+              {description.length > 30 && (
+                <div role="button">
+                  <Text
+                    className="inline-block text-sm font-bold text-gray-400"
+                    onClick={setShow.toggle}
+                  >
+                    Show {show ? 'Less' : 'More'}
+                  </Text>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </article>
