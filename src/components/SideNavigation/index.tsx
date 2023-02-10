@@ -42,7 +42,6 @@ const Sidebar = ({
         <div className="hidden lg:block">
           <Brand styles="mb-[3rem] ml-[1rem]" />
         </div>
-
         <div className="block lg:hidden">
           <h1 className="mb-[3rem] text-center text-6xl font-bold text-white">
             <span className="text-primary-100">F</span>
@@ -54,9 +53,9 @@ const Sidebar = ({
             <NavItem
               icon={
                 router.pathname === '/' ? (
-                  <TiHome className="hover-animation text-3xl" />
+                  <TiHome className="hover-animation text-4xl" />
                 ) : (
-                  <VscHome className="hover-animation text-3xl" />
+                  <VscHome className="hover-animation text-4xl" />
                 )
               }
               label="Home"
@@ -64,12 +63,12 @@ const Sidebar = ({
           </Link>
           <NavItem
             onClick={() => setIsSearchDrawerOpen(true)}
-            icon={<BsSearch className="hover-animation text-2xl" />}
+            icon={<BsSearch className="hover-animation text-3xl" />}
             label="Search"
           />
           <NavItem
             onClick={() => setIsModalOpen(true)}
-            icon={<HiOutlinePlusCircle className="hover-animation text-2xl" />}
+            icon={<HiOutlinePlusCircle className="hover-animation text-3xl" />}
             label="Create"
           />
           <Link
@@ -89,7 +88,7 @@ const Sidebar = ({
                 }
                 ringColor="white"
                 className="hover-animation"
-                size="xs"
+                size="sm"
                 name={user?.username}
                 src={user?.profilePic}
               />

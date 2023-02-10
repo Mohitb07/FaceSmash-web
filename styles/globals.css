@@ -39,7 +39,7 @@ a {
     @apply flex cursor-pointer items-center space-x-5 rounded-full p-3 text-xl transition-all duration-300 ease-in-out hover:bg-slate-800 md:justify-center lg:justify-start;
   }
   .hover-animation {
-    @apply transition-transform duration-300 ease-in-out group-hover:scale-125;
+    @apply transition-transform duration-300 ease-in-out group-hover:scale-110;
   }
   .form-label-text {
     @apply text-[#8E8FAB]
