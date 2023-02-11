@@ -1,54 +1,32 @@
-import {
-  Avatar,
-  Button,
-  Skeleton,
-  SlideFade,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { SlideFade } from '@chakra-ui/react';
 import type { Unsubscribe } from 'firebase/firestore';
 import { collection, orderBy, query, where } from 'firebase/firestore';
-import { onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { FiSettings } from 'react-icons/fi';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import Navigation from '@/common/Navigation';
 import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
 import Footer from '@/components/DataList/Footer';
 import Feed from '@/components/Feed';
-import ProfileButton from '@/components/ProfileButton';
+import UserDetail from '@/components/Profile/UserDetails';
 import { POSTS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import { useConnection } from '@/hooks/useConnection';
 import { useGetPosts } from '@/hooks/useGetPosts';
 import { useGetUser } from '@/hooks/useGetUser';
 import { useHandlePost } from '@/hooks/useHandlePost';
-import type { ModalType, Post } from '@/interface';
+import type { Post } from '@/interface';
 import { Meta } from '@/layouts/Meta';
 import { withAuth } from '@/routes/WithProtected';
 import { Main } from '@/templates/Main';
 
 import { db } from '../../../firebase';
 
-const ConnectionModal = lazy(() => import('@/components/ConnectionsModal'));
-
 const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.userId as string;
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [modalType, setModalType] = useState<ModalType>(null);
   const { authUser } = useAuthUser();
   const { userDetail, isUserDetailLoading } = useGetUser(userId);
-  const { connectionsCount, followersList, followingList } =
-    useConnection(userId);
   const { userLikedPosts } = useHandlePost();
   const {
     postsLoading,
@@ -57,7 +35,6 @@ const UserProfile = () => {
     lastVisible,
     getInitialPosts,
   } = useGetPosts();
-  const [postsCount, setPostsCount] = useState(0);
 
   const userQuery = useMemo(
     () =>
@@ -71,20 +48,9 @@ const UserProfile = () => {
 
   useEffect(() => {
     let unsubscriber: Unsubscribe;
-    let unsubscriberPostsCount: Unsubscribe;
-    unsubscriberPostsCount = onSnapshot(
-      userQuery,
-      (querySnapshot) => {
-        setPostsCount(querySnapshot.size);
-      },
-      (err) => {
-        console.log('ERROR in useGetPosts effect', err);
-      }
-    );
     unsubscriber = getInitialPosts(userQuery);
     return () => {
       unsubscriber();
-      unsubscriberPostsCount();
     };
   }, [userId, userQuery]);
 
@@ -110,16 +76,7 @@ const UserProfile = () => {
   }
 
   const memoizedUserData = useMemo(() => userDetail, [userDetail]);
-  const hasFollowedThisUser = useMemo(
-    () => !!followersList.find((user) => user.uid === authUser?.uid),
-    [authUser?.uid, followersList]
-  );
   const paginateMoreData = useCallback(() => getPosts(userQuery), [getPosts]);
-
-  const handleModalOpen = (type: ModalType) => {
-    setModalType(type);
-    onOpen();
-  };
 
   return (
     <Main
@@ -134,91 +91,13 @@ const UserProfile = () => {
         <Navigation />
       </div>
       <div className="flex flex-col justify-start space-y-3 md:items-center md:justify-center md:space-y-10 md:p-10 lg:ml-[10%] xl:ml-0">
-        <div className="flex items-center gap-5 p-3 lg:gap-10 xl:gap-20">
-          <div>
-            <Skeleton borderRadius="full" isLoaded={!isUserDetailLoading}>
-              <Avatar
-                loading="lazy"
-                size="2xl"
-                ignoreFallback
-                name={memoizedUserData.username}
-                src={memoizedUserData.profilePic}
-                showBorder
-              />
-            </Skeleton>
-          </div>
-          <Skeleton isLoaded={!isUserDetailLoading}>
-            <div className="flex flex-col space-y-3 md:space-y-6">
-              <div className="flex items-center gap-5">
-                <p className="text-3xl font-light md:text-2xl lg:text-3xl xl:text-4xl">
-                  {memoizedUserData.qusername}
-                </p>
-                <ProfileButton
-                  hasFollowedThisUser={hasFollowedThisUser}
-                  userId={userId}
-                />
-                <FiSettings className="text-xl xl:text-3xl" />
-              </div>
-              <div className="block md:hidden">
-                <Button onClick={() => handleModalOpen('Edit profile')}>
-                  Edit profile
-                </Button>
-              </div>
-              <div className="hidden items-center gap-5 text-lg md:flex">
-                <p>
-                  <span className="mr-2 font-semibold">{postsCount}</span> posts
-                </p>
-                <p
-                  className="cursor-pointer"
-                  onClick={() => handleModalOpen('Followers')}
-                >
-                  <span className="mr-2 font-semibold">
-                    {connectionsCount.followers}
-                  </span>{' '}
-                  followers
-                </p>
-                <p
-                  className="cursor-pointer"
-                  onClick={() => handleModalOpen('Following')}
-                >
-                  <span className="mr-2 font-semibold">
-                    {connectionsCount.following}
-                  </span>{' '}
-                  followings
-                </p>
-              </div>
-              <div className="hidden md:flex">
-                <span className="text-xl">{memoizedUserData?.bio}</span>
-              </div>
-            </div>
-          </Skeleton>
-        </div>
-        <div className="flex w-full flex-col px-5 text-left md:hidden">
-          <span className="text-lg font-semibold">
-            {memoizedUserData?.qusername}
-          </span>
-          <span className="text-base">{memoizedUserData?.bio}</span>
-        </div>
-        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-700 p-1 md:hidden">
-          <div className="text-center">
-            <span className="font-semibold">{postsCount}</span>
-            <p className="text-slate-400">posts</p>
-          </div>
-          <div
-            className="text-center"
-            onClick={() => handleModalOpen('Followers')}
-          >
-            <span className="font-semibold">{connectionsCount.followers}</span>
-            <p className="text-slate-400">followers</p>
-          </div>
-          <div
-            className="text-center"
-            onClick={() => handleModalOpen('Following')}
-          >
-            <span className="font-semibold">{connectionsCount.following}</span>
-            <p className="text-slate-400">following</p>
-          </div>
-        </div>
+        <UserDetail
+          isLoading={isUserDetailLoading}
+          user={userDetail}
+          userId={userId}
+          userQuery={userQuery}
+        />
+
         <div className="space-y-5 pb-16">
           <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
             <DataList
@@ -235,19 +114,6 @@ const UserProfile = () => {
           </SlideFade>
         </div>
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
-        {/* {isOpen && modalType === 'Edit profile' && (
-          <UpdateProfileModal onClose={onClose} isOpen={isOpen} />
-        )} */}
-        {isOpen && modalType !== 'Edit profile' && (
-          <ConnectionModal
-            data={modalType === 'Followers' ? followersList : followingList}
-            title={modalType!}
-            onClose={onClose}
-            isOpen={isOpen}
-          />
-        )}
-      </Suspense>
     </Main>
   );
 };
