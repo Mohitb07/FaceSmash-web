@@ -1,19 +1,12 @@
 import { SlideFade } from '@chakra-ui/react';
-import { collection, limit, orderBy, query } from 'firebase/firestore';
-import { useCallback, useEffect } from 'react';
+import { collection, orderBy, query } from 'firebase/firestore';
 
+import FeedContainer from '@/common/FeedContainer';
 import Navigation from '@/common/Navigation';
 import Brand from '@/components/Brand';
-import DataList from '@/components/DataList';
-import EmptyData from '@/components/DataList/EmptyData';
-import Footer from '@/components/DataList/Footer';
-import Feed from '@/components/Feed';
 import UserRecommendation from '@/components/UserRecommendation';
-import { FEED_LIMIT, POSTS_COLLECTION } from '@/constant';
-import { useAuthUser } from '@/hooks/useAuthUser';
+import { POSTS_COLLECTION } from '@/constant';
 import { useGetPosts } from '@/hooks/useGetPosts';
-import { useHandlePost } from '@/hooks/useHandlePost';
-import type { Post } from '@/interface';
 import { Meta } from '@/layouts/Meta';
 import { withAuth } from '@/routes/WithProtected';
 import { Main } from '@/templates/Main';
@@ -26,44 +19,7 @@ const userQuery = query(
 );
 
 function Home() {
-  const { userLikedPosts } = useHandlePost();
-  const { authUser } = useAuthUser();
-  const {
-    getInitialPosts,
-    getPosts,
-    memoizedPosts,
-    lastVisible,
-    postsLoading,
-  } = useGetPosts();
-
-  useEffect(() => {
-    const q = query(userQuery, limit(FEED_LIMIT));
-    const unsubscribe = getInitialPosts(q);
-    return () => unsubscribe();
-  }, []);
-
-  function renderItem<T extends Post>(feed: T) {
-    return (
-      <Feed
-        key={feed.key}
-        authUserId={authUser?.uid || ''}
-        username={feed.username}
-        postImage={feed.image}
-        userProfile={feed.userProfile}
-        createdAt={feed.createdAt}
-        description={feed.description}
-        link={feed.link}
-        imageRef={feed.imageRef}
-        likes={feed.likes}
-        userId={feed.uid}
-        postTitle={feed.title}
-        postId={feed.key}
-        hasLiked={userLikedPosts.has(feed.key)}
-      />
-    );
-  }
-
-  const paginateMoreData = useCallback(() => getPosts(userQuery), [getPosts]);
+  const { postsLoading } = useGetPosts();
 
   return (
     <Main
@@ -82,19 +38,7 @@ function Home() {
           </header>
           <div className="flex justify-center gap-10 md:p-10">
             <main className="w-auto space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
-              <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
-                <DataList
-                  ListEmptyComponent={EmptyData}
-                  ListFooterComponent={
-                    <Footer dataList={memoizedPosts} loading={postsLoading} />
-                  }
-                  data={memoizedPosts}
-                  isLoading={postsLoading}
-                  renderItem={(item: any) => renderItem(item)}
-                  getMore={paginateMoreData}
-                  lastVisible={lastVisible}
-                />
-              </SlideFade>
+              <FeedContainer userQuery={userQuery} />
             </main>
             <aside className="hidden flex-col lg:flex">
               <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
