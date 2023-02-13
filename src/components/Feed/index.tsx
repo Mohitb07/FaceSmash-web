@@ -287,6 +287,7 @@ const Feed = ({
                 src={postImage}
                 layout="fill"
                 objectFit="contain"
+                priority
                 onLoad={({ target }) => {
                   const { naturalWidth, naturalHeight } =
                     target as HTMLImageElement;
