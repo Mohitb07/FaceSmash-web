@@ -9,11 +9,11 @@ type StyledButtonProps = {
 const StyledButton: React.FC<StyledButtonProps> = ({ children, ...props }) => {
   return (
     <Button
-      {...props}
       rounded="full"
       color="white"
       colorScheme="brand"
       variant="solid"
+      {...props}
     >
       {children}
     </Button>
