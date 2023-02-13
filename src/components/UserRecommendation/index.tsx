@@ -1,6 +1,7 @@
 import { Spinner } from '@chakra-ui/react';
 import { collection, getDocs, query } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import { useErrorHandler } from 'react-error-boundary';
 
 import UserCard from '@/components/User';
 import { USERS_COLLECTION } from '@/constant';
@@ -13,6 +14,7 @@ const UserRecommendation = () => {
   const { authUser } = useAuthUser();
   const [randomSuggestion, setRandomSuggestion] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const handleError = useErrorHandler();
 
   useEffect(() => {
     const getRandomUsers = async () => {
@@ -39,7 +41,7 @@ const UserRecommendation = () => {
         }
         setRandomSuggestion(userList);
       } catch (error) {
-        console.log('ERROR while fetching random user data', error);
+        handleError(error);
       } finally {
         setIsLoading(false);
       }

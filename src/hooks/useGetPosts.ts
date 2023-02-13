@@ -1,4 +1,9 @@
-import type { DocumentData, DocumentSnapshot, Query } from 'firebase/firestore';
+import type {
+  DocumentData,
+  DocumentSnapshot,
+  FirestoreError,
+  Query,
+} from 'firebase/firestore';
 import {
   getDoc,
   limit,
@@ -15,6 +20,7 @@ export const useGetPosts = () => {
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
+  const [error, setError] = useState<FirestoreError>();
 
   const getPosts = useCallback(
     (initialQuery: Query<DocumentData>) => {
@@ -44,6 +50,7 @@ export const useGetPosts = () => {
         },
         (err) => {
           console.log('ERROR in useGetPosts', err);
+          setError(err);
           setPostsLoading(false);
         }
       );
@@ -79,6 +86,7 @@ export const useGetPosts = () => {
       },
       (err) => {
         console.log('ERROR in getInitialPost', err);
+        setError(err);
         setPostsLoading(false);
       }
     );
@@ -93,5 +101,6 @@ export const useGetPosts = () => {
     getPosts,
     lastVisible,
     getInitialPosts,
+    error,
   };
 };

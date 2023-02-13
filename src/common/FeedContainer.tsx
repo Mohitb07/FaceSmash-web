@@ -1,6 +1,7 @@
 import { SlideFade } from '@chakra-ui/react';
 import type { DocumentData, Query, Unsubscribe } from 'firebase/firestore';
 import React, { useCallback, useEffect } from 'react';
+import { useErrorHandler } from 'react-error-boundary';
 
 import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
@@ -24,7 +25,9 @@ const FeedContainer = ({ userQuery }: FeedContainerProps) => {
     memoizedPosts,
     lastVisible,
     postsLoading,
+    error,
   } = useGetPosts();
+  useErrorHandler(error);
 
   useEffect(() => {
     let unsubscriber: Unsubscribe;

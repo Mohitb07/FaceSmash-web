@@ -1,9 +1,11 @@
 import { SlideFade } from '@chakra-ui/react';
 import { collection, orderBy, query } from 'firebase/firestore';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import FeedContainer from '@/common/FeedContainer';
 import Navigation from '@/common/Navigation';
 import Brand from '@/components/Brand';
+import ErrorFallback from '@/components/Error';
 import UserRecommendation from '@/components/UserRecommendation';
 import { POSTS_COLLECTION } from '@/constant';
 import { useGetPosts } from '@/hooks/useGetPosts';
@@ -38,11 +40,15 @@ function Home() {
           </header>
           <div className="flex justify-center gap-10 md:p-10">
             <main className="w-auto space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
-              <FeedContainer userQuery={userQuery} />
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <FeedContainer userQuery={userQuery} />
+              </ErrorBoundary>
             </main>
             <aside className="hidden flex-col lg:flex">
               <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
-                <UserRecommendation />
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                  <UserRecommendation />
+                </ErrorBoundary>
               </SlideFade>
             </aside>
           </div>
