@@ -1,9 +1,11 @@
 import { collection, orderBy, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import FeedContainer from '@/common/FeedContainer';
 import Navigation from '@/common/Navigation';
+import ErrorFallback from '@/components/Error';
 import UserDetail from '@/components/Profile/UserDetails';
 import { POSTS_COLLECTION } from '@/constant';
 import { useGetUser } from '@/hooks/useGetUser';
@@ -17,7 +19,6 @@ const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.userId as string;
   const { userDetail, isUserDetailLoading } = useGetUser(userId);
-
   const userQuery = useMemo(
     () =>
       query(
@@ -43,15 +44,19 @@ const UserProfile = () => {
         <Navigation />
       </div>
       <div className="flex flex-col justify-start space-y-3 md:items-center md:justify-center md:space-y-10 md:p-10 lg:ml-[10%] xl:ml-0">
-        <UserDetail
-          isLoading={isUserDetailLoading}
-          user={userDetail}
-          userId={userId}
-          userQuery={userQuery}
-        />
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <UserDetail
+            isLoading={isUserDetailLoading}
+            user={userDetail}
+            userId={userId}
+            userQuery={userQuery}
+          />
+        </ErrorBoundary>
 
         <div className="space-y-5 pb-16">
-          <FeedContainer userQuery={userQuery} />
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <FeedContainer userQuery={userQuery} />
+          </ErrorBoundary>
         </div>
       </div>
     </Main>

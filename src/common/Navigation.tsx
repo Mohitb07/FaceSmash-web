@@ -6,8 +6,10 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { lazy, Suspense, useState } from 'react';
+import { ErrorBoundary, useErrorHandler } from 'react-error-boundary';
 
 import BottomNavigation from '@/components/BottomNavigation';
+import ErrorFallback from '@/components/Error';
 import Sidebar from '@/components/SideNavigation';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
@@ -17,10 +19,10 @@ const SearchDrawer = lazy(
 );
 
 const Navigation = () => {
-  const { authUser } = useAuthUser();
+  const { authUser, error } = useAuthUser();
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  useErrorHandler(error);
   const searchDrawerClose = () => {
     if (isSearchDrawerOpen) {
       setIsSearchDrawerOpen(false);
@@ -32,15 +34,16 @@ const Navigation = () => {
       setIsModalOpen(false);
     }
   };
-
   return (
-    <div>
-      <div>
-        <Sidebar
-          user={authUser}
-          setIsModalOpen={setIsModalOpen}
-          setIsSearchDrawerOpen={setIsSearchDrawerOpen}
-        />
+    <div className="h-full w-full">
+      <div className="fixed hidden h-full bg-[#0b0b0b] md:flex">
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Sidebar
+            user={authUser}
+            setIsModalOpen={setIsModalOpen}
+            setIsSearchDrawerOpen={setIsSearchDrawerOpen}
+          />
+        </ErrorBoundary>
       </div>
       <div>
         <BottomNavigation
