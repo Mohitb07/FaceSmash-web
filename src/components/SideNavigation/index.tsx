@@ -35,9 +35,8 @@ const Sidebar = ({
         console.log('error while signing out', error);
       });
   };
-
   return (
-    <div className="fixed hidden h-full flex-col justify-between bg-[#0b0b0b] px-[2rem] pt-[5rem] pb-[2rem] md:flex">
+    <div className="flex h-full flex-col justify-between px-[2rem] pt-[5rem] pb-[2rem]">
       <nav>
         <div className="hidden lg:block">
           <Brand styles="mb-[3rem] ml-[1rem]" />

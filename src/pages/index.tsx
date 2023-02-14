@@ -32,7 +32,9 @@ function Home() {
         />
       }
     >
-      <Navigation />
+      <div>
+        <Navigation />
+      </div>
       <div className="h-screen">
         <div>
           <header className="block text-center md:hidden">
