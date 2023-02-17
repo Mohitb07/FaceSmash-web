@@ -36,7 +36,7 @@ const Navigation = () => {
   };
   return (
     <div className="h-full w-full">
-      <div className="fixed hidden h-full bg-[#0b0b0b] md:flex">
+      <div className="fixed hidden h-full md:flex">
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <Sidebar
             user={authUser}
