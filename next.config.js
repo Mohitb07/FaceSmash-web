@@ -21,10 +21,10 @@ module.exports = withBundleAnalyzer({
       '',
       'static.cdninstagram.com',
       'lh3.googleusercontent.com',
-      'scontent-del1-2.cdninstagram.com',
       'projects.websetters.in',
       'firebasestorage.googleapis.com',
       'encrypted-tbn0.gstatic.com',
+      'i.postimg.cc',
     ],
   },
 });
