@@ -31,13 +31,14 @@ const Layout: React.FC<LayoutProps> = ({
         />
       }
     >
-      <div className="flex-container min-h-screen">
-        <div className="hidden items-center  justify-center pt-16 lg:flex">
+      <div className="flex-container min-h-screen space-x-16">
+        <div className="lg:flex-container hidden">
           <Image
-            src="https://static.cdninstagram.com/rsrc.php/v3/y4/r/ItTndlZM2n2.png"
-            alt=""
-            height={800}
-            width={600}
+            src="https://i.postimg.cc/tg77N3Rm/m2.png"
+            alt="authentication page app showcase"
+            objectFit="contain"
+            height={700}
+            width={400}
           />
         </div>
         <div>
@@ -61,9 +62,7 @@ const Layout: React.FC<LayoutProps> = ({
               </Link>
             </div>
           </div>
-          <div
-            className={`md:flex-container bg-color mt-5 hidden h-20 w-[500px]`}
-          >
+          <div className="md:flex-container bg-color mt-5 hidden h-20 w-[500px]">
             <Link href={footerLink}>
               <h1 className="form-label-text text-lg">
                 {footerText}{' '}
