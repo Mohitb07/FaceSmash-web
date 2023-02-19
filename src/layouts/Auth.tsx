@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({
         />
       }
     >
-      <div className="flex-container min-h-screen space-x-16">
+      <div className="flex-container min-h-screen md:space-x-16">
         <div className="lg:flex-container hidden">
           <Image
             src="https://i.postimg.cc/tg77N3Rm/m2.png"
