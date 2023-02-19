@@ -70,13 +70,15 @@ const Register = () => {
             placeholder="Enter your username"
             type="text"
           />
-          <Text
-            fontSize="sm"
-            paddingLeft="4"
-            color={charactersLeft > 0 ? 'white' : 'crimson'}
-          >
-            Characters left {charactersLeft}
-          </Text>
+          {registerFieldData.username.length > 0 && (
+            <Text
+              fontSize="sm"
+              paddingLeft="4"
+              color={charactersLeft > 0 ? 'white' : 'crimson'}
+            >
+              Characters left {charactersLeft}
+            </Text>
+          )}
         </div>
         <div className="flex flex-col space-y-1">
           <label htmlFor="email" className="form-label-text">
