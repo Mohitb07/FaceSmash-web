@@ -4,7 +4,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,6 +16,7 @@ import {
 import { doc, updateDoc } from 'firebase/firestore';
 import React, { memo, useRef, useState } from 'react';
 
+import Input from '@/components/Input';
 import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useImageUpload } from '@/hooks/useImageUpload';
@@ -48,6 +48,7 @@ const ProfilePic = ({
   if (selectedImage) {
     return (
       <Avatar
+        _hover={{ opacity: 0.5 }}
         onError={() => console.log('image error')}
         loading="lazy"
         ignoreFallback
@@ -59,6 +60,7 @@ const ProfilePic = ({
   } else {
     return (
       <Avatar
+        _hover={{ opacity: 0.5 }}
         onError={() => console.log('image error')}
         loading="lazy"
         ignoreFallback
@@ -170,22 +172,18 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
                   <Input
                     ref={imageInputRef}
                     hidden
-                    disabled={loading}
+                    isDisabled={loading}
                     name="image"
                     type="file"
-                    focusBorderColor="brand.100"
-                    rounded="lg"
                     onChange={handleImageProcessing}
                   />
                 </div>
               </div>
               <FormLabel>Change your Bio</FormLabel>
               <Input
-                disabled={loading}
+                isDisabled={loading}
                 autoFocus
                 name="bio"
-                focusBorderColor="brand.100"
-                rounded="lg"
                 placeholder="Your bio"
                 value={updateProfileFieldData.bio}
                 onChange={onChangeHandler}

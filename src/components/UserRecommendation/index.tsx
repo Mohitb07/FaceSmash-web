@@ -49,9 +49,9 @@ const UserRecommendation = () => {
     getRandomUsers();
   }, [authUser?.uid]);
 
-  if (isLoading) {
+  if (isLoading || !authUser) {
     return (
-      <div className="flex h-[15rem] w-[15rem] items-center justify-center">
+      <div className="flex-container h-[15rem] w-[15rem]">
         <Spinner size="lg" />
       </div>
     );
@@ -61,12 +61,12 @@ const UserRecommendation = () => {
     <div className="h-auto w-[15rem]">
       <div className="mt-10 flex items-center gap-5">
         <UserCard
-          userId={authUser?.uid || ''}
+          userId={authUser.uid}
           size="md"
           fontSize="medium"
-          username={authUser?.username || ''}
-          email={authUser?.email || ''}
-          profileURL={authUser?.profilePic || ''}
+          username={authUser.username}
+          email={authUser.email}
+          profileURL={authUser.profilePic}
         />
       </div>
       <div className="mt-5">

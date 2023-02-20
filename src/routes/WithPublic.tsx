@@ -17,7 +17,7 @@ export const withPublic = (Component: () => JSX.Element) => {
 
     if (loading) {
       return (
-        <div className="z-50 flex h-screen w-screen items-center justify-center bg-red-500">
+        <div className="flex-container z-50 h-screen w-screen">
           <Spinner size="xl" />
         </div>
       );
