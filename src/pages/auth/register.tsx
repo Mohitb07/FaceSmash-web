@@ -7,12 +7,11 @@ import {
 import React, { useState } from 'react';
 
 import Button from '@/components/Button';
+import ErrorLabel from '@/components/ErrorLabel';
 import Input from '@/components/Input';
 import { useRegister } from '@/hooks/useRegister';
 import AuthLayout from '@/layouts/Auth';
 import { withPublic } from '@/routes/WithPublic';
-
-import { FIREBASE_ERRORS } from '../../../firebase/error';
 
 const Register = () => {
   const [registerFieldData, setRegisterFieldData] = useState({
@@ -47,6 +46,15 @@ const Register = () => {
     registerFieldData.password === registerFieldData.confirmPassword;
   const confirmPasswordLabel = "Password doesn't match";
 
+  const onRegisterAttempt = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSignUp(
+      registerFieldData.username,
+      registerFieldData.email,
+      registerFieldData.password
+    );
+  };
+
   return (
     <AuthLayout
       meta="Sign Up"
@@ -55,7 +63,11 @@ const Register = () => {
       footerLink="/auth/login"
       containerStyle="h-screen md:h-[800px]"
     >
-      <div className="mt-5 flex flex-col space-y-2">
+      <form
+        noValidate
+        onSubmit={onRegisterAttempt}
+        className="mt-5 flex flex-col space-y-2"
+      >
         <div className="flex flex-col space-y-1">
           <label htmlFor="username" className="form-label-text">
             Username
@@ -94,11 +106,7 @@ const Register = () => {
             placeholder="Email"
             type="email"
           />
-          {error.email && (
-            <Text fontSize="medium" color="crimson">
-              {FIREBASE_ERRORS[error.email as keyof typeof FIREBASE_ERRORS]}
-            </Text>
-          )}
+          <ErrorLabel error={error.email} />
         </div>
         <div className="flex flex-col space-y-1">
           <label htmlFor="password" className="form-label-text">
@@ -123,11 +131,7 @@ const Register = () => {
               </InputRightElement>
             )}
           </InputGroup>
-          {error.password && (
-            <Text fontSize="medium" color="crimson">
-              {FIREBASE_ERRORS[error.password as keyof typeof FIREBASE_ERRORS]}
-            </Text>
-          )}
+          <ErrorLabel error={error.password} />
         </div>
         <div className="flex flex-col space-y-1 pb-5">
           <label htmlFor="password" className="form-label-text">
@@ -160,20 +164,10 @@ const Register = () => {
             </Text>
           )}
         </div>
-        <Button
-          isLoading={loading}
-          isDisabled={loading}
-          onClick={() =>
-            onSignUp(
-              registerFieldData.username,
-              registerFieldData.email,
-              registerFieldData.password
-            )
-          }
-        >
+        <Button type="submit" isLoading={loading} isDisabled={loading}>
           Sign Up
         </Button>
-      </div>
+      </form>
     </AuthLayout>
   );
 };

@@ -1,18 +1,12 @@
-import {
-  InputGroup,
-  InputRightElement,
-  Text,
-  useBoolean,
-} from '@chakra-ui/react';
+import { InputGroup, InputRightElement, useBoolean } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
 import Button from '@/components/Button';
+import ErrorLabel from '@/components/ErrorLabel';
 import Input from '@/components/Input';
 import { useLogin } from '@/hooks/useLogin';
 import AuthLayout from '@/layouts/Auth';
 import { withPublic } from '@/routes/WithPublic';
-
-import { FIREBASE_ERRORS } from '../../../firebase/error';
 
 const Login = () => {
   const [loginFieldData, setLoginFieldData] = useState({
@@ -45,8 +39,10 @@ const Login = () => {
       [event.target.name]: event.target.value,
     }));
 
-  const onSignInAttempt = () =>
+  const onSignInAttempt = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     onSignIn(loginFieldData.email, loginFieldData.password);
+  };
 
   return (
     <AuthLayout
@@ -55,7 +51,11 @@ const Login = () => {
       footerLabel="Sign Up"
       footerLink="/auth/register"
     >
-      <div className="mt-5 flex flex-col space-y-2">
+      <form
+        noValidate
+        onSubmit={onSignInAttempt}
+        className="mt-5 flex flex-col space-y-2"
+      >
         <div className="flex flex-col space-y-1">
           <label htmlFor="email" className="form-label-text">
             Email
@@ -70,11 +70,7 @@ const Login = () => {
             placeholder="Email"
             type="email"
           />
-          {error.email && (
-            <Text fontSize="medium" color="crimson">
-              {FIREBASE_ERRORS[error.email as keyof typeof FIREBASE_ERRORS]}
-            </Text>
-          )}
+          <ErrorLabel error={error.email} />
         </div>
 
         <div className="flex flex-col space-y-1 pb-10">
@@ -100,21 +96,17 @@ const Login = () => {
               </InputRightElement>
             )}
           </InputGroup>
-          {error.password && (
-            <Text fontSize="medium" color="crimson">
-              {FIREBASE_ERRORS[error.password as keyof typeof FIREBASE_ERRORS]}
-            </Text>
-          )}
+          <ErrorLabel error={error.password} />
         </div>
         <Button
+          type="submit"
           isLoading={loading}
           size="md"
           isDisabled={disableLoginBtn}
-          onClick={onSignInAttempt}
         >
           Log in
         </Button>
-      </div>
+      </form>
     </AuthLayout>
   );
 };
