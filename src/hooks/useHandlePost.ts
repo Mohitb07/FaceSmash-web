@@ -30,11 +30,17 @@ export const useHandlePost = () => {
       const q = query(
         collection(db, `${USERS_COLLECTION}/${authUser?.uid}/postlikes`)
       );
-      unsubscriber = onSnapshot(q, (querySnap) => {
-        const list: string[] = querySnap.docs.map((d) => d.data().postId);
-        const setList = new Set(list);
-        setUserLikedPosts(setList);
-      });
+      unsubscriber = onSnapshot(
+        q,
+        (querySnap) => {
+          const list: string[] = querySnap.docs.map((d) => d.data().postId);
+          const setList = new Set(list);
+          setUserLikedPosts(setList);
+        },
+        (err) => {
+          console.log('error while fetching user liked posts', err);
+        }
+      );
     };
     getUserLikedPosts();
     return () => {
