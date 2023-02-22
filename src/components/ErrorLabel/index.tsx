@@ -5,9 +5,17 @@ import { FIREBASE_ERRORS } from './../../../firebase/error';
 
 type ErrorLabelProps = {
   error: string;
+  validationError?: string;
 };
 
-const ErrorLabel = ({ error }: ErrorLabelProps) => {
+const ErrorLabel = ({ error, validationError }: ErrorLabelProps) => {
+  if (validationError) {
+    return (
+      <Text fontSize="medium" color="crimson">
+        {validationError}
+      </Text>
+    );
+  }
   return error.length ? (
     <Text fontSize="medium" color="crimson">
       {FIREBASE_ERRORS[error as keyof typeof FIREBASE_ERRORS]}
