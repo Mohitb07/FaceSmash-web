@@ -1,5 +1,5 @@
 import type { DocumentSnapshot, Unsubscribe } from 'firebase/firestore';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 type DataListProps<D> = {
   data: D[];
@@ -21,15 +21,18 @@ const DataList = <D extends { key: string }>({
   lastVisible,
 }: DataListProps<D>) => {
   const lastPostId = data[data.length - 1]?.key;
-
+  const isMounted = useRef(false);
   useEffect(() => {
     let unsubscribe: Unsubscribe;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (lastVisible) {
+        if (isMounted.current) {
+          if (entry.isIntersecting && lastVisible) {
+            console.log('calling getMore');
             unsubscribe = getMore();
           }
+        } else {
+          isMounted.current = true;
         }
       });
     });
@@ -43,7 +46,7 @@ const DataList = <D extends { key: string }>({
       observer.disconnect();
       if (typeof unsubscribe === 'function') unsubscribe();
     };
-  }, [lastPostId, getMore, lastVisible]);
+  }, [lastVisible, getMore]);
 
   if (data.length === 0 && !isLoading) {
     return <ListEmptyComponent />;
@@ -51,13 +54,11 @@ const DataList = <D extends { key: string }>({
   return (
     <>
       <div className="space-y-8">
-        {data.map((item) => {
-          return (
-            <div key={item.key} id={item.key}>
-              {renderItem(item)}
-            </div>
-          );
-        })}
+        {data.map((item) => (
+          <div key={item.key} id={item.key}>
+            {renderItem(item)}
+          </div>
+        ))}
         {ListFooterComponent}
       </div>
     </>
