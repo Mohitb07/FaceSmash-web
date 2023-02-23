@@ -1,5 +1,5 @@
 import { SlideFade } from '@chakra-ui/react';
-import type { DocumentData, Query, Unsubscribe } from 'firebase/firestore';
+import { collection, orderBy, query } from 'firebase/firestore';
 import React, { useCallback, useEffect } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
@@ -7,16 +7,20 @@ import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
 import Footer from '@/components/DataList/Footer';
 import Feed from '@/components/Feed';
+import { POSTS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useGetPosts } from '@/hooks/useGetPosts';
 import { useHandlePost } from '@/hooks/useHandlePost';
 import type { Post } from '@/interface';
 
-type FeedContainerProps = {
-  userQuery: Query<DocumentData>;
-};
+import { db } from '../../firebase';
 
-const FeedContainer = ({ userQuery }: FeedContainerProps) => {
+const userQuery = query(
+  collection(db, POSTS_COLLECTION),
+  orderBy('createdAt', 'desc')
+);
+
+const FeedContainer = () => {
   const { authUser } = useAuthUser();
   const { userLikedPosts } = useHandlePost();
   const {
@@ -30,12 +34,9 @@ const FeedContainer = ({ userQuery }: FeedContainerProps) => {
   useErrorHandler(error);
 
   useEffect(() => {
-    let unsubscriber: Unsubscribe;
-    unsubscriber = getInitialPosts(userQuery);
-    return () => {
-      unsubscriber();
-    };
-  }, [userQuery]);
+    const unsubscriber = getInitialPosts(userQuery);
+    return () => unsubscriber();
+  }, []);
 
   function renderItem<T extends Post>(feed: T) {
     return (
