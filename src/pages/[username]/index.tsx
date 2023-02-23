@@ -19,7 +19,7 @@ const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.userId as string;
   const { userDetail, isUserDetailLoading } = useGetUser(userId);
-  const userQuery = useMemo(
+  const postQuery = useMemo(
     () =>
       query(
         collection(db, POSTS_COLLECTION),
@@ -49,13 +49,13 @@ const UserProfile = () => {
             isLoading={isUserDetailLoading}
             user={userDetail}
             userId={userId}
-            userQuery={userQuery}
+            userQuery={postQuery}
           />
         </ErrorBoundary>
 
         <div className="space-y-5 pb-16">
           <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <FeedContainer userQuery={userQuery} />
+            <FeedContainer customQuery={postQuery} />
           </ErrorBoundary>
         </div>
       </div>

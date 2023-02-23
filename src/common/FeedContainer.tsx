@@ -1,5 +1,5 @@
 import { SlideFade } from '@chakra-ui/react';
-import { collection, orderBy, query } from 'firebase/firestore';
+import type { DocumentData, Query } from 'firebase/firestore';
 import React, { useCallback, useEffect } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
@@ -7,20 +7,16 @@ import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
 import Footer from '@/components/DataList/Footer';
 import Feed from '@/components/Feed';
-import { POSTS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useGetPosts } from '@/hooks/useGetPosts';
 import { useHandlePost } from '@/hooks/useHandlePost';
 import type { Post } from '@/interface';
 
-import { db } from '../../firebase';
+type FeedContainerProps = {
+  customQuery: Query<DocumentData>;
+};
 
-const userQuery = query(
-  collection(db, POSTS_COLLECTION),
-  orderBy('createdAt', 'desc')
-);
-
-const FeedContainer = () => {
+const FeedContainer = ({ customQuery }: FeedContainerProps) => {
   const { authUser } = useAuthUser();
   const { userLikedPosts } = useHandlePost();
   const {
@@ -34,7 +30,7 @@ const FeedContainer = () => {
   useErrorHandler(error);
 
   useEffect(() => {
-    const unsubscriber = getInitialPosts(userQuery);
+    const unsubscriber = getInitialPosts(customQuery);
     return () => unsubscriber();
   }, []);
 
@@ -59,7 +55,7 @@ const FeedContainer = () => {
     );
   }
 
-  const paginateMoreData = useCallback(() => getPosts(userQuery), [getPosts]);
+  const paginateMoreData = useCallback(() => getPosts(customQuery), [getPosts]);
 
   return (
     <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
