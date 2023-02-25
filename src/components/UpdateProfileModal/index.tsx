@@ -44,33 +44,17 @@ const ProfilePic = ({
   username,
   selectedImage,
   defaultImage,
-}: ProfilePicProps) => {
-  if (selectedImage) {
-    return (
-      <Avatar
-        _hover={{ opacity: 0.5 }}
-        onError={() => console.log('image error')}
-        loading="lazy"
-        ignoreFallback
-        size="2xl"
-        name={username}
-        src={URL.createObjectURL(selectedImage)}
-      />
-    );
-  } else {
-    return (
-      <Avatar
-        _hover={{ opacity: 0.5 }}
-        onError={() => console.log('image error')}
-        loading="lazy"
-        ignoreFallback
-        size="2xl"
-        name={username}
-        src={defaultImage}
-      />
-    );
-  }
-};
+}: ProfilePicProps) => (
+  <Avatar
+    _hover={{ opacity: 0.5 }}
+    onError={() => console.log('image error')}
+    loading="lazy"
+    ignoreFallback
+    size="2xl"
+    name={username}
+    src={selectedImage ? URL.createObjectURL(selectedImage) : defaultImage}
+  />
+);
 
 const MemoizedProfile = memo(ProfilePic);
 
