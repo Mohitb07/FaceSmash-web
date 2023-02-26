@@ -6,6 +6,8 @@ import {
 } from 'firebase/storage';
 import { useState } from 'react';
 
+import type { CustomFile } from '@/interface';
+
 export const useImageUpload = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
@@ -13,11 +15,14 @@ export const useImageUpload = () => {
   const storage = getStorage();
   const uploadImage = (
     urlRef: string,
-    file: Blob | MediaSource,
+    file: CustomFile,
     cb: (url: string) => void
   ) => {
     const storageRef = ref(storage, urlRef);
-    const uploadTask = uploadBytesResumable(storageRef, file as Blob);
+    const uploadTask = uploadBytesResumable(
+      storageRef,
+      file as unknown as Blob
+    );
     uploadTask.on(
       'state_changed',
       (snap) => {
