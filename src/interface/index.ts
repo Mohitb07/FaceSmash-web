@@ -48,3 +48,16 @@ export interface PostLikes {
 }
 
 export type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
+
+export interface CustomFile {
+  extension: string;
+  id: string;
+  preview: { type: 'image'; url: string };
+  sizeReadable: string;
+  lastModified: number;
+  lastModifiedDate: Date;
+  name: string;
+  size: number;
+  type: string;
+  webkitRelativePath: string;
+}
