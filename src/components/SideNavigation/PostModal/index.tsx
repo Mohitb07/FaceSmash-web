@@ -25,6 +25,7 @@ import Input from '@/components/Input';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHandlePost } from '@/hooks/useHandlePost';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import type { CustomFile } from '@/interface';
 import { convertImageObject } from '@/utils/convertImageObject';
 
 type PostModalProps = {
@@ -110,12 +111,16 @@ const CreatePostModal = ({
       setIsLoading(true);
       if (postData.image && authUser?.uid) {
         const urlRef = `${authUser.uid}/posts/${postData.imageRef}`;
-        uploadImage(urlRef, postData.image, (url: string) => {
-          createPostWithImage(authUser, url, postData, () => {
-            modalClose();
-            setIsLoading(false);
-          });
-        });
+        uploadImage(
+          urlRef,
+          postData.image as unknown as CustomFile,
+          (url: string) => {
+            createPostWithImage(authUser, url, postData, () => {
+              modalClose();
+              setIsLoading(false);
+            });
+          }
+        );
       }
       if (!postData.image && authUser?.uid) {
         createPostWithoutImage(authUser, postData, () => {
