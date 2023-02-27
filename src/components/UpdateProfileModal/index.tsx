@@ -148,7 +148,7 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <form onSubmit={handleSubmit(handleProfileUpdate)}>
+      <form noValidate onSubmit={handleSubmit(handleProfileUpdate)}>
         <ModalContent>
           <ModalHeader>
             <Text fontSize="2xl">Edit Profile</Text>
