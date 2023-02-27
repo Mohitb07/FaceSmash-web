@@ -13,12 +13,19 @@ import {
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 
-import type { PostValue } from '@/components/SideNavigation/PostModal';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import type { User } from '@/interface';
+import type { CustomFile, User } from '@/interface';
 
 import { db } from '../../firebase';
+
+type PostCreationFormData = {
+  title: string;
+  description: string;
+  image?: CustomFile | null;
+  link?: string;
+  imageRef?: string;
+};
 
 export const useHandlePost = () => {
   const [userLikedPosts, setUserLikedPosts] = useState<Set<string>>(new Set());
@@ -51,7 +58,7 @@ export const useHandlePost = () => {
   const createPostWithImage = async (
     user: User,
     url: string,
-    data: PostValue,
+    data: PostCreationFormData,
     cb?: () => void
   ) => {
     await addDoc(collection(db, POSTS_COLLECTION), {
@@ -69,7 +76,7 @@ export const useHandlePost = () => {
 
   const createPostWithoutImage = async (
     user: User,
-    data: PostValue,
+    data: PostCreationFormData,
     cb?: () => void
   ) => {
     await addDoc(collection(db, POSTS_COLLECTION), {
