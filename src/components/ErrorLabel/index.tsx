@@ -11,13 +11,13 @@ type ErrorLabelProps = {
 const ErrorLabel = ({ error, validationError }: ErrorLabelProps) => {
   if (validationError) {
     return (
-      <Text fontSize="medium" color="crimson">
+      <Text role="alert" aria-live="polite" fontSize="medium" color="crimson">
         {validationError}
       </Text>
     );
   }
   return error?.length ? (
-    <Text fontSize="medium" color="crimson">
+    <Text role="alert" aria-live="polite" fontSize="medium" color="crimson">
       {FIREBASE_ERRORS[error as keyof typeof FIREBASE_ERRORS]}
     </Text>
   ) : null;
