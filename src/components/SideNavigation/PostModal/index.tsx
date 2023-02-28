@@ -1,17 +1,8 @@
 import {
-  Box,
-  Button,
   Flex,
   FormControl,
   FormLabel,
   IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
   Textarea,
   useBoolean,
@@ -28,6 +19,7 @@ import { BsImages } from 'react-icons/bs';
 import * as yup from 'yup';
 
 import ErrorLabel from '@/components/ErrorLabel';
+import FormModal from '@/components/FormModal';
 import Input from '@/components/Input';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHandlePost } from '@/hooks/useHandlePost';
@@ -38,27 +30,6 @@ type PostModalProps = {
   isModalOpen: boolean;
   modalClose: () => void;
 };
-
-const PostImage = ({ selectedImage }: { selectedImage: string | null }) => {
-  if (selectedImage) {
-    return (
-      <div className="flex items-center justify-center p-2">
-        <Image
-          src={selectedImage}
-          height={300}
-          width={600}
-          alt="post image"
-          objectFit="cover"
-          className="rounded-2xl"
-        />
-      </div>
-    );
-  } else {
-    return null;
-  }
-};
-
-const MemoizedPostImage = memo(PostImage);
 
 const schema = yup
   .object({
@@ -157,160 +128,129 @@ const CreatePostModal = ({
   };
 
   return (
-    <Modal
-      isCentered
-      isOpen={isModalOpen || isLoading}
+    <FormModal
+      title="Create new post"
+      isOpen={isModalOpen}
       onClose={modalClose}
-      size="4xl"
+      footerBtnLabel="Create"
+      onSubmit={handleSubmit(handlePostCreation)}
+      isLoading={isLoading}
     >
-      <ModalOverlay />
-      <form noValidate onSubmit={handleSubmit(handlePostCreation)}>
-        <ModalContent>
-          <ModalHeader>
-            <Text fontSize="2xl">Create new post</Text>
-          </ModalHeader>
-          <ModalCloseButton disabled={isLoading} />
-          <ModalBody>
-            <Box p={1}>
-              <FormControl isRequired isInvalid={false}>
-                <FormLabel>Title</FormLabel>
-                <Controller
-                  name="title"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      isInvalid={!!errors.title?.message}
-                      isDisabled={isLoading}
-                      autoFocus
-                      name="title"
-                      placeholder="Enter title of your post"
-                    />
-                  )}
+      <FormControl isRequired isInvalid={false}>
+        <FormLabel>Title</FormLabel>
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              isInvalid={!!errors.title?.message}
+              isDisabled={isLoading}
+              autoFocus
+              name="title"
+              placeholder="Enter title of your post"
+            />
+          )}
+        />
+        <ErrorLabel validationError={errors.title?.message} />
+        {isLinkVisible && (
+          <div className="mt-5">
+            <FormLabel>Link</FormLabel>
+            <Controller
+              name="link"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  isDisabled={isLoading}
+                  name="link"
+                  type="url"
+                  placeholder="Provide link"
                 />
-                <ErrorLabel validationError={errors.title?.message} />
-                {isLinkVisible && (
-                  <div className="mt-5">
-                    <FormLabel>Link</FormLabel>
-                    <Controller
-                      name="link"
-                      control={control}
-                      render={({ field }) => (
-                        <Input
-                          {...field}
-                          isDisabled={isLoading}
-                          name="link"
-                          type="url"
-                          placeholder="Provide link"
-                        />
-                      )}
-                    />
-                    <ErrorLabel validationError={errors.link?.message} />
-                  </div>
-                )}
-                <FormLabel mt={5}>Description</FormLabel>
-                <Controller
-                  name="description"
-                  control={control}
-                  render={({ field }) => (
-                    <Textarea
-                      {...field}
-                      disabled={isLoading}
-                      name="description"
-                      rounded="lg"
-                      focusBorderColor="brand.100"
-                      colorScheme="brand"
-                      rows={10}
-                      _placeholder={{ fontSize: 18 }}
-                      placeholder="Enter description of your post"
-                      size="md"
-                    />
-                  )}
-                />
-                <ErrorLabel validationError={errors.description?.message} />
-                {isImageContainerVisible && (
-                  <div className="mt-5 min-h-[5rem] overflow-hidden rounded-md border-2 border-dashed border-slate-600 px-3">
-                    <Files
-                      onChange={handleChange}
-                      onError={handleError}
-                      accepts={['image/*']}
-                      maxFileSize={1000000}
-                      minFileSize={0}
-                      clickable
-                    >
-                      {!fileInput.file && (
-                        <Text
-                          textAlign="center"
-                          mt={4}
-                          color="GrayText"
-                          fontSize="2xl"
-                        >
-                          Select Image from your system
-                        </Text>
-                      )}
-                      <MemoizedPostImage
-                        selectedImage={fileInput.file?.preview.url ?? null}
-                      />
-                    </Files>
-                  </div>
-                )}
-                <ErrorLabel validationError={fileInput.error} />
-              </FormControl>
-              <Flex gap={3} mt={5}>
-                <IconButton
-                  onClick={setIsLinkVisible.toggle}
-                  colorScheme={`${isLinkVisible ? 'gray' : 'blue'}`}
-                  aria-label="Add link"
-                  icon={
-                    isLinkVisible ? (
-                      <BiUnlink className="text-xl" />
-                    ) : (
-                      <BiLink className="text-xl" />
-                    )
-                  }
-                />
-                <IconButton
-                  onClick={setIsImageContainerVisible.toggle}
-                  colorScheme={`${isImageContainerVisible ? 'gray' : 'teal'}`}
-                  aria-label="Add photo"
-                  icon={
-                    isImageContainerVisible ? (
-                      <BsImages className="text-xl" />
-                    ) : (
-                      <BsImages className="text-xl" />
-                    )
-                  }
-                />
-              </Flex>
-            </Box>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              aria-label="Close modal"
+              )}
+            />
+            <ErrorLabel validationError={errors.link?.message} />
+          </div>
+        )}
+        <FormLabel mt={5}>Description</FormLabel>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <Textarea
+              {...field}
               disabled={isLoading}
-              color="white"
-              colorScheme="ghost"
-              mr={3}
-              onClick={modalClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              aria-label="Create post"
-              disabled={isLoading}
-              type="submit"
-              rounded="full"
-              color="white"
+              name="description"
+              rounded="lg"
+              focusBorderColor="brand.100"
               colorScheme="brand"
-              variant="solid"
-              isLoading={isLoading}
+              rows={10}
+              _placeholder={{ fontSize: 18 }}
+              placeholder="Enter description of your post"
+              size="md"
+            />
+          )}
+        />
+        <ErrorLabel validationError={errors.description?.message} />
+        {isImageContainerVisible && (
+          <div className="mt-5 min-h-[5rem] overflow-hidden rounded-md border-2 border-dashed border-slate-600 px-3">
+            <Files
+              onChange={handleChange}
+              onError={handleError}
+              accepts={['image/*']}
+              maxFileSize={1000000}
+              minFileSize={0}
+              clickable
             >
-              Create
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </form>
-    </Modal>
+              {!fileInput.file && (
+                <Text textAlign="center" mt={4} color="GrayText" fontSize="2xl">
+                  Select Image from your system
+                </Text>
+              )}
+              {fileInput.file && (
+                <div className="flex items-center justify-center p-2">
+                  <Image
+                    src={fileInput.file?.preview.url}
+                    height={300}
+                    width={600}
+                    alt="post image"
+                    objectFit="cover"
+                    className="rounded-2xl"
+                  />
+                </div>
+              )}
+            </Files>
+          </div>
+        )}
+        <ErrorLabel validationError={fileInput.error} />
+      </FormControl>
+      <Flex gap={3} mt={5}>
+        <IconButton
+          onClick={setIsLinkVisible.toggle}
+          colorScheme={`${isLinkVisible ? 'gray' : 'blue'}`}
+          aria-label="Add a link"
+          icon={
+            isLinkVisible ? (
+              <BiUnlink className="text-xl" />
+            ) : (
+              <BiLink className="text-xl" />
+            )
+          }
+        />
+        <IconButton
+          onClick={setIsImageContainerVisible.toggle}
+          colorScheme={`${isImageContainerVisible ? 'gray' : 'teal'}`}
+          aria-label="Add an image"
+          icon={
+            isImageContainerVisible ? (
+              <BsImages className="text-xl" />
+            ) : (
+              <BsImages className="text-xl" />
+            )
+          }
+        />
+      </Flex>
+    </FormModal>
   );
 };
 export default memo(CreatePostModal);

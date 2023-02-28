@@ -1,64 +1,25 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Avatar, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { doc, updateDoc } from 'firebase/firestore';
-import React, { memo, useState } from 'react';
+import React, { useState } from 'react';
 import Files from 'react-files';
-import { Controller } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form/dist/types';
 import * as yup from 'yup';
 
-import Input from '@/components/Input';
-import { DEFAULT_PROFILE_PIC, USERS_COLLECTION } from '@/constant';
+import { USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import type { CustomFile } from '@/interface';
 
 import { db } from '../../../firebase';
 import ErrorLabel from '../ErrorLabel';
+import FormModal from '../FormModal';
 
 type UpdateProfileModalProps = {
   onClose: () => void;
   isOpen: boolean;
 };
-
-type ProfilePicProps = {
-  username: string;
-  selectedImage?: string;
-  defaultImage?: string;
-};
-
-const ProfilePic = ({
-  username,
-  selectedImage,
-  defaultImage,
-}: ProfilePicProps) => (
-  <Avatar
-    _hover={{ opacity: 0.5 }}
-    onError={() => console.log('image error')}
-    loading="lazy"
-    ignoreFallback
-    size="2xl"
-    name={username}
-    src={selectedImage ?? defaultImage}
-  />
-);
-
-const MemoizedProfile = memo(ProfilePic);
 
 const schema = yup.object({
   bio: yup.string().max(30, 'Bio cannot exceed 30 characters'),
@@ -141,86 +102,52 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
   };
 
   return (
-    <Modal
-      isCentered
-      onClose={onClose}
+    <FormModal
       isOpen={isOpen}
-      motionPreset="slideInBottom"
+      onClose={onClose}
+      isLoading={loading}
+      isDisabled={isDisabled}
+      onSubmit={handleSubmit(handleProfileUpdate)}
+      footerBtnLabel="Update"
+      title="Edit Profile"
+      modalSize="md"
     >
-      <ModalOverlay />
-      <form noValidate onSubmit={handleSubmit(handleProfileUpdate)}>
-        <ModalContent>
-          <ModalHeader>
-            <Text fontSize="2xl">Edit Profile</Text>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box p={1}>
-              <FormControl isInvalid={false}>
-                <FormLabel mt={5}>Change profile pic</FormLabel>
-                <div className="flex justify-center overflow-hidden px-3">
-                  <div className="inline-block cursor-pointer">
-                    <Files
-                      onChange={handleChange}
-                      onError={handleError}
-                      accepts={['image/*']}
-                      maxFileSize={1000000}
-                      minFileSize={0}
-                      clickable
-                    >
-                      <MemoizedProfile
-                        username={authUser?.username || ''}
-                        selectedImage={fileInput.file?.preview.url}
-                        defaultImage={
-                          authUser?.profilePic || DEFAULT_PROFILE_PIC
-                        }
-                      />
-                    </Files>
-                  </div>
-                </div>
-                <ErrorLabel validationError={fileInput.error} />
-                <FormLabel>Change your Bio</FormLabel>
-                <Controller
-                  name="bio"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      autoFocus
-                      name="bio"
-                      placeholder="Your bio"
-                    />
-                  )}
-                />
-                <ErrorLabel validationError={errors.bio?.message} />
-              </FormControl>
-            </Box>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              isDisabled={isDisabled}
-              color="white"
-              colorScheme="ghost"
-              mr={3}
-              onClick={onClose}
+      <FormControl isInvalid={false}>
+        <FormLabel mt={5}>Change profile pic</FormLabel>
+        <div className="flex justify-center overflow-hidden px-3">
+          <div className="inline-block cursor-pointer">
+            <Files
+              onChange={handleChange}
+              onError={handleError}
+              accepts={['image/*']}
+              maxFileSize={1000000}
+              minFileSize={0}
+              clickable
             >
-              Cancel
-            </Button>
-            <Button
-              isDisabled={isDisabled}
-              isLoading={loading}
-              rounded="full"
-              color="white"
-              colorScheme="brand"
-              variant="solid"
-              type="submit"
-            >
-              Update
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </form>
-    </Modal>
+              <Avatar
+                _hover={{ opacity: 0.5 }}
+                onError={() => console.log('image error')}
+                loading="lazy"
+                ignoreFallback
+                size="2xl"
+                name={authUser?.username || ''}
+                src={fileInput.file?.preview.url ?? authUser?.profilePic}
+              />
+            </Files>
+          </div>
+        </div>
+        <ErrorLabel validationError={fileInput.error} />
+        <FormLabel>Change your Bio</FormLabel>
+        <Controller
+          name="bio"
+          control={control}
+          render={({ field }) => (
+            <Input {...field} autoFocus name="bio" placeholder="Your bio" />
+          )}
+        />
+        <ErrorLabel validationError={errors.bio?.message} />
+      </FormControl>
+    </FormModal>
   );
 };
 export default UpdateProfileModal;
