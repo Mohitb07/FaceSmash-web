@@ -4,17 +4,14 @@ import type {
   FirestoreError,
   Query,
 } from 'firebase/firestore';
-import {
-  getDoc,
-  limit,
-  onSnapshot,
-  query,
-  startAfter,
-} from 'firebase/firestore';
+import { startAfter } from 'firebase/firestore';
+import { getDoc, limit, onSnapshot, query } from 'firebase/firestore';
 import { useCallback, useMemo, useState } from 'react';
 
 import { FEED_LIMIT } from '@/constant';
 import type { Post, User } from '@/interface';
+
+type DataType = 'Initial' | 'Paginated';
 
 export const useGetPosts = () => {
   const [userPosts, setUserPosts] = useState<Post[]>([]);
@@ -22,50 +19,17 @@ export const useGetPosts = () => {
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
   const [error, setError] = useState<FirestoreError>();
 
-  const getPosts = useCallback(
-    (initialQuery: Query<DocumentData>) => {
-      setPostsLoading(true);
-      const q = query(initialQuery, startAfter(lastVisible), limit(FEED_LIMIT));
-      const unsubscribe = onSnapshot(
-        q,
-        async (querySnapshot) => {
-          if (!querySnapshot.empty) {
-            const postUserPromises = querySnapshot.docs.map((d) =>
-              getDoc(d.data().user)
-            );
-            const rawResult = await Promise.all(postUserPromises);
-            const result: User[] = rawResult.map((d) => d.data() as User);
-            const postList = querySnapshot.docs.map((d, index) => {
-              return {
-                ...(d.data() as Post),
-                username: result[index].username,
-                userProfile: result[index].profilePic,
-                key: d.id,
-              };
-            });
-            setUserPosts((prev) => [...prev, ...postList]);
-            setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-          }
-          setPostsLoading(false);
-        },
-        (err) => {
-          console.log('ERROR in useGetPosts', err);
-          setError(err);
-          setPostsLoading(false);
-        }
-      );
-      return unsubscribe;
-    },
-    [lastVisible]
-  );
-
-  const getInitialPosts = useCallback((q: Query<DocumentData>) => {
+  const getData = (q: Query<DocumentData>, type: DataType) => {
     setPostsLoading(true);
     const unsub = onSnapshot(
-      query(q, limit(FEED_LIMIT)),
+      q,
       async (querySnapshot) => {
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        console.log('refetch thing');
         if (querySnapshot.empty) {
-          setUserPosts([]);
+          if (type === 'Initial') {
+            setUserPosts([]);
+          }
         }
         if (!querySnapshot.empty) {
           const postUserPromises = querySnapshot.docs.map((d) =>
@@ -79,8 +43,12 @@ export const useGetPosts = () => {
             userProfile: result[index].profilePic,
             key: d.id,
           }));
-          setUserPosts(postList);
-          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+          if (type === 'Initial') {
+            setUserPosts(postList);
+          }
+          if (type === 'Paginated') {
+            setUserPosts((prev) => [...prev, ...postList]);
+          }
         }
         setPostsLoading(false);
       },
@@ -90,6 +58,22 @@ export const useGetPosts = () => {
         setPostsLoading(false);
       }
     );
+    return unsub;
+  };
+
+  const getPosts = useCallback(
+    (q: Query<DocumentData>) => {
+      const unsub = getData(
+        query(q, limit(FEED_LIMIT), startAfter(lastVisible)),
+        'Paginated'
+      );
+      return unsub;
+    },
+    [lastVisible]
+  );
+
+  const getInitialPosts = useCallback((q: Query<DocumentData>) => {
+    const unsub = getData(query(q, limit(FEED_LIMIT)), 'Initial');
     return unsub;
   }, []);
 

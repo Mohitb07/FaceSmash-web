@@ -1,6 +1,6 @@
 import { SlideFade } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
 import DataList from '@/components/DataList';
@@ -55,7 +55,7 @@ const FeedContainer = ({ customQuery }: FeedContainerProps) => {
     );
   }
 
-  const paginateMoreData = useCallback(() => getPosts(customQuery), [getPosts]);
+  const paginateMoreData = () => getPosts(customQuery);
 
   return (
     <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
