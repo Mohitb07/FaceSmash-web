@@ -11,25 +11,89 @@ import { useCallback, useMemo, useState } from 'react';
 import { FEED_LIMIT } from '@/constant';
 import type { Post, User } from '@/interface';
 
-type DataType = 'Initial' | 'Paginated';
+export interface FeedState {
+  data: Post[];
+  loading: boolean;
+  lastVisible: DocumentSnapshot | null;
+}
 
 export const useGetPosts = () => {
-  const [userPosts, setUserPosts] = useState<Post[]>([]);
-  const [postsLoading, setPostsLoading] = useState(true);
-  const [lastVisible, setLastVisible] = useState<DocumentSnapshot>();
+  const [posts, setPosts] = useState<FeedState>({
+    data: [],
+    loading: true,
+    lastVisible: null,
+  });
   const [error, setError] = useState<FirestoreError>();
 
-  const getData = (q: Query<DocumentData>, type: DataType) => {
-    setPostsLoading(true);
-    const unsub = onSnapshot(
+  const getPosts = (initialQuery: Query<DocumentData>) => {
+    if (!posts.lastVisible) {
+      return;
+    }
+    setPosts((prev) => ({
+      ...prev,
+      loading: true,
+    }));
+    const q = query(
+      initialQuery,
+      startAfter(posts.lastVisible),
+      limit(FEED_LIMIT)
+    );
+    onSnapshot(
       q,
       async (querySnapshot) => {
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        console.log('refetch thing');
         if (querySnapshot.empty) {
-          if (type === 'Initial') {
-            setUserPosts([]);
-          }
+          setPosts((prev) => ({
+            ...prev,
+            lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+          }));
+        }
+        if (!querySnapshot.empty) {
+          const postUserPromises = querySnapshot.docs.map((d) =>
+            getDoc(d.data().user)
+          );
+          const rawResult = await Promise.all(postUserPromises);
+          const result: User[] = rawResult.map((d) => d.data() as User);
+          const paginatedResult = querySnapshot.docs.map((d, index) => {
+            return {
+              ...(d.data() as Post),
+              username: result[index].username,
+              userProfile: result[index].profilePic,
+              key: d.id,
+            };
+          });
+          setPosts((prev) => ({
+            ...prev,
+            data: [...posts.data, ...paginatedResult],
+            lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+          }));
+        }
+        setPosts((prev) => ({
+          ...prev,
+          loading: false,
+        }));
+      },
+      (err) => {
+        console.log('ERROR in useGetPosts', err);
+        setError(err);
+        setPosts((prev) => ({
+          ...prev,
+          loading: false,
+        }));
+      }
+    );
+  };
+
+  const getInitialPosts = useCallback((q: Query<DocumentData>) => {
+    const unsub = onSnapshot(
+      query(q, limit(FEED_LIMIT)),
+      async (querySnapshot) => {
+        if (querySnapshot.empty) {
+          setPosts((prev) => ({
+            ...prev,
+            data: [],
+            lastVisible: null,
+            loading: false,
+          }));
         }
         if (!querySnapshot.empty) {
           const postUserPromises = querySnapshot.docs.map((d) =>
@@ -43,41 +107,30 @@ export const useGetPosts = () => {
             userProfile: result[index].profilePic,
             key: d.id,
           }));
-          if (type === 'Initial') {
-            setUserPosts(postList);
-          }
-          if (type === 'Paginated') {
-            setUserPosts((prev) => [...prev, ...postList]);
-          }
+          setPosts((prev) => ({
+            ...prev,
+            data: postList,
+            loading: false,
+            lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+          }));
         }
-        setPostsLoading(false);
       },
       (err) => {
         console.log('ERROR in getInitialPost', err);
         setError(err);
-        setPostsLoading(false);
+        setPosts((prev) => ({
+          ...prev,
+          loading: false,
+          lastVisible: null,
+        }));
       }
     );
     return unsub;
-  };
-
-  const getPosts = useCallback(
-    (q: Query<DocumentData>) => {
-      const unsub = getData(
-        query(q, limit(FEED_LIMIT), startAfter(lastVisible)),
-        'Paginated'
-      );
-      return unsub;
-    },
-    [lastVisible]
-  );
-
-  const getInitialPosts = useCallback((q: Query<DocumentData>) => {
-    const unsub = getData(query(q, limit(FEED_LIMIT)), 'Initial');
-    return unsub;
   }, []);
 
-  const memoizedPosts = useMemo(() => userPosts, [userPosts]);
+  const memoizedPosts = useMemo(() => posts.data, [posts.data]);
+  const postsLoading = posts.loading;
+  const lastVisible = posts.lastVisible;
 
   return {
     memoizedPosts,
