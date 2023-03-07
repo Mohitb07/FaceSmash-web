@@ -14,9 +14,10 @@ import type { Post } from '@/interface';
 
 type FeedContainerProps = {
   customQuery: Query<DocumentData>;
+  userId?: string;
 };
 
-const FeedContainer = ({ customQuery }: FeedContainerProps) => {
+const FeedContainer = ({ customQuery, userId }: FeedContainerProps) => {
   const { authUser } = useAuthUser();
   const { userLikedPosts } = useHandlePost();
   const {
@@ -32,7 +33,7 @@ const FeedContainer = ({ customQuery }: FeedContainerProps) => {
   useEffect(() => {
     const unsubscriber = getInitialPosts(customQuery);
     return () => unsubscriber();
-  }, []);
+  }, [userId]);
 
   function renderItem<T extends Post>(feed: T) {
     return (
