@@ -32,7 +32,7 @@ const UserConnections = ({ userQuery, userId }: UserConnectionsProps) => {
     return () => {
       unsubscriber();
     };
-  }, []);
+  }, [userId]);
 
   const handleModalOpen = (type: ModalType) => {
     setModalType(type);

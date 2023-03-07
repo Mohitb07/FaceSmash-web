@@ -55,7 +55,7 @@ const UserProfile = () => {
 
         <div className="space-y-5 pb-16">
           <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <FeedContainer customQuery={postQuery} />
+            <FeedContainer userId={userId} customQuery={postQuery} />
           </ErrorBoundary>
         </div>
       </div>
