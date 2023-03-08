@@ -1,12 +1,13 @@
-import { Skeleton, SkeletonCircle, SkeletonText, Text } from '@chakra-ui/react';
+import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
 import React from 'react';
 
 type FooterProps = {
   dataList: any[];
   loading: boolean;
+  hasNext: boolean;
 };
 
-const Footer = ({ dataList = [], loading }: FooterProps) => {
+const Footer = ({ loading }: FooterProps) => {
   let content;
   if (loading) {
     content = (
@@ -28,14 +29,6 @@ const Footer = ({ dataList = [], loading }: FooterProps) => {
         </div>
       </div>
     );
-  } else if (dataList.length > 0 && !loading) {
-    content = (
-      <Text textAlign="center" color="gray.500">
-        No More post
-      </Text>
-    );
-  } else {
-    return null;
   }
   return <div>{content}</div>;
 };

@@ -63,7 +63,11 @@ const FeedContainer = ({ customQuery, userId }: FeedContainerProps) => {
       <DataList
         ListEmptyComponent={EmptyData}
         ListFooterComponent={
-          <Footer dataList={memoizedPosts} loading={postsLoading} />
+          <Footer
+            dataList={memoizedPosts}
+            loading={postsLoading}
+            hasNext={Boolean(lastVisible)}
+          />
         }
         data={memoizedPosts}
         isLoading={postsLoading}
