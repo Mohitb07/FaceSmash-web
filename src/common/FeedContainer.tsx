@@ -5,7 +5,6 @@ import { useErrorHandler } from 'react-error-boundary';
 
 import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
-import Footer from '@/components/DataList/Footer';
 import Feed from '@/components/Feed';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useGetPosts } from '@/hooks/useGetPosts';
@@ -62,13 +61,6 @@ const FeedContainer = ({ customQuery, userId }: FeedContainerProps) => {
     <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
       <DataList
         ListEmptyComponent={EmptyData}
-        ListFooterComponent={
-          <Footer
-            dataList={memoizedPosts}
-            loading={postsLoading}
-            hasNext={Boolean(lastVisible)}
-          />
-        }
         data={memoizedPosts}
         isLoading={postsLoading}
         renderItem={(item: any) => renderItem(item)}

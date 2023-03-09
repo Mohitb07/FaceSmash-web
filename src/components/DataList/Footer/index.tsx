@@ -1,16 +1,9 @@
 import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
 import React from 'react';
 
-type FooterProps = {
-  dataList: any[];
-  loading: boolean;
-  hasNext: boolean;
-};
-
-const Footer = ({ loading }: FooterProps) => {
-  let content;
-  if (loading) {
-    content = (
+const Footer = ({ isLoading }: { isLoading: boolean }) => {
+  if (isLoading) {
+    return (
       <div className="w-full space-y-5 rounded-md md:w-[480px]">
         <div className="space-y-2">
           <SkeletonCircle height="14" width="14" />
@@ -30,6 +23,7 @@ const Footer = ({ loading }: FooterProps) => {
       </div>
     );
   }
-  return <div>{content}</div>;
+
+  return null;
 };
 export default Footer;
