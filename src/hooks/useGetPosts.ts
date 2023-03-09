@@ -44,7 +44,7 @@ export const useGetPosts = () => {
         if (querySnapshot.empty) {
           setPosts((prev) => ({
             ...prev,
-            lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+            lastVisible: null,
           }));
         }
         if (!querySnapshot.empty) {
