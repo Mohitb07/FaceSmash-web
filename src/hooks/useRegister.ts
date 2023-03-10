@@ -21,11 +21,11 @@ export const useRegister = () => {
   const [error, setError] = useState(DEFAULT_ERROR_VALUE);
 
   const createUserAttempt = async (user: UserCredential, username: string) => {
-    await sendEmailVerification(user.user);
     try {
+      await sendEmailVerification(user.user);
       await setDoc(doc(db, USERS_COLLECTION, user.user.uid), {
         email: user.user.email,
-        username: username,
+        username,
         qusername: username.toLowerCase(),
         uid: user.user.uid,
         createdAt: user.user.metadata.creationTime,
@@ -48,13 +48,10 @@ export const useRegister = () => {
       })
       .catch((err) => {
         console.log('error', err.message);
-        if (err.code === 'auth/invalid-email') {
-          setError((prev) => ({
-            ...prev,
-            email: err.message,
-          }));
-        }
-        if (err.code === 'auth/email-already-in-use') {
+        if (
+          err.code === 'auth/invalid-email' ||
+          err.code === 'auth/email-already-in-use'
+        ) {
           setError((prev) => ({
             ...prev,
             email: err.message,
