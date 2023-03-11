@@ -1,5 +1,5 @@
 import { Spinner } from '@chakra-ui/react';
-import { getAuth, sendEmailVerification, signOut } from 'firebase/auth';
+import { getAuth, sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +11,8 @@ import { withAuth } from '@/routes/WithProtected';
 const Verification = () => {
   const router = useRouter();
   const user = getAuth();
-  const { authUser, isVerified, loading, setIsVerified } = useAuthUser();
+  const { authUser, isVerified, loading, setIsVerified, logout } =
+    useAuthUser();
   const [currentStatus, setCurrentStatus] = useState({
     status: '',
     statusColor: '',
@@ -64,16 +65,6 @@ const Verification = () => {
     }
   };
 
-  const handleLogOut = () => {
-    signOut(user)
-      .then(() => {
-        console.log('user logged out');
-      })
-      .catch((error) => {
-        console.log('error while signing out', error);
-      });
-  };
-
   let content;
   if (authUser && !isVerified) {
     content = (
@@ -101,7 +92,7 @@ const Verification = () => {
           <Button
             size="md"
             isDisabled={verificationLoading || resendLoading || loading}
-            onClick={handleLogOut}
+            onClick={logout}
           >
             Log Out
           </Button>
