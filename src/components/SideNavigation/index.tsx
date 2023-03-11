@@ -1,16 +1,17 @@
 import { Avatar, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { getAuth, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
+import { MdLogout } from 'react-icons/md';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
 
 import Brand from '@/components/Brand';
 import NavItem from '@/components/NavItem';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import type { User } from '@/interface';
 
 type SidebarProps = {
@@ -24,17 +25,8 @@ const Sidebar = ({
   setIsModalOpen,
   setIsSearchDrawerOpen,
 }: SidebarProps) => {
+  const { logout } = useAuthUser();
   const router = useRouter();
-  const auth = getAuth();
-  const signOutUser = () => {
-    signOut(auth)
-      .then(() => {
-        console.log('user logged out');
-      })
-      .catch((error) => {
-        console.log('error while signing out', error);
-      });
-  };
   return (
     <div className="flex h-full flex-col justify-between bg-[#0b0b0b] px-[2rem] pt-[5rem] pb-[2rem]">
       <nav>
@@ -105,9 +97,22 @@ const Sidebar = ({
               </li>
             </ul>
           </MenuButton>
-          <MenuList>
-            <MenuItem onClick={signOutUser}>
-              <span className="text-red-500">Log Out</span>
+          <MenuList backgroundColor="#242526" border="none" padding="2">
+            <MenuItem
+              onClick={logout}
+              backgroundColor="transparent"
+              _hover={{
+                backgroundColor: '#40404F',
+                borderRadius: '3px',
+              }}
+              icon={<MdLogout className="hover-animation text-xl" />}
+            >
+              <button
+                aria-label="logout user"
+                className="font-semibold text-red-500"
+              >
+                Log Out
+              </button>
             </MenuItem>
           </MenuList>
         </Menu>
