@@ -1,6 +1,6 @@
 import { Spinner } from '@chakra-ui/react';
 import type { User } from 'firebase/auth';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { getDoc } from 'firebase/firestore';
 import { doc } from 'firebase/firestore';
 import type { Dispatch, SetStateAction } from 'react';
@@ -18,6 +18,7 @@ type UserState = {
   isVerified: boolean;
   setIsVerified: Dispatch<SetStateAction<boolean>>;
   error: string | null;
+  logout: () => void;
 };
 
 const DEFAULT_VALUES: UserState = {
@@ -35,6 +36,7 @@ const DEFAULT_VALUES: UserState = {
   isVerified: false,
   setIsVerified() {},
   error: null,
+  logout() {},
 };
 
 export const UserContext = createContext<UserState>(DEFAULT_VALUES);
@@ -46,7 +48,12 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   const auth = getAuth();
-  console.log('current status', isVerified);
+
+  const logout = () => {
+    signOut(auth)
+      .then(() => console.log('user Logged out'))
+      .catch((err) => console.log('error while logging out', err));
+  };
 
   useEffect(() => {
     let unsubscribeAuth = onAuthStateChanged(
@@ -92,8 +99,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       isVerified,
       setIsVerified,
       error,
+      logout,
     }),
-    [authUser, loading, isVerified, setIsVerified, error]
+    [authUser, loading, isVerified, setIsVerified, error, logout]
   );
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };
