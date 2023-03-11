@@ -36,10 +36,10 @@ const User = ({
         <Avatar size={size} src={profileURL} name={username} />
         <div>
           <Text aria-label="email" fontWeight="bold">
-            {email}
+            {username}
           </Text>
           <Text aria-label="username" color="gray.500" fontSize={fontSize}>
-            {username}
+            {email}
           </Text>
         </div>
       </div>

@@ -45,7 +45,7 @@ const Navigation = () => {
           />
         </ErrorBoundary>
       </div>
-      <div>
+      <div className="md:hidden">
         <BottomNavigation
           user={authUser}
           setIsModalOpen={setIsModalOpen}

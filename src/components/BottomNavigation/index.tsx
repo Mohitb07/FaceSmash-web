@@ -23,7 +23,7 @@ const BottomNavigation = ({
   const router = useRouter();
   return (
     <nav className="fixed bottom-0 z-50 w-full bg-slate-900">
-      <ul className="grid h-14 w-full grid-cols-4 place-items-center p-2 md:hidden">
+      <ul className="grid h-14 w-full grid-cols-4 place-items-center p-2">
         <li>
           <Link href="/">
             {router.pathname === '/' ? (
