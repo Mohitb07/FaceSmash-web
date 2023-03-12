@@ -66,7 +66,7 @@ const ProfileButton = ({ userId }: ProfileButtonProps) => {
 
   return (
     <>
-      <div className="">
+      <div className="min-w-[150px]">
         {authUser?.uid === userId ? (
           <Button
             width="full"
