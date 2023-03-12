@@ -1,8 +1,8 @@
 import { Avatar, Skeleton } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
 import React from 'react';
-import { FiSettings } from 'react-icons/fi';
 
+import Settings from '@/components/Settings';
 import type { User } from '@/interface';
 
 import ProfileButton from '../ProfileButton';
@@ -44,7 +44,7 @@ const UserDetail = ({
                   <p className="text-3xl font-light md:text-2xl lg:text-3xl xl:text-4xl">
                     {user.qusername}
                   </p>
-                  <FiSettings className="ml-3 text-xl xl:text-3xl" />
+                  <Settings />
                 </div>
                 <span className="text-base">{user.bio}</span>
               </div>
@@ -75,7 +75,7 @@ const UserDetail = ({
               {user.qusername}
             </p>
             <ProfileButton userId={userId} />
-            <FiSettings className="ml-3 text-xl xl:text-3xl" />
+            <Settings />
           </div>
           <UserConnections userId={userId} userQuery={userQuery} />
           <div>
