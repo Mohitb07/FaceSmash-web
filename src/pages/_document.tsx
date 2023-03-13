@@ -10,6 +10,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="manifest" href="/site.webmanifest" />
           <link
             rel="preconnect"
             href="https://fonts.gstatic.com"
