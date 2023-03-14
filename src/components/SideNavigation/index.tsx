@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import React, { memo } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
+import { RxHamburgerMenu } from 'react-icons/rx';
 import { TiHome } from 'react-icons/ti';
 import { VscHome } from 'react-icons/vsc';
 
@@ -86,7 +87,7 @@ const Sidebar = ({
         </ul>
       </nav>
       <div>
-        <Settings />
+        <Settings Icon={RxHamburgerMenu} label="More" />
       </div>
     </div>
   );
