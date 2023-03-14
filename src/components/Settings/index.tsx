@@ -1,17 +1,24 @@
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import type { IconType } from 'react-icons';
 import { FiSettings } from 'react-icons/fi';
 import { MdLogout } from 'react-icons/md';
 
 import { useAuthUser } from '@/hooks/useAuthUser';
 
-const Settings = () => {
+type SettingsProps = {
+  Icon?: IconType;
+  label?: string;
+};
+
+const Settings = ({ Icon = FiSettings, label = '' }: SettingsProps) => {
   const { logout } = useAuthUser();
   return (
     <Menu>
       <MenuButton>
         <ul>
           <li className="nav-item">
-            <FiSettings className="ml-3 text-xl xl:text-3xl" />{' '}
+            <Icon className="ml-3 text-xl xl:text-3xl" />
+            {label.length > 0 && <p>{label}</p>}
           </li>
         </ul>
       </MenuButton>
