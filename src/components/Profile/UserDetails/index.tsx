@@ -3,6 +3,7 @@ import type { DocumentData, Query } from 'firebase/firestore';
 import React from 'react';
 
 import Settings from '@/components/Settings';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import type { User } from '@/interface';
 
 import ProfileButton from '../ProfileButton';
@@ -21,6 +22,7 @@ const UserDetail = ({
   user,
   userId,
 }: UserDetailProps) => {
+  const { authUser } = useAuthUser();
   return (
     <div className="p-3">
       <div className="block md:hidden">
@@ -44,7 +46,7 @@ const UserDetail = ({
                   <p className="text-3xl font-light md:text-2xl lg:text-3xl xl:text-4xl">
                     {user.qusername}
                   </p>
-                  <Settings />
+                  {userId === authUser?.uid && <Settings />}
                 </div>
                 <span className="text-base">{user.bio}</span>
               </div>
@@ -75,7 +77,7 @@ const UserDetail = ({
               {user.qusername}
             </p>
             <ProfileButton userId={userId} />
-            <Settings />
+            {userId === authUser?.uid && <Settings />}
           </div>
           <UserConnections userId={userId} userQuery={userQuery} />
           <div>
