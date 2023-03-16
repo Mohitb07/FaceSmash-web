@@ -1,4 +1,4 @@
-import { Avatar, Skeleton } from '@chakra-ui/react';
+import { Avatar, Skeleton, Text } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
 import React from 'react';
 
@@ -23,8 +23,9 @@ const UserDetail = ({
   userId,
 }: UserDetailProps) => {
   const { authUser } = useAuthUser();
+  console.log('user getting', user.qusername, user.qusername.length);
   return (
-    <div className="p-3">
+    <div className="min-w-[570px] p-3">
       <div className="block md:hidden">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20">
           <div>
@@ -58,31 +59,34 @@ const UserDetail = ({
         </div>
         <UserConnections userId={userId} userQuery={userQuery} />
       </div>
-      <div className="hidden items-center font-normal md:flex">
-        <div>
-          <Skeleton borderRadius="full" isLoaded={!isLoading}>
-            <Avatar
-              loading="lazy"
-              size="2xl"
-              ignoreFallback
-              name={user.username}
-              src={user.profilePic}
-              showBorder
-            />
-          </Skeleton>
-        </div>
-        <div className="ml-10 space-y-5">
-          <div className="flex items-center space-x-5">
+      <div className="hidden w-full items-center font-normal md:flex">
+        <Skeleton borderRadius="full" isLoaded={!isLoading}>
+          <Avatar
+            loading="lazy"
+            size="2xl"
+            ignoreFallback
+            name={user.username}
+            src={user.profilePic}
+            showBorder
+          />
+        </Skeleton>
+        <div className="ml-10 flex-1 space-y-5">
+          <Skeleton
+            display="flex"
+            alignItems="center"
+            borderRadius="3xl"
+            isLoaded={!isLoading}
+          >
             <p className="text-3xl md:text-2xl lg:text-3xl xl:text-4xl">
               {user.qusername}
             </p>
-            <ProfileButton userId={userId} />
+            <div className="mx-5">
+              <ProfileButton userId={userId} />
+            </div>
             {userId === authUser?.uid && <Settings />}
-          </div>
+          </Skeleton>
           <UserConnections userId={userId} userQuery={userQuery} />
-          <div>
-            <span className="text-base">{user.bio}</span>
-          </div>
+          <Text fontSize="medium">{user.bio}</Text>
         </div>
       </div>
     </div>

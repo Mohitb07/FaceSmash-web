@@ -11,12 +11,18 @@ import type { User } from '@/interface';
 
 import { db } from '../../firebase';
 
+type ConnectionsCount = {
+  following: number | null;
+  followers: number | null;
+};
+
 export const useConnection = (userId: string) => {
   const [followersList, setFollowersList] = useState<User[]>([]);
   const [followingList, setFollowingList] = useState<User[]>([]);
-  const [connectionsCount, setConnectionCount] = useState({
-    following: 0,
-    followers: 0,
+  const [isLoading, setIsLoading] = useState(true);
+  const [connectionsCount, setConnectionCount] = useState<ConnectionsCount>({
+    following: null,
+    followers: null,
   });
 
   const promiseResolver = async (querySnap: QuerySnapshot<DocumentData>) => {
@@ -41,6 +47,10 @@ export const useConnection = (userId: string) => {
             ...prev,
             following: querySnap.size,
           }));
+        },
+        (err) => {
+          console.log('ERROR while fetching user posts count', err);
+          setIsLoading(false);
         }
       );
 
@@ -56,6 +66,11 @@ export const useConnection = (userId: string) => {
             ...prev,
             followers: querySnap.size,
           }));
+          setIsLoading(false);
+        },
+        (err) => {
+          console.log('ERROR while fetching user posts count', err);
+          setIsLoading(false);
         }
       );
     }
@@ -66,5 +81,5 @@ export const useConnection = (userId: string) => {
     };
   }, [userId]);
 
-  return { connectionsCount, followersList, followingList };
+  return { connectionsCount, followersList, followingList, isLoading };
 };
