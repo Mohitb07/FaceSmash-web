@@ -40,7 +40,7 @@ Run build project
 
 ## Tech Stack
 
-**Client:** TypeScript, Next JS, React JS, Tailwind CSS, Chakra UI, React-Icons
+**Client:** TypeScript, Next JS, React JS, Tailwind CSS, Chakra UI, React-Icons, React hook forms, yup
 
 **Server:** Firebase
 
