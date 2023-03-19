@@ -11,9 +11,8 @@ import {
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
-import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 import { BiLink } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaHeart } from 'react-icons/fa';
@@ -27,6 +26,7 @@ import { useHandlePost } from '@/hooks/useHandlePost';
 import type { FeedProps } from '@/interface';
 
 import { db } from '../../../firebase';
+import FeedImage from './FeedImage';
 
 dayjs.extend(relativeTime);
 
@@ -46,7 +46,6 @@ const Feed = ({
   authUserId,
 }: FeedProps) => {
   const [show, setShow] = useBoolean();
-  const [paddingTop, setPaddingTop] = useState('0');
   const { deletePostWithoutImage, deletePostWithImage } = useHandlePost();
 
   const handlePostDeletion = async (pid: string, imgRef?: string) => {
@@ -152,35 +151,7 @@ const Feed = ({
             </nav>
           </header>
         </div>
-
-        {postImage && (
-          <div>
-            <div style={{ position: 'relative', paddingTop }}>
-              <Image
-                alt="user post"
-                src={postImage}
-                layout="fill"
-                objectFit="contain"
-                priority
-                onLoad={({ target }) => {
-                  const { naturalWidth, naturalHeight } =
-                    target as HTMLImageElement;
-                  setPaddingTop(
-                    `calc(100% / (${naturalWidth} / ${naturalHeight})`
-                  );
-                }}
-              />
-              {link && (
-                <div className="absolute top-3 right-3 cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
-                  <a href={link} target="_blank" rel="noopener noreferrer">
-                    <BiLink fontSize={20} />
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
+        {postImage && <FeedImage postImage={postImage} link={link} />}
         <div
           className={`flex flex-col px-2 ${
             !postImage ? 'flex-col-reverse' : ''
