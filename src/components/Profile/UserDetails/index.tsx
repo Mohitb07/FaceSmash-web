@@ -23,9 +23,8 @@ const UserDetail = ({
   userId,
 }: UserDetailProps) => {
   const { authUser } = useAuthUser();
-  console.log('user getting', user.qusername, user.qusername.length);
   return (
-    <div className="min-w-[570px] p-3">
+    <div className="p-3 md:min-w-[570px]">
       <div className="block md:hidden">
         <div className="flex items-center gap-5 lg:gap-10 xl:gap-20">
           <div>
