@@ -12,7 +12,7 @@ const EmptyData = () => {
         alignItems="center"
       >
         <CgFeed fontSize={120} />
-        <Text fontSize={20}>Not enough data</Text>
+        <Text fontSize={20}>No post yet</Text>
       </Flex>
     </Box>
   );
