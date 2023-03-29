@@ -41,7 +41,7 @@ function Home() {
             <Brand />
           </header>
           <div className="flex justify-center gap-10 md:p-10">
-            <main className="w-auto space-y-5 pb-16 md:ml-[20%] xl:ml-[10%]">
+            <main className="w-full space-y-5 pb-16 md:ml-[20%] md:w-auto xl:ml-[10%]">
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <FeedContainer customQuery={postQuery} />
               </ErrorBoundary>
