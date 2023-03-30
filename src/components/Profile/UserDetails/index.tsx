@@ -56,7 +56,7 @@ const UserDetail = ({
         <div className="my-2">
           <ProfileButton userId={userId} />
         </div>
-        <UserConnections userId={userId} userQuery={userQuery} />
+        <UserConnections isMobile userId={userId} userQuery={userQuery} />
       </div>
       <div className="hidden w-full items-center font-normal md:flex">
         <Skeleton borderRadius="full" isLoaded={!isLoading}>

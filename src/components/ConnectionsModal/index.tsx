@@ -18,6 +18,7 @@ type ConnectionModalProps = {
   onClose: () => void;
   isOpen: boolean;
   data: UserDetail[];
+  isMobile?: boolean;
 };
 
 const ConnectionModal = ({
@@ -25,6 +26,7 @@ const ConnectionModal = ({
   onClose,
   isOpen,
   data = [],
+  isMobile = false,
 }: ConnectionModalProps) => {
   return (
     <Modal
@@ -32,7 +34,7 @@ const ConnectionModal = ({
       onClose={onClose}
       isOpen={isOpen}
       scrollBehavior="inside"
-      size="lg"
+      size={isMobile ? 'sm' : 'lg'}
       closeOnEsc
     >
       <ModalOverlay />

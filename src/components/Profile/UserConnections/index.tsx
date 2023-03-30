@@ -11,9 +11,14 @@ const ConnectionModal = lazy(() => import('@/components/ConnectionsModal'));
 type UserConnectionsProps = {
   userQuery: Query<DocumentData>;
   userId: string;
+  isMobile?: boolean;
 };
 
-const UserConnections = ({ userQuery, userId }: UserConnectionsProps) => {
+const UserConnections = ({
+  userQuery,
+  userId,
+  isMobile,
+}: UserConnectionsProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<ModalType>(null);
   const [postsCount, setPostsCount] = useState<number | null>(null);
@@ -107,6 +112,7 @@ const UserConnections = ({ userQuery, userId }: UserConnectionsProps) => {
       <Suspense fallback={<></>}>
         {isOpen && modalType !== 'Edit profile' && (
           <ConnectionModal
+            isMobile={isMobile}
             data={modalType === 'Followers' ? followersList : followingList}
             title={modalType!}
             onClose={onClose}
