@@ -1,6 +1,7 @@
 import {
   Drawer,
   DrawerBody,
+  DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
@@ -80,6 +81,7 @@ const SearchDrawer = ({
     >
       <DrawerOverlay />
       <DrawerContent>
+        <DrawerCloseButton />
         <DrawerHeader borderBottomWidth="1px">
           <Text fontSize="3xl">Search</Text>
           <InputGroup mt="5">
