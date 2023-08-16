@@ -2,6 +2,9 @@
 
 It's a social media platform where users can interact with friends or family. It's a native application for both android and ios
 
+![facesmash-web](https://github.com/Mohitb07/FaceSmash-web/assets/51907464/bc6388d6-4efb-47dd-bec4-61d5a758c055)
+
+
 ## Run Locally
 
 Clone the project
@@ -40,7 +43,7 @@ Run build project
 
 ## Tech Stack
 
-**Client:** TypeScript, Next JS, React JS, Tailwind CSS, Chakra UI, React-Icons, React hook forms, yup
+**Client:** TypeScript, Next JS, React JS, Tailwind CSS, Chakra UI, Day Js,  React-Icons, React hook forms, yup, husky, React files
 
 **Server:** Firebase
 
