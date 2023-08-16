@@ -15,8 +15,10 @@ export const useLogin = () => {
     setError(DEFAULT_ERROR_VALUE);
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('user logged in', userCredential);
+      .then((user) => {
+        if (user) {
+          window.location.reload();
+        }
       })
       .catch((err) => {
         console.log('error', err);

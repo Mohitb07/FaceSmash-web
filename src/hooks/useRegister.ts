@@ -33,6 +33,7 @@ export const useRegister = () => {
         profilePic: DEFAULT_PROFILE_PIC,
       });
       console.log('successfully created');
+      window.location.reload();
     } catch (err) {
       console.log('registration error', error);
     }
