@@ -88,9 +88,9 @@ const Feed = ({
   };
 
   return (
-    <article className="bg-color relative h-auto w-full rounded-md pb-5 md:w-[480px]">
+    <article className="relative h-auto max-w-2xl rounded-2xl bg-black pb-5">
       <div>
-        <div className="p-2">
+        <div className="p-4">
           <header className="flex items-center">
             <div className="flex flex-1 items-center space-x-2">
               <div role="button">
@@ -104,7 +104,7 @@ const Feed = ({
                 </Link>
               </div>
               <div className="flex items-center space-x-3">
-                <span role="button" className="text-sm font-semibold">
+                <span role="button" className="text-base font-semibold">
                   <Link
                     href={{
                       pathname: '/[username]',
@@ -114,7 +114,7 @@ const Feed = ({
                     {username}
                   </Link>
                 </span>
-                <div className="space-x-2 text-sm">
+                <div className="space-x-2 text-base">
                   <span className="text-slate-400">•</span>
                   <span className="text-slate-400">
                     {dayjs(createdAt?.toDate()).fromNow()}
@@ -151,15 +151,19 @@ const Feed = ({
             </nav>
           </header>
         </div>
-        {postImage && <FeedImage postImage={postImage} link={link} />}
+        {postImage && (
+          <div className="p-4 pt-0">
+            <FeedImage postImage={postImage} link={link} />
+          </div>
+        )}
         <div
-          className={`flex flex-col px-2 ${
+          className={`flex flex-col px-4 ${
             !postImage ? 'flex-col-reverse' : ''
           }`}
         >
           <div>
-            <div className="flex text-2xl">
-              <div className="flex flex-1 space-x-3 pt-3">
+            <div className="flex items-center text-2xl">
+              <div className="flex flex-1 space-x-3">
                 <section>
                   <span>
                     <button onClick={handleLikes}>
@@ -213,8 +217,8 @@ const Feed = ({
             )}
             <p className="text-xl leading-8 md:text-2xl">{postTitle}</p>
             <div>
-              <Collapse startingHeight={20} in={show}>
-                <p className="text-sm">
+              <Collapse startingHeight={23} in={show}>
+                <p className="text-base">
                   <span className="mr-2 font-semibold tracking-wide">
                     {username}
                   </span>
@@ -224,7 +228,7 @@ const Feed = ({
               {description.length > 30 && (
                 <div role="button">
                   <Text
-                    className="inline-block text-sm font-bold text-gray-400"
+                    className="inline-block text-base font-bold text-gray-400"
                     onClick={setShow.toggle}
                   >
                     Show {show ? 'Less' : 'More'}
