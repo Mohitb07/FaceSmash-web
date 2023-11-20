@@ -30,7 +30,7 @@ a {
   }
   body {
     color: white;
-    background: rgb(25, 24, 26);
+    background: #000000;
   }
 }
 
@@ -48,6 +48,6 @@ a {
     @apply flex items-center justify-center
   }
   .bg-color{
-    @apply bg-[#181920]
+    @apply bg-[#19191B]
   }
 }
