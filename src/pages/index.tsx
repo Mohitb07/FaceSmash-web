@@ -32,27 +32,25 @@ function Home() {
         />
       }
     >
-      <div className="grid h-screen grid-cols-1 overflow-hidden md:grid-cols-4 lg:grid-cols-4">
-        <div className="h-full w-full overflow-y-auto">
+      <header className="fixed inset-x-0 top-0 z-50 bg-black text-center md:hidden">
+        <Brand />
+      </header>
+      <div className="overflow-hidden md:flex md:h-screen">
+        <div className="h-full overflow-y-auto lg:w-1/4">
           <Navigation />
         </div>
-        <div className="overflow-y-auto md:col-span-3 lg:col-span-2">
-          <header className="sticky top-0 z-50 bg-black text-center md:hidden">
-            <Brand />
-          </header>
-          <main className="overflow-x-auto bg-red-500">
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <FeedContainer customQuery={postQuery} />
-            </ErrorBoundary>
-          </main>
+        <div className="flex-1 overflow-y-auto">
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <FeedContainer customQuery={postQuery} />
+          </ErrorBoundary>
         </div>
-        <aside className="hidden overflow-y-auto p-6 lg:block">
+        <div className="overflow-y-auto p-3 lg:w-1/4">
           <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <UserRecommendation />
             </ErrorBoundary>
           </SlideFade>
-        </aside>
+        </div>
       </div>
     </Main>
   );
