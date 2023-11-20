@@ -9,14 +9,23 @@ import Feed from '@/components/Feed';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useGetPosts } from '@/hooks/useGetPosts';
 import { useHandlePost } from '@/hooks/useHandlePost';
-import type { Post } from '@/interface';
+import type { Post, User } from '@/interface';
 
 type FeedContainerProps = {
   customQuery: Query<DocumentData>;
   userId?: string;
+  isProfile?: boolean;
+  isLoading?: boolean;
+  user?: User;
 };
 
-const FeedContainer = ({ customQuery, userId }: FeedContainerProps) => {
+const FeedContainer = ({
+  customQuery,
+  userId,
+  isProfile = false,
+  isLoading,
+  user,
+}: FeedContainerProps) => {
   const { authUser } = useAuthUser();
   const { userLikedPosts } = useHandlePost();
   const {
@@ -66,6 +75,11 @@ const FeedContainer = ({ customQuery, userId }: FeedContainerProps) => {
         renderItem={(item: any) => renderItem(item)}
         getMore={paginateMoreData}
         lastVisible={lastVisible}
+        isProfile={isProfile}
+        isUserLoading={isLoading}
+        user={user}
+        postQuery={customQuery}
+        userId={userId}
       />
     </SlideFade>
   );
