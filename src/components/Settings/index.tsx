@@ -1,7 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import type { IconType } from 'react-icons';
 import { FiSettings } from 'react-icons/fi';
-import { MdLogout } from 'react-icons/md';
 
 import { useAuthUser } from '@/hooks/useAuthUser';
 
@@ -30,12 +29,16 @@ const Settings = ({ Icon = FiSettings, label = '' }: SettingsProps) => {
             backgroundColor: '#40404F',
             borderRadius: '3px',
           }}
-          icon={<MdLogout className="hover-animation text-xl" />}
+          icon={
+            <img
+              width="24"
+              height="24"
+              src="https://img.icons8.com/external-tal-revivo-bold-tal-revivo/24/ff0000/external-online-account-logout-with-arrow-direction-mark-login-bold-tal-revivo.png"
+              alt="external-online-account-logout-with-arrow-direction-mark-login-bold-tal-revivo"
+            />
+          }
         >
-          <button
-            aria-label="logout user"
-            className="font-semibold text-red-500"
-          >
+          <button aria-label="logout user" className="font-semibold">
             Log Out
           </button>
         </MenuItem>

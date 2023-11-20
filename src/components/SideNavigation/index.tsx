@@ -2,11 +2,7 @@ import { Avatar } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
-import { BsSearch } from 'react-icons/bs';
-import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { RxHamburgerMenu } from 'react-icons/rx';
-import { TiHome } from 'react-icons/ti';
-import { VscHome } from 'react-icons/vsc';
 
 import Brand from '@/components/Brand';
 import NavItem from '@/components/NavItem';
@@ -27,25 +23,37 @@ const Sidebar = ({
 }: SidebarProps) => {
   const router = useRouter();
   return (
-    <div className="flex h-full flex-col justify-between bg-[#0b0b0b] px-[2rem] pt-[5rem] pb-[2rem]">
+    <div className="flex h-full flex-col justify-between p-6 lg:w-full lg:items-center">
       <nav>
         <div className="hidden lg:block">
           <Brand styles="mb-[3rem] ml-[1rem]" />
         </div>
         <div className="block lg:hidden">
-          <h1 className="mb-[3rem] text-center text-6xl font-bold text-white">
+          <h1 className="mb-[3rem] text-center text-4xl font-bold">
             <span className="text-primary-100">F</span>
           </h1>
         </div>
 
-        <ul className="space-y-12 text-xl">
+        <ul className="space-y-10 text-xl">
           <Link href="/">
             <NavItem
               icon={
                 router.pathname === '/' ? (
-                  <TiHome className="hover-animation text-4xl" />
+                  // <TiHome className="hover-animation text-4xl text-blue-500" />
+                  <img
+                    width="40"
+                    height="40"
+                    src="https://img.icons8.com/3d-fluency/94/paper-plane.png"
+                    alt="paper-plane"
+                  />
                 ) : (
-                  <VscHome className="hover-animation text-4xl" />
+                  // <VscHome className="hover-animation text-4xl" />
+                  <img
+                    width="40"
+                    height="40"
+                    src="https://img.icons8.com/3d-fluency/94/paper-plane.png"
+                    alt="paper-plane"
+                  />
                 )
               }
               label="Home"
@@ -53,12 +61,26 @@ const Sidebar = ({
           </Link>
           <NavItem
             onClick={() => setIsSearchDrawerOpen(true)}
-            icon={<BsSearch className="hover-animation text-3xl" />}
+            icon={
+              <img
+                width="40"
+                height=""
+                src="https://img.icons8.com/pastel-glyph/64/7950F2/search--v2.png"
+                alt="search--v2"
+              />
+            }
             label="Search"
           />
           <NavItem
             onClick={() => setIsModalOpen(true)}
-            icon={<HiOutlinePlusCircle className="hover-animation text-3xl" />}
+            icon={
+              <img
+                width="40"
+                height="40"
+                src="https://img.icons8.com/glyph-neue/64/7950F2/plus-2-math.png"
+                alt="plus-2-math"
+              />
+            }
             label="Create"
           />
           <Link
@@ -87,7 +109,12 @@ const Sidebar = ({
         </ul>
       </nav>
       <div>
-        <Settings Icon={RxHamburgerMenu} label="More" />
+        <div className="hidden lg:block">
+          <Settings Icon={RxHamburgerMenu} label="More" />
+        </div>
+        <div className="lg:hidden">
+          <Settings Icon={RxHamburgerMenu} />
+        </div>
       </div>
     </div>
   );
