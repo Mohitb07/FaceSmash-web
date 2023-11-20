@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
 
 const config = {
   // color mode user-preference configuration
@@ -7,6 +8,13 @@ const config = {
 };
 
 export const theme = extendTheme({
+  styles: {
+    global: (props: GlobalStyleProps) => ({
+      body: {
+        bg: props.colorMode === 'dark' ? '#000000' : 'gray.100',
+      },
+    }),
+  },
   colors: {
     brand: {
       100: '#6e3ddc',
