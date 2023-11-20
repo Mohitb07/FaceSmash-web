@@ -18,7 +18,6 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaHeart } from 'react-icons/fa';
 import { FiBookmark, FiHeart } from 'react-icons/fi';
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
-import { MdDeleteOutline } from 'react-icons/md';
 import { TbMessageCircle2 } from 'react-icons/tb';
 
 import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
@@ -88,7 +87,7 @@ const Feed = ({
   };
 
   return (
-    <article className="relative h-auto max-w-2xl rounded-2xl bg-black pb-5">
+    <article className="relative h-auto max-w-2xl rounded-2xl bg-[#242427] pb-5">
       <div>
         <div className="p-4">
           <header className="flex items-center">
@@ -104,7 +103,10 @@ const Feed = ({
                 </Link>
               </div>
               <div className="flex items-center space-x-3">
-                <span role="button" className="text-base font-semibold">
+                <span
+                  role="button"
+                  className="text-sm font-semibold md:text-base"
+                >
                   <Link
                     href={{
                       pathname: '/[username]',
@@ -114,7 +116,7 @@ const Feed = ({
                     {username}
                   </Link>
                 </span>
-                <div className="space-x-2 text-base">
+                <div className="space-x-2 text-xs md:text-base">
                   <span className="text-slate-400">•</span>
                   <span className="text-slate-400">
                     {dayjs(createdAt?.toDate()).fromNow()}
@@ -130,7 +132,14 @@ const Feed = ({
                   </MenuButton>
                   <MenuList backgroundColor="#242526" border="none" padding="2">
                     <MenuItem
-                      icon={<MdDeleteOutline className="text-lg" />}
+                      icon={
+                        <img
+                          width="24"
+                          height="24"
+                          src="https://img.icons8.com/ios-glyphs/30/ff0000/filled-trash.png"
+                          alt="filled-trash"
+                        />
+                      }
                       onClick={() => handlePostDeletion(postId, imageRef)}
                       backgroundColor="transparent"
                       _hover={{
@@ -162,7 +171,7 @@ const Feed = ({
           }`}
         >
           <div>
-            <div className="flex items-center text-2xl">
+            <div className="flex items-center text-xl md:text-2xl">
               <div className="flex flex-1 space-x-3">
                 <section>
                   <span>
@@ -218,7 +227,7 @@ const Feed = ({
             <p className="text-xl leading-8 md:text-2xl">{postTitle}</p>
             <div>
               <Collapse startingHeight={23} in={show}>
-                <p className="text-base">
+                <p className="text-sm md:text-base">
                   <span className="mr-2 font-semibold tracking-wide">
                     {username}
                   </span>
