@@ -37,8 +37,10 @@ const UserRecommendation = () => {
           const randomIndex = Math.floor(
             Math.random() * filteredUsersList.length
           );
-          userList.push(filteredUsersList[randomIndex] as User);
+          const user = filteredUsersList.splice(randomIndex, 1)[0] as User; // Remove the user from the list
+          userList.push(user);
         }
+
         setRandomSuggestion(userList);
       } catch (error) {
         handleError(error);
@@ -58,8 +60,8 @@ const UserRecommendation = () => {
   }
 
   return (
-    <div className="h-auto w-[15rem]">
-      <div className="mt-10 flex items-center gap-5">
+    <div className="mt-10 hidden max-w-[25rem] overflow-hidden rounded-2xl bg-[#242427] p-3 lg:block">
+      <div className="flex items-center gap-5">
         <UserCard
           userId={authUser.uid}
           size="md"
