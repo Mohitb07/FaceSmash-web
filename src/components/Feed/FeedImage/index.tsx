@@ -26,9 +26,11 @@ const FeedImage = ({ postImage, link }: FeedImageProps) => {
         src={postImage}
         layout="fill"
         objectFit="contain"
+        className="rounded-xl"
         priority
         onLoad={onImageLoad}
       />
+
       {isLoading && (
         <div className="flex h-[10rem] items-center justify-center">
           <Spinner />
