@@ -35,8 +35,8 @@ const Navigation = () => {
     }
   };
   return (
-    <div className="h-full w-full">
-      <div className="fixed hidden h-full md:flex">
+    <div className="md:h-screen">
+      <div className="top-0 left-0 hidden h-full md:sticky md:flex">
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <Sidebar
             user={authUser}
@@ -44,7 +44,7 @@ const Navigation = () => {
             setIsSearchDrawerOpen={setIsSearchDrawerOpen}
           />
         </ErrorBoundary>
-      </div>
+      </div>{' '}
       <div className="md:hidden">
         <BottomNavigation
           user={authUser}
