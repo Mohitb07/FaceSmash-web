@@ -1,9 +1,9 @@
-import { Avatar, Skeleton, Text } from '@chakra-ui/react';
+import { Skeleton, useMediaQuery } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
 import React from 'react';
+import Avatar from 'react-avatar';
 
 import Settings from '@/components/Settings';
-import { useAuthUser } from '@/hooks/useAuthUser';
 import type { User } from '@/interface';
 
 import ProfileButton from '../ProfileButton';
@@ -17,76 +17,80 @@ type UserDetailProps = {
 };
 
 const UserDetail = ({
-  isLoading,
+  isLoading = true,
   userQuery,
   user,
-  userId,
+  userId = '',
 }: UserDetailProps) => {
-  const { authUser } = useAuthUser();
+  const [isMobile] = useMediaQuery('(max-width: 400px)');
+  const [isMedium] = useMediaQuery('(max-width: 768px)');
+  const [isLarge] = useMediaQuery('(max-width: 1024px)');
+
+  const isSmaller = isMobile;
+  const isMediumSize = isMedium;
+
   return (
-    <div className="p-3 md:min-w-[570px]">
-      <div className="block md:hidden">
-        <div className="flex items-center gap-5 lg:gap-10 xl:gap-20">
-          <div>
-            <Skeleton borderRadius="full" isLoaded={!isLoading}>
-              <Avatar
-                loading="lazy"
-                size="2xl"
-                ignoreFallback
-                name={user.username}
-                src={user.profilePic}
-                showBorder
-              />
-            </Skeleton>
-          </div>
-          <div>
-            <Skeleton isLoaded={!isLoading}>
-              <div>
-                <div className="flex items-center">
-                  <p className="text-3xl font-light md:text-2xl lg:text-3xl xl:text-4xl">
-                    {user.qusername}
-                  </p>
-                  {userId === authUser?.uid && <Settings />}
-                </div>
-                <span className="text-base">{user.bio}</span>
-              </div>
-            </Skeleton>
-          </div>
-        </div>
-        <div className="my-2">
-          <ProfileButton userId={userId} />
-        </div>
-        <UserConnections isMobile userId={userId} userQuery={userQuery} />
-      </div>
-      <div className="hidden w-full items-center font-normal md:flex">
-        <Skeleton borderRadius="full" isLoaded={!isLoading}>
-          <Avatar
-            loading="lazy"
-            size="2xl"
-            ignoreFallback
-            name={user.username}
-            src={user.profilePic}
-            showBorder
-          />
-        </Skeleton>
-        <div className="ml-10 flex-1 space-y-5">
+    <div className="flex h-full flex-col justify-center overflow-hidden p-3 md:px-10">
+      <div className="flex items-center justify-between pt-10 md:px-10 xl:px-20">
+        <div>
           <Skeleton
-            display="flex"
-            alignItems="center"
-            borderRadius="3xl"
+            borderRadius="full"
             isLoaded={!isLoading}
+            width="-webkit-fit-content"
           >
-            <p className="text-3xl md:text-2xl lg:text-3xl xl:text-4xl">
-              {user.qusername}
-            </p>
-            <div className="mx-5">
-              <ProfileButton userId={userId} />
-            </div>
-            {userId === authUser?.uid && <Settings />}
+            <Avatar
+              name={user.username}
+              src={user.profilePic}
+              round={true}
+              size={
+                isSmaller
+                  ? '120'
+                  : isMediumSize
+                  ? '150'
+                  : isLarge
+                  ? '200'
+                  : '230'
+              }
+              className="object-contain hover:opacity-80"
+            />
           </Skeleton>
-          <UserConnections userId={userId} userQuery={userQuery} />
-          <Text fontSize="medium">{user.bio}</Text>
         </div>
+        <div className="flex items-center">
+          <ProfileButton userId={userId} />
+          <Settings />
+        </div>
+      </div>
+      <div className="flex-wrap space-y-3 md:px-10 xl:px-20">
+        <Skeleton
+          borderRadius="full"
+          isLoaded={!isLoading}
+          mt={5}
+          width="-webkit-fit-content"
+        >
+          <p className="text-2xl font-semibold">{user.username}</p>
+        </Skeleton>
+        <Skeleton
+          borderRadius="full"
+          isLoaded={!isLoading}
+          width="-webkit-fit-content"
+        >
+          <p className="text-lg md:text-xl">{user.bio}</p>
+        </Skeleton>
+        <Skeleton
+          borderRadius="full"
+          isLoaded={!isLoading}
+          width="-webkit-fit-content"
+        >
+          <p className="text-base md:text-lg">{user.email}</p>
+        </Skeleton>
+
+        <Skeleton
+          borderRadius="full"
+          isLoaded={!isLoading}
+          // width="-webkit-fit-content"
+        >
+          <UserConnections userId={userId} userQuery={userQuery} />
+        </Skeleton>
       </div>
     </div>
   );

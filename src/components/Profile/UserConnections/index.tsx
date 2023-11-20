@@ -58,15 +58,16 @@ const UserConnections = ({
         borderRadius="2xl"
         isLoaded={!isLoading && !isConnectionsCountLoading}
       >
-        <div className="hidden items-center gap-5 text-lg md:flex">
+        <div className="hidden items-center gap-5 text-lg text-slate-600 md:flex">
           <p>
-            <span className="mr-2 font-semibold">{postsCount}</span> posts
+            <span className="mr-2 font-semibold text-white">{postsCount}</span>{' '}
+            posts
           </p>
           <p
             className="cursor-pointer"
             onClick={() => handleModalOpen('Followers')}
           >
-            <span className="mr-2 font-semibold">
+            <span className="mr-2 font-semibold text-white">
               {connectionsCount.followers}
             </span>{' '}
             followers
@@ -75,7 +76,7 @@ const UserConnections = ({
             className="cursor-pointer"
             onClick={() => handleModalOpen('Following')}
           >
-            <span className="mr-2 font-semibold">
+            <span className="mr-2 font-semibold text-white">
               {connectionsCount.following}
             </span>{' '}
             followings
@@ -87,24 +88,28 @@ const UserConnections = ({
         borderRadius="2xl"
         isLoaded={!isLoading && !isConnectionsCountLoading}
       >
-        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-700 p-1 md:hidden">
+        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-700 p-1 text-slate-600 md:hidden">
           <div className="text-center">
-            <span className="font-semibold">{postsCount}</span>
-            <p className="text-slate-400">posts</p>
+            <span className="font-semibold text-white">{postsCount}</span>
+            <p className="text-slate-600">posts</p>
           </div>
           <div
             className="text-center"
             onClick={() => handleModalOpen('Followers')}
           >
-            <span className="font-semibold">{connectionsCount.followers}</span>
-            <p className="text-slate-400">followers</p>
+            <span className="font-semibold text-white">
+              {connectionsCount.followers}
+            </span>
+            <p>followers</p>
           </div>
           <div
             className="text-center"
             onClick={() => handleModalOpen('Following')}
           >
-            <span className="font-semibold">{connectionsCount.following}</span>
-            <p className="text-slate-400">following</p>
+            <span className="font-semibold text-white">
+              {connectionsCount.following}
+            </span>
+            <p>following</p>
           </div>
         </div>
       </Skeleton>

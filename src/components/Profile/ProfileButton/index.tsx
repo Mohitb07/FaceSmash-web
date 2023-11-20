@@ -66,15 +66,15 @@ const ProfileButton = ({ userId }: ProfileButtonProps) => {
 
   return (
     <>
-      <div className="min-w-[150px]">
+      <div className="">
         {authUser?.uid === userId ? (
           <Button
-            width="full"
+            width="fit-content"
             colorScheme="brand"
             color="white"
             onClick={() => handleModalOpen('Edit profile')}
           >
-            Edit profile
+            Edit
           </Button>
         ) : (
           <Button
