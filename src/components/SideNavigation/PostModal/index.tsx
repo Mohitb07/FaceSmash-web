@@ -6,6 +6,7 @@ import {
   Text,
   Textarea,
   useBoolean,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Image from 'next/image';
@@ -77,6 +78,9 @@ const CreatePostModal = ({
   const [isLinkVisible, setIsLinkVisible] = useBoolean(false);
   const [isImageContainerVisible, setIsImageContainerVisible] =
     useBoolean(true);
+  const [isMobile] = useMediaQuery('(max-width: 400px)');
+  const [isMedium] = useMediaQuery('(max-width: 768px)');
+  const [isLarge] = useMediaQuery('(max-width: 1024px)');
   const { authUser } = useAuthUser();
   const { createPostWithImage, createPostWithoutImage } = useHandlePost();
   const { uploadImage } = useImageUpload();
@@ -137,7 +141,13 @@ const CreatePostModal = ({
       isLoading={isLoading}
     >
       <FormControl isRequired isInvalid={false}>
-        <FormLabel>Title</FormLabel>
+        <FormLabel
+          fontSize={
+            isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : 'large'
+          }
+        >
+          Title
+        </FormLabel>
         <Controller
           name="title"
           control={control}
@@ -149,13 +159,20 @@ const CreatePostModal = ({
               autoFocus
               name="title"
               placeholder="Enter title of your post"
+              _placeholder={{ fontSize: isMobile ? 14 : 16 }}
             />
           )}
         />
         <ErrorLabel validationError={errors.title?.message} />
         {isLinkVisible && (
           <div className="mt-5">
-            <FormLabel>Link</FormLabel>
+            <FormLabel
+              fontSize={
+                isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : 'large'
+              }
+            >
+              Link
+            </FormLabel>
             <Controller
               name="link"
               control={control}
@@ -166,13 +183,21 @@ const CreatePostModal = ({
                   name="link"
                   type="url"
                   placeholder="Provide link"
+                  _placeholder={{ fontSize: isMobile ? 14 : 16 }}
                 />
               )}
             />
             <ErrorLabel validationError={errors.link?.message} />
           </div>
         )}
-        <FormLabel mt={5}>Description</FormLabel>
+        <FormLabel
+          mt={5}
+          fontSize={
+            isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : 'large'
+          }
+        >
+          Description
+        </FormLabel>
         <Controller
           name="description"
           control={control}
@@ -184,8 +209,8 @@ const CreatePostModal = ({
               rounded="lg"
               focusBorderColor="brand.100"
               colorScheme="brand"
-              rows={10}
-              _placeholder={{ fontSize: 18 }}
+              rows={isMobile ? 3 : isMedium ? 4 : isLarge ? 5 : 6}
+              _placeholder={{ fontSize: isMobile ? 14 : 16 }}
               placeholder="Enter description of your post"
               size="md"
             />
@@ -193,7 +218,7 @@ const CreatePostModal = ({
         />
         <ErrorLabel validationError={errors.description?.message} />
         {isImageContainerVisible && (
-          <div className="mt-5 min-h-[5rem] overflow-hidden rounded-md border-2 border-dashed border-slate-600 px-3">
+          <div className="mt-5 overflow-hidden rounded-md border-2 border-dashed border-slate-600 p-1">
             <Files
               onChange={handleChange}
               onError={handleError}
@@ -203,19 +228,26 @@ const CreatePostModal = ({
               clickable
             >
               {!fileInput.file && (
-                <Text textAlign="center" mt={4} color="GrayText" fontSize="2xl">
+                <Text
+                  textAlign="center"
+                  p={3}
+                  color="GrayText"
+                  fontSize={
+                    isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : '2xl'
+                  }
+                >
                   Select Image from your system
                 </Text>
               )}
               {fileInput.file && (
-                <div className="flex items-center justify-center p-2">
+                <div className="flex items-center justify-center overflow-hidden">
                   <Image
                     src={fileInput.file?.preview.url}
                     height={300}
                     width={600}
                     alt="post image"
                     objectFit="cover"
-                    className="rounded-2xl"
+                    className="rounded-lg"
                   />
                 </div>
               )}

@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 import React from 'react';
@@ -55,19 +56,29 @@ const FormModal: React.FC<FormModalProps> = ({
   modalSize = '4xl',
   children,
 }) => {
+  const [isMobile] = useMediaQuery('(max-width: 400px)');
+  const [isMedium] = useMediaQuery('(max-width: 768px)');
+  const [isLarge] = useMediaQuery('(max-width: 1024px)');
+
   return (
     <Modal
       isCentered
       isOpen={isOpen}
       onClose={onClose}
-      size={modalSize}
+      size={isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : modalSize}
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
       <form noValidate onSubmit={onSubmit}>
         <ModalContent>
           <ModalHeader>
-            <Text fontSize="2xl">{title}</Text>
+            <Text
+              fontSize={
+                isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : '2xl'
+              }
+            >
+              {title}
+            </Text>
           </ModalHeader>
           <ModalCloseButton disabled={isLoading} />
           <ModalBody>
@@ -81,6 +92,7 @@ const FormModal: React.FC<FormModalProps> = ({
                 colorScheme="ghost"
                 mr={3}
                 onClick={onClose}
+                fontSize={isMobile ? 'sm' : 'md'}
               >
                 Cancel
               </Button>
@@ -89,6 +101,7 @@ const FormModal: React.FC<FormModalProps> = ({
                 aria-label={title}
                 type="submit"
                 isLoading={isLoading}
+                fontSize={isMobile ? 'sm' : 'md'}
               >
                 {footerBtnLabel}
               </Button>

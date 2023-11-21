@@ -87,9 +87,9 @@ const Feed = ({
   };
 
   return (
-    <article className="relative h-auto max-w-2xl rounded-2xl bg-[#242427] pb-5">
+    <article className="relative h-auto max-w-2xl border border-slate-900 pb-3">
       <div>
-        <div className="p-4">
+        <div className="p-3">
           <header className="flex items-center">
             <div className="flex flex-1 items-center space-x-2">
               <div role="button">
@@ -161,12 +161,12 @@ const Feed = ({
           </header>
         </div>
         {postImage && (
-          <div className="p-4 pt-0">
+          <div className="pb-1">
             <FeedImage postImage={postImage} link={link} />
           </div>
         )}
         <div
-          className={`flex flex-col px-4 ${
+          className={`mt-2 flex flex-col px-4 ${
             !postImage ? 'flex-col-reverse' : ''
           }`}
         >

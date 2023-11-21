@@ -31,7 +31,7 @@ const UserDetail = ({
 
   return (
     <div className="flex h-full flex-col justify-center overflow-hidden p-3 md:px-10">
-      <div className="flex items-center justify-between pt-10 md:px-10 xl:px-20">
+      <div className="flex items-center justify-between pt-[calc(2.5rem+0.75rem+1.5rem)] md:px-10 xl:px-20">
         <div>
           <Skeleton
             borderRadius="full"
@@ -89,7 +89,11 @@ const UserDetail = ({
           isLoaded={!isLoading}
           // width="-webkit-fit-content"
         >
-          <UserConnections userId={userId} userQuery={userQuery} />
+          <UserConnections
+            userId={userId}
+            userQuery={userQuery}
+            isMobile={isSmaller}
+          />
         </Skeleton>
       </div>
     </div>
