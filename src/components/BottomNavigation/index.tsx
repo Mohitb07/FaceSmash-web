@@ -2,10 +2,6 @@ import { Avatar } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
-import { BsSearch } from 'react-icons/bs';
-import { HiOutlinePlusCircle } from 'react-icons/hi';
-import { TiHome } from 'react-icons/ti';
-import { VscHome } from 'react-icons/vsc';
 
 import type { User } from '@/interface';
 
@@ -22,30 +18,35 @@ const BottomNavigation = ({
 }: BottomNavigationProps) => {
   const router = useRouter();
   return (
-    <nav className="fixed bottom-0 z-50 w-full bg-slate-900">
+    <nav className="fixed bottom-0 z-50 w-full bg-black">
       <ul className="grid h-14 w-full grid-cols-4 place-items-center p-2">
         <li>
           <Link href="/">
-            {router.pathname === '/' ? (
-              <TiHome className="text-2xl" />
-            ) : (
-              <VscHome className="text-2xl" />
-            )}
+            <img
+              width="24"
+              height="24"
+              src="https://img.icons8.com/3d-fluency/94/paper-plane.png"
+              alt="paper-plane"
+            />
           </Link>
         </li>
         <li>
-          <BsSearch
+          <img
             onClick={() => setIsSearchDrawerOpen(true)}
-            className="text-xl"
+            width="24"
+            height="24"
+            src="https://img.icons8.com/pastel-glyph/64/7950F2/search--v2.png"
+            alt="search--v2"
           />
         </li>
         <li>
-          <div>
-            <HiOutlinePlusCircle
-              onClick={() => setIsModalOpen(true)}
-              className="text-2xl"
-            />
-          </div>
+          <img
+            onClick={() => setIsModalOpen(true)}
+            width="24"
+            height="24"
+            src="https://img.icons8.com/glyph-neue/64/7950F2/plus-2-math.png"
+            alt="plus-2-math"
+          />
         </li>
         <li>
           <Link
