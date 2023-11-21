@@ -88,7 +88,7 @@ const UserConnections = ({
         borderRadius="2xl"
         isLoaded={!isLoading && !isConnectionsCountLoading}
       >
-        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-700 p-1 text-slate-600 md:hidden">
+        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-800 p-1 text-slate-600 md:hidden">
           <div className="text-center">
             <span className="font-semibold text-white">{postsCount}</span>
             <p className="text-slate-600">posts</p>

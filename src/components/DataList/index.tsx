@@ -84,7 +84,7 @@ const DataList = <D extends { key: string }>({
               isProfile ? 'pt-2' : 'pt-16'
             } md:pt-[1rem]`}
           >
-            <div className="mx-auto w-full max-w-2xl space-y-5 p-2 px-4">
+            <div className="mx-auto w-full max-w-2xl space-y-5">
               {data.map((item) => (
                 <div className="place-items-center" key={item.key}>
                   {renderItem(item)}

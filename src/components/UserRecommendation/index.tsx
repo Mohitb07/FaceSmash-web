@@ -60,7 +60,7 @@ const UserRecommendation = () => {
   }
 
   return (
-    <div className="mt-10 hidden max-w-[25rem] overflow-hidden rounded-2xl bg-[#242427] p-3 lg:block">
+    <div className="mt-10 hidden max-w-[25rem] overflow-hidden rounded-2xl bg-[#121213] p-3 lg:block">
       <div className="flex items-center gap-5">
         <UserCard
           userId={authUser.uid}

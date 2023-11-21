@@ -64,7 +64,7 @@ const Sidebar = ({
             icon={
               <img
                 width="40"
-                height=""
+                height="40"
                 src="https://img.icons8.com/pastel-glyph/64/7950F2/search--v2.png"
                 alt="search--v2"
               />

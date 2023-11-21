@@ -35,10 +35,15 @@ const User = ({
       >
         <Avatar size={size} src={profileURL} name={username} />
         <div>
-          <Text aria-label="email" fontWeight="bold">
+          <Text aria-label="email" fontWeight="bold" wordBreak="break-all">
             {username}
           </Text>
-          <Text aria-label="username" color="gray.500" fontSize={fontSize}>
+          <Text
+            wordBreak="break-all"
+            aria-label="username"
+            color="gray.500"
+            fontSize={fontSize}
+          >
             {email}
           </Text>
         </div>
