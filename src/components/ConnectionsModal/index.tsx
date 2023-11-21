@@ -39,22 +39,22 @@ const ConnectionModal = ({
     >
       <ModalOverlay />
       <ModalContent borderRadius="2xl" paddingBottom="5">
-        <ModalHeader textAlign="center" fontSize="3xl">
+        <ModalHeader textAlign="center" fontSize={isMobile ? 'large' : '2xl'}>
           {title}
         </ModalHeader>
         <Divider />
-        <ModalCloseButton fontSize="2xl" />
+        <ModalCloseButton fontSize={isMobile ? 'medium' : 'large'} />
         <ModalBody maxHeight="md">
           {data.length === 0 && (
-            <Text textAlign="center" fontSize="xl">
+            <Text textAlign="center" fontSize={isMobile ? 'medium' : 'large'}>
               No {title}
             </Text>
           )}
           {data.map((user) => (
             <User
               key={user.uid}
-              size="lg"
-              fontSize="lg"
+              size={isMobile ? 'md' : 'lg'}
+              fontSize={isMobile ? 'medium' : 'large'}
               username={user.username}
               profileURL={user.profilePic}
               userId={user.uid}
