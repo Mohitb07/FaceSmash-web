@@ -2,10 +2,10 @@ import { Button } from '@chakra-ui/react';
 import { IoIosRefresh } from 'react-icons/io';
 
 function ErrorFallback({
-  error,
+  // error,
   resetErrorBoundary,
 }: {
-  error: Error;
+  // error: Error;
   resetErrorBoundary: () => void;
 }) {
   return (
@@ -14,7 +14,7 @@ function ErrorFallback({
       className="flex w-full flex-col items-center justify-center space-y-4 p-3"
     >
       <p className="text-xl font-bold">Something went wrong 😢</p>
-      <pre className="text-lg">{error.message}</pre>
+      {/* <pre className="text-lg">{error.message}</pre> */}
       <Button
         onClick={resetErrorBoundary}
         bgColor="white"
