@@ -15,10 +15,12 @@ import Link from 'next/link';
 import React from 'react';
 import { BiLink } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { CiTrash } from 'react-icons/ci';
 import { FaHeart } from 'react-icons/fa';
-import { FiBookmark, FiHeart } from 'react-icons/fi';
-import { HiOutlinePaperAirplane } from 'react-icons/hi';
-import { TbMessageCircle2 } from 'react-icons/tb';
+import { FiHeart } from 'react-icons/fi';
+// import { HiOutlinePaperAirplane } from 'react-icons/hi';
+// import { TbMessageCircle2 } from 'react-icons/tb';
+import { LiaEdit } from 'react-icons/lia';
 
 import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
 import { useHandlePost } from '@/hooks/useHandlePost';
@@ -87,7 +89,7 @@ const Feed = ({
   };
 
   return (
-    <article className="relative h-auto max-w-2xl border border-slate-900 pb-3">
+    <article className="relative h-auto max-w-2xl border-b border-slate-900 pb-3">
       <div>
         <div className="p-3">
           <header className="flex items-center">
@@ -105,7 +107,7 @@ const Feed = ({
               <div className="flex items-center space-x-3">
                 <span
                   role="button"
-                  className="text-sm font-semibold md:text-base"
+                  className="text-xs font-semibold tracking-wider xl:text-base"
                 >
                   <Link
                     href={{
@@ -116,7 +118,7 @@ const Feed = ({
                     {username}
                   </Link>
                 </span>
-                <div className="space-x-2 text-xs md:text-base">
+                <div className="space-x-2 text-xs xl:text-base">
                   <span className="text-slate-400">•</span>
                   <span className="text-slate-400">
                     {dayjs(createdAt?.toDate()).fromNow()}
@@ -132,14 +134,23 @@ const Feed = ({
                   </MenuButton>
                   <MenuList backgroundColor="#242526" border="none" padding="2">
                     <MenuItem
-                      icon={
-                        <img
-                          width="24"
-                          height="24"
-                          src="https://img.icons8.com/ios-glyphs/30/ff0000/filled-trash.png"
-                          alt="filled-trash"
-                        />
-                      }
+                      icon={<LiaEdit className="text-lg" />}
+                      onClick={() => console.log('edit post')}
+                      backgroundColor="transparent"
+                      _hover={{
+                        backgroundColor: '#40404F',
+                        borderRadius: '3px',
+                      }}
+                    >
+                      <button
+                        aria-label="delete post"
+                        className="bg-none text-gray-400"
+                      >
+                        Edit Post
+                      </button>
+                    </MenuItem>
+                    <MenuItem
+                      icon={<CiTrash className="text-lg text-red-400" />}
                       onClick={() => handlePostDeletion(postId, imageRef)}
                       backgroundColor="transparent"
                       _hover={{
@@ -171,15 +182,15 @@ const Feed = ({
           }`}
         >
           <div>
-            <div className="flex items-center text-xl md:text-2xl">
+            <div className="flex items-center text-xl">
               <div className="flex flex-1 space-x-3">
                 <section>
                   <span>
                     <button onClick={handleLikes}>
                       {hasLiked ? (
-                        <FaHeart className="text-red-500 group-hover:opacity-40" />
+                        <FaHeart className="text-4xl text-red-500 group-hover:opacity-40" />
                       ) : (
-                        <FiHeart className="group-hover:opacity-40" />
+                        <FiHeart className="text-4xl group-hover:opacity-40" />
                       )}
                     </button>
                   </span>
@@ -187,14 +198,14 @@ const Feed = ({
                 <section>
                   <span>
                     <button>
-                      <TbMessageCircle2 className="-scale-x-100 group-hover:opacity-40" />
+                      {/* <TbMessageCircle2 className="-scale-x-100 group-hover:opacity-40" /> */}
                     </button>
                   </span>
                 </section>
                 <section>
                   <span>
                     <button>
-                      <HiOutlinePaperAirplane className="rotate-90 group-hover:opacity-40" />
+                      {/* <HiOutlinePaperAirplane className="rotate-90 group-hover:opacity-40" /> */}
                     </button>
                   </span>
                 </section>
@@ -202,14 +213,14 @@ const Feed = ({
               <section>
                 <span>
                   <button>
-                    <FiBookmark className="group-hover:opacity-40" />
+                    {/* <FiBookmark className="group-hover:opacity-40" /> */}
                   </button>
                 </span>
               </section>
             </div>
 
             <div>
-              <span className="text-base font-semibold md:text-lg">
+              <span className="text-sm font-semibold xl:text-lg">
                 {likes} likes
               </span>
             </div>
@@ -219,15 +230,21 @@ const Feed = ({
               <div role="link" className="flex justify-start">
                 <div className="inline-block cursor-pointer rounded-full bg-slate-600 p-2 opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-80">
                   <a href={link} target="_blank" rel="noopener noreferrer">
-                    <BiLink fontSize={20} />
+                    <BiLink className="text-4xl" />
                   </a>
                 </div>
               </div>
             )}
-            <p className="text-xl leading-8 md:text-2xl">{postTitle}</p>
-            <div>
+            <p
+              className={`leading-8 ${
+                postImage ? 'text-lg xl:text-xl' : 'text-2xl'
+              }`}
+            >
+              {postTitle}
+            </p>
+            <div className="pb-2">
               <Collapse startingHeight={23} in={show}>
-                <p className="text-sm md:text-base">
+                <p className="text-[0.9rem]">
                   <span className="mr-2 font-semibold tracking-wide">
                     {username}
                   </span>
