@@ -1,7 +1,10 @@
 import { Avatar } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { memo } from 'react';
+import { memo } from 'react';
+import { GoHome, GoHomeFill } from 'react-icons/go';
+import { IoSearch } from 'react-icons/io5';
+import { TbSquareRoundedPlus } from 'react-icons/tb';
 
 import type { User } from '@/interface';
 
@@ -22,30 +25,30 @@ const BottomNavigation = ({
       <ul className="grid h-14 w-full grid-cols-4 place-items-center p-2">
         <li>
           <Link href="/">
-            <img
-              width="24"
-              height="24"
-              src="https://img.icons8.com/3d-fluency/94/paper-plane.png"
-              alt="paper-plane"
-            />
+            {router.pathname === '/' ? (
+              <GoHomeFill className="text-2xl" />
+            ) : (
+              <GoHome className="text-2xl" />
+            )}
           </Link>
         </li>
         <li>
-          <img
+          <IoSearch
             onClick={() => setIsSearchDrawerOpen(true)}
-            width="24"
-            height="24"
-            src="https://img.icons8.com/pastel-glyph/64/7950F2/search--v2.png"
-            alt="search--v2"
+            className="text-2xl"
           />
         </li>
         <li>
-          <img
+          {/* <img
             onClick={() => setIsModalOpen(true)}
             width="24"
             height="24"
             src="https://img.icons8.com/glyph-neue/64/7950F2/plus-2-math.png"
             alt="plus-2-math"
+          /> */}
+          <TbSquareRoundedPlus
+            onClick={() => setIsModalOpen(true)}
+            className="text-2xl"
           />
         </li>
         <li>
