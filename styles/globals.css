@@ -36,7 +36,7 @@ a {
 
 @layer components {
   .nav-item {
-    @apply flex cursor-pointer items-center space-x-5 rounded-full p-3 text-xl transition-all duration-300 ease-in-out hover:bg-slate-800 md:justify-center lg:justify-start;
+    @apply flex cursor-pointer items-center gap-3 rounded-full p-3 text-base xl:text-xl transition-all duration-300 ease-in-out hover:bg-zinc-900 md:justify-center lg:justify-start;
   }
   .hover-animation {
     @apply transition-transform duration-300 ease-in-out group-hover:scale-110;
