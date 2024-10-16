@@ -78,12 +78,7 @@ const UpdateProfileModal = ({ onClose, isOpen }: UpdateProfileModalProps) => {
     }
   };
 
-  const isDisabled =
-    Boolean(errors.bio) ||
-    Boolean(fileInput.error) ||
-    !bio ||
-    (bio === authUser?.bio && !fileInput.file) ||
-    loading;
+  const isDisabled = !fileInput.file && (!bio || bio === authUser?.bio);
 
   const handleChange = (files: CustomFile[]) => {
     if (files.length > 0) {
