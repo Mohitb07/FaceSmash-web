@@ -50,23 +50,21 @@ const UserProfile = () => {
       </header>
 
       <div className="md:flex md:h-screen">
-        <div className="h-full lg:w-1/4">
+        <div className="max-w-lg overflow-y-auto border-r border-neutral-900 lg:w-1/6">
           <Navigation />
         </div>
         <div className="flex-1 overflow-y-auto">
-          <div>
-            <main className="">
-              <ErrorBoundary FallbackComponent={ErrorFallback}>
-                <FeedContainer
-                  customQuery={postQuery}
-                  user={userDetail}
-                  isLoading={isUserDetailLoading}
-                  userId={userId}
-                  isProfile
-                />
-              </ErrorBoundary>
-            </main>
-          </div>
+          <main className="">
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <FeedContainer
+                customQuery={postQuery}
+                user={userDetail}
+                isLoading={isUserDetailLoading}
+                userId={userId}
+                isProfile
+              />
+            </ErrorBoundary>
+          </main>
         </div>
         <aside className="p-3 lg:w-1/4">
           <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
