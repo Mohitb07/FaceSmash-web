@@ -36,9 +36,10 @@ const DataList = <D extends { key: string }>({
   userId,
 }: DataListProps<D>) => {
   let endMessage = null;
+
   if (data.length > 0 && !isLoading) {
     endMessage = (
-      <h4 className="my-2 text-center text-slate-500">
+      <h4 className="py-12 text-center text-slate-500">
         Yay! You have seen it all
       </h4>
     );

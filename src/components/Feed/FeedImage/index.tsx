@@ -22,6 +22,7 @@ const FeedImage = ({ postImage, link }: FeedImageProps) => {
     <div style={{ position: 'relative', paddingTop }}>
       <Image
         style={{ visibility: isLoading ? 'hidden' : 'visible' }}
+        className="rounded-lg"
         alt="user post"
         src={postImage}
         layout="fill"

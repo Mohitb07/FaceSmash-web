@@ -72,15 +72,19 @@ const ProfileButton = ({ userId }: ProfileButtonProps) => {
             width="fit-content"
             colorScheme="brand"
             color="white"
+            rounded="full"
+            minWidth={40}
             onClick={() => handleModalOpen('Edit profile')}
           >
             Edit
           </Button>
         ) : (
           <Button
+            rounded="full"
             width="full"
             colorScheme="brand"
             color="white"
+            minWidth={40}
             onClick={handleConnections}
           >
             {hasFollowedThisUser ? 'Unfollow' : 'Follow'}

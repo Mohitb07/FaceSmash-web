@@ -60,25 +60,25 @@ const UserRecommendation = () => {
   }
 
   return (
-    <div className="mt-10 hidden max-w-[25rem] overflow-hidden rounded-2xl bg-[#121213] p-3 lg:block">
+    <div className="hidden overflow-hidden rounded-2xl p-3 lg:block xl:max-w-[25rem]">
       <div className="flex items-center gap-5">
         <UserCard
           userId={authUser.uid}
           size="md"
-          fontSize="medium"
+          fontSize="sm"
           username={authUser.username}
           email={authUser.email}
           profileURL={authUser.profilePic}
         />
       </div>
       <div className="mt-5">
-        <p className="text-base font-semibold tracking-wider text-gray-500">
-          Suggestions for you
+        <p className="font-semibold tracking-wider text-gray-500 xl:text-[1.1rem]">
+          Suggested for you
         </p>
         <div>
           {randomSuggestion.map((user) => (
             <UserCard
-              size="sm"
+              size="md"
               fontSize="sm"
               key={user.uid}
               userId={user.uid}

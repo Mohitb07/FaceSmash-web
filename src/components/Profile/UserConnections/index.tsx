@@ -54,15 +54,14 @@ const UserConnections = ({
 
   return (
     <>
-      <Skeleton
-        borderRadius="2xl"
-        isLoaded={!isLoading && !isConnectionsCountLoading}
-      >
-        <div className="hidden items-center gap-5 text-lg text-slate-600 md:flex">
+      <div className="hidden items-center gap-5 text-lg text-slate-600 md:flex">
+        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <p>
             <span className="mr-2 font-semibold text-white">{postsCount}</span>{' '}
             posts
           </p>
+        </Skeleton>
+        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <p
             className="cursor-pointer"
             onClick={() => handleModalOpen('Followers')}
@@ -72,6 +71,8 @@ const UserConnections = ({
             </span>{' '}
             followers
           </p>
+        </Skeleton>
+        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <p
             className="cursor-pointer"
             onClick={() => handleModalOpen('Following')}
@@ -81,18 +82,17 @@ const UserConnections = ({
             </span>{' '}
             followings
           </p>
-        </div>
-      </Skeleton>
+        </Skeleton>
+      </div>
 
-      <Skeleton
-        borderRadius="2xl"
-        isLoaded={!isLoading && !isConnectionsCountLoading}
-      >
-        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-800 p-1 text-slate-600 md:hidden">
+      <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-800 p-1 text-slate-600 md:hidden">
+        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <div className="text-center">
             <span className="font-semibold text-white">{postsCount}</span>
             <p className="text-slate-600">posts</p>
           </div>
+        </Skeleton>
+        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <div
             className="text-center"
             onClick={() => handleModalOpen('Followers')}
@@ -102,6 +102,8 @@ const UserConnections = ({
             </span>
             <p>followers</p>
           </div>
+        </Skeleton>
+        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <div
             className="text-center"
             onClick={() => handleModalOpen('Following')}
@@ -111,8 +113,8 @@ const UserConnections = ({
             </span>
             <p>following</p>
           </div>
-        </div>
-      </Skeleton>
+        </Skeleton>
+      </div>
 
       <Suspense fallback={<></>}>
         {isOpen && modalType !== 'Edit profile' && (

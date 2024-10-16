@@ -12,7 +12,7 @@ export const useCheckOnlineStatus = () => {
         position: 'bottom-right',
         isClosable: true,
         colorScheme: 'purple',
-        icon: <FiWifi className="text-xl" />,
+        icon: <FiWifi className="text-2xl" />,
       });
     }
     function handleOffline() {
@@ -22,7 +22,7 @@ export const useCheckOnlineStatus = () => {
         position: 'bottom-right',
         isClosable: true,
         colorScheme: 'purple',
-        icon: <FiWifiOff className="text-xl" />,
+        icon: <FiWifiOff className="text-2xl" />,
       });
     }
     window.addEventListener('online', handleOnline);

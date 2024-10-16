@@ -36,15 +36,15 @@ function Home() {
         <Brand />
       </header>
       <div className="overflow-hidden md:flex md:h-screen">
-        <div className="h-full overflow-y-auto lg:w-1/4">
+        <div className="h-full max-w-lg overflow-y-auto border-r border-neutral-900 lg:w-1/6">
           <Navigation />
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto md:mx-[3rem]">
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <FeedContainer customQuery={postQuery} />
           </ErrorBoundary>
         </div>
-        <div className="overflow-y-auto p-3 lg:w-1/4">
+        <div className="overflow-y-auto p-3 lg:w-2/6">
           <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <UserRecommendation />

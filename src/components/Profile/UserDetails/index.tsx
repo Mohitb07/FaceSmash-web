@@ -55,13 +55,14 @@ const UserDetail = ({
             />
           </Skeleton>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center gap-5">
           <ProfileButton userId={userId} />
           <Settings />
         </div>
       </div>
-      <div className="flex-wrap space-y-3 md:px-10 xl:px-20">
+      <div className="flex-wrap space-y-6 md:px-10 xl:px-20">
         <Skeleton
+          height={3}
           borderRadius="full"
           isLoaded={!isLoading}
           mt={5}
@@ -69,14 +70,18 @@ const UserDetail = ({
         >
           <p className="text-2xl font-semibold">{user.username}</p>
         </Skeleton>
+        {user.bio && (
+          <Skeleton
+            height={3}
+            borderRadius="full"
+            isLoaded={!isLoading}
+            width="-webkit-fit-content"
+          >
+            <p className="text-lg md:text-xl">{user.bio}</p>
+          </Skeleton>
+        )}
         <Skeleton
-          borderRadius="full"
-          isLoaded={!isLoading}
-          width="-webkit-fit-content"
-        >
-          <p className="text-lg md:text-xl">{user.bio}</p>
-        </Skeleton>
-        <Skeleton
+          height={3}
           borderRadius="full"
           isLoaded={!isLoading}
           width="-webkit-fit-content"
@@ -84,17 +89,11 @@ const UserDetail = ({
           <p className="text-base md:text-lg">{user.email}</p>
         </Skeleton>
 
-        <Skeleton
-          borderRadius="full"
-          isLoaded={!isLoading}
-          // width="-webkit-fit-content"
-        >
-          <UserConnections
-            userId={userId}
-            userQuery={userQuery}
-            isMobile={isSmaller}
-          />
-        </Skeleton>
+        <UserConnections
+          userId={userId}
+          userQuery={userQuery}
+          isMobile={isSmaller}
+        />
       </div>
     </div>
   );

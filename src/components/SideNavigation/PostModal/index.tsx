@@ -40,7 +40,7 @@ const schema = yup
       .required('Title is a required field'),
     description: yup
       .string()
-      .max(100)
+      .max(1000, 'Description must not exceed 1000 characters')
       .required('Description is a required field'),
     link: yup.string().optional(),
   })

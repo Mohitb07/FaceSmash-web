@@ -41,7 +41,7 @@ const User = ({
           <Text
             wordBreak="break-all"
             aria-label="username"
-            color="gray.500"
+            color="GrayText"
             fontSize={fontSize}
           >
             {email}
