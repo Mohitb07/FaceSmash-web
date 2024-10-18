@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/react';
 import type { Unsubscribe } from 'firebase/auth';
 import {
   addDoc,
@@ -9,9 +10,12 @@ import {
   query,
   runTransaction,
   serverTimestamp,
+  updateDoc,
 } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { useEffect, useState } from 'react';
+import { MdErrorOutline } from 'react-icons/md';
+import { TiTick } from 'react-icons/ti';
 
 import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -30,6 +34,7 @@ type PostCreationFormData = {
 export const useHandlePost = () => {
   const [userLikedPosts, setUserLikedPosts] = useState<Set<string>>(new Set());
   const { authUser } = useAuthUser();
+  const toast = useToast();
 
   useEffect(() => {
     let unsubscriber: Unsubscribe;
@@ -74,6 +79,44 @@ export const useHandlePost = () => {
     }
   };
 
+  const updatePost = async (
+    postId: string,
+    url: string,
+    data: PostCreationFormData,
+    cb?: () => void
+  ) => {
+    console.log('updatePost', postId, url, data);
+    const postDocRef = doc(db, POSTS_COLLECTION, postId); // Replace 'posts' with your collection name and id with your document ID
+    try {
+      await updateDoc(postDocRef, {
+        ...data,
+        image: url,
+        updatedAt: serverTimestamp(),
+      });
+      toast({
+        title: `Post updated successfully`,
+        variant: 'left-accent',
+        position: 'bottom-right',
+        isClosable: true,
+        colorScheme: 'purple',
+        icon: <TiTick className="text-2xl" />,
+      });
+      if (typeof cb === 'function') {
+        cb();
+      }
+    } catch (error) {
+      console.error('Error updating document: ', error);
+      toast({
+        title: `Some went wrong`,
+        variant: 'left-accent',
+        position: 'bottom-right',
+        isClosable: true,
+        colorScheme: 'purple',
+        icon: <MdErrorOutline className="text-2xl" />,
+      });
+    }
+  };
+
   const createPostWithoutImage = async (
     user: User,
     data: PostCreationFormData,
@@ -113,6 +156,7 @@ export const useHandlePost = () => {
   };
 
   const deletePostWithImage = async (postId: string, postImageRef: string) => {
+    console.log('dete', postId, postImageRef);
     const backup = await backupPost(postId);
     const storage = getStorage();
     const imageRef = ref(storage, postImageRef);
@@ -143,5 +187,6 @@ export const useHandlePost = () => {
     deletePostWithoutImage,
     deletePostWithImage,
     userLikedPosts,
+    updatePost,
   };
 };

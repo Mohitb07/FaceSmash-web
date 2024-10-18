@@ -5,16 +5,15 @@ import {
   IconButton,
   Text,
   Textarea,
-  useBoolean,
   useMediaQuery,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { deleteObject, getStorage, ref } from 'firebase/storage';
 import Image from 'next/image';
-import React, { memo, useState } from 'react';
+import { memo, useState } from 'react';
 import Files from 'react-files';
 import type { SubmitHandler } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { BiLink, BiUnlink } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
 import * as yup from 'yup';
@@ -30,6 +29,15 @@ import type { CustomFile } from '@/interface';
 type PostModalProps = {
   isModalOpen: boolean;
   modalClose: () => void;
+  mode: 'create' | 'edit';
+  initialFormData?: {
+    title: string;
+    description: string;
+    link?: string;
+    image?: string;
+  };
+  postId?: string;
+  imageRef?: string;
 };
 
 const schema = yup
@@ -56,7 +64,13 @@ type FileInput = {
 const CreatePostModal = ({
   isModalOpen = false,
   modalClose,
+  mode,
+  initialFormData,
+  postId,
+  imageRef,
 }: PostModalProps) => {
+  console.log('initialFormData', initialFormData);
+  const { authUser } = useAuthUser();
   const [fileInput, setFileInput] = useState<FileInput>({
     file: null,
     error: '',
@@ -66,24 +80,42 @@ const CreatePostModal = ({
     control,
     formState: { errors },
     handleSubmit,
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: '',
-      description: '',
-      link: '',
+      title: initialFormData?.title,
+      description: initialFormData?.description,
+      link: initialFormData?.link,
     },
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [isLinkVisible, setIsLinkVisible] = useBoolean(false);
-  const [isImageContainerVisible, setIsImageContainerVisible] =
-    useBoolean(true);
+  const [isLinkVisible, setIsLinkVisible] = useState(
+    initialFormData?.link ? true : false
+  );
+  const [removeInitialImage, setRemoveInitialImage] = useState(false);
+  const [removeInitialLink, setRemoveInitialLink] = useState(false);
+  const [isImageContainerVisible, setIsImageContainerVisible] = useState(true);
   const [isMobile] = useMediaQuery('(max-width: 400px)');
   const [isMedium] = useMediaQuery('(max-width: 768px)');
   const [isLarge] = useMediaQuery('(max-width: 1024px)');
-  const { authUser } = useAuthUser();
-  const { createPostWithImage, createPostWithoutImage } = useHandlePost();
+  const { createPostWithImage, createPostWithoutImage, updatePost } =
+    useHandlePost();
   const { uploadImage } = useImageUpload();
+  const values = watch();
+  const currentValues = {
+    ...values,
+    link: !isLinkVisible && removeInitialLink ? '' : values.link,
+    image:
+      !isImageContainerVisible && removeInitialImage
+        ? ''
+        : fileInput.file?.preview.url || initialFormData?.image,
+  };
+
+  console.log('current', currentValues);
+
+  const isDisabled =
+    JSON.stringify(currentValues) === JSON.stringify(initialFormData);
 
   const handlePostCreation: SubmitHandler<FormData> = (data) => {
     try {
@@ -114,6 +146,54 @@ const CreatePostModal = ({
     }
   };
 
+  const handlePostEdit: SubmitHandler<FormData> = async (data) => {
+    console.log('handlePostEdit', data);
+    try {
+      setIsLoading(true);
+      if (fileInput.file && authUser?.uid && postId) {
+        if (imageRef) {
+          console.log('image ref', imageRef);
+          const storage = getStorage();
+          const storageImageRef = ref(
+            storage,
+            `${authUser?.uid}/posts/${imageRef}`
+          );
+          await deleteObject(storageImageRef);
+        }
+        const urlRef = `${authUser.uid}/posts/${fileInput.imageRef}`;
+        uploadImage(urlRef, fileInput.file, (url: string) => {
+          updatePost(
+            postId,
+            url,
+            {
+              ...data,
+              link: currentValues.link,
+              imageRef: fileInput.imageRef,
+            },
+            () => {
+              modalClose();
+              setIsLoading(false);
+            }
+          );
+        });
+      }
+      if (!fileInput.file && authUser?.uid && postId) {
+        updatePost(
+          postId,
+          removeInitialImage ? '' : initialFormData?.image || '',
+          { ...data, link: currentValues.link },
+          () => {
+            modalClose();
+            setIsLoading(false);
+          }
+        );
+      }
+    } catch (error) {
+      console.log('Error', error);
+      setIsLoading(false);
+    }
+  };
+
   const handleChange = (files: CustomFile[]) => {
     if (files.length > 0) {
       setFileInput({
@@ -131,13 +211,41 @@ const CreatePostModal = ({
     }));
   };
 
+  const toggleImageContainer = () => {
+    setIsImageContainerVisible((prevState) => !prevState);
+    if (isImageContainerVisible) {
+      setRemoveInitialImage(true);
+      setFileInput({
+        file: null,
+        error: '',
+        imageRef: '',
+      });
+    } else {
+      setRemoveInitialImage(false);
+    }
+  };
+
+  const toggleLinkContainer = () => {
+    setIsLinkVisible((prevState) => !prevState);
+    if (isLinkVisible) {
+      setRemoveInitialLink(true);
+    } else {
+      setRemoveInitialLink(false);
+    }
+  };
+
   return (
     <FormModal
-      title="Create new post"
+      isDisabled={mode === 'edit' ? isDisabled : false}
+      title={mode === 'create' ? 'Create Post' : 'Edit Post'}
       isOpen={isModalOpen}
       onClose={modalClose}
-      footerBtnLabel="Create"
-      onSubmit={handleSubmit(handlePostCreation)}
+      footerBtnLabel={mode === 'create' ? 'Create' : 'Edit'}
+      onSubmit={
+        mode === 'create'
+          ? handleSubmit(handlePostCreation)
+          : handleSubmit(handlePostEdit)
+      }
       isLoading={isLoading}
     >
       <FormControl isRequired isInvalid={false}>
@@ -227,7 +335,7 @@ const CreatePostModal = ({
               minFileSize={0}
               clickable
             >
-              {!fileInput.file && (
+              {!initialFormData?.image && !fileInput.file && (
                 <Text
                   textAlign="center"
                   p={3}
@@ -239,10 +347,14 @@ const CreatePostModal = ({
                   Select Image from your system
                 </Text>
               )}
-              {fileInput.file && (
+              {(Boolean(initialFormData?.image) || Boolean(fileInput.file)) && (
                 <div className="flex items-center justify-center overflow-hidden">
                   <Image
-                    src={fileInput.file?.preview.url}
+                    src={
+                      fileInput.file?.preview.url ||
+                      initialFormData?.image ||
+                      ''
+                    }
                     height={300}
                     width={600}
                     alt="post image"
@@ -258,7 +370,7 @@ const CreatePostModal = ({
       </FormControl>
       <Flex gap={3} mt={5}>
         <IconButton
-          onClick={setIsLinkVisible.toggle}
+          onClick={toggleLinkContainer}
           colorScheme={`${isLinkVisible ? 'gray' : 'blue'}`}
           aria-label="Add a link"
           icon={
@@ -270,7 +382,7 @@ const CreatePostModal = ({
           }
         />
         <IconButton
-          onClick={setIsImageContainerVisible.toggle}
+          onClick={toggleImageContainer}
           colorScheme={`${isImageContainerVisible ? 'gray' : 'teal'}`}
           aria-label="Add an image"
           icon={

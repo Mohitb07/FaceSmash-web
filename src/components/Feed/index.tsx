@@ -10,9 +10,7 @@ import {
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
 import Link from 'next/link';
-import React from 'react';
 import { BiLink } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CiTrash } from 'react-icons/ci';
@@ -22,11 +20,10 @@ import { FiHeart } from 'react-icons/fi';
 // import { TbMessageCircle2 } from 'react-icons/tb';
 import { LiaEdit } from 'react-icons/lia';
 
-import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHandlePost } from '@/hooks/useHandlePost';
 import type { FeedProps } from '@/interface';
 
-import { db } from '../../../firebase';
 import FeedImage from './FeedImage';
 
 dayjs.extend(relativeTime);
@@ -45,51 +42,43 @@ const Feed = ({
   link,
   hasLiked,
   authUserId,
+  handleLikes,
+  setPostEditModal,
+  setInitialPostValues,
+  setPostId,
+  setImageRef,
 }: FeedProps) => {
+  const { authUser } = useAuthUser();
   const [show, setShow] = useBoolean();
-  const { deletePostWithoutImage, deletePostWithImage } = useHandlePost();
+  const { deletePostWithImage, deletePostWithoutImage } = useHandlePost();
 
-  const handlePostDeletion = async (pid: string, imgRef?: string) => {
-    if (authUserId !== userId) return;
-    if (postImage && imgRef) {
-      await deletePostWithImage(pid, `${authUserId}/posts/${imgRef}`);
+  const editHandler = () => {
+    if (imageRef) setImageRef(imageRef);
+    setPostId(postId);
+    setInitialPostValues({
+      title: postTitle,
+      description,
+      link,
+      image: postImage,
+    });
+    setPostEditModal(true);
+  };
+
+  const handlePostDeletion = async (
+    pid: string,
+    postImg?: string,
+    imgRef?: string
+  ) => {
+    if (authUser?.uid !== userId) return;
+    if (postImg && imgRef) {
+      await deletePostWithImage(pid, `${authUser?.uid}/posts/${imgRef}`);
     } else {
       await deletePostWithoutImage(pid);
     }
   };
 
-  const handleLikes = async () => {
-    const batch = writeBatch(db);
-    const postLikesSubColRef = doc(
-      db,
-      `${USERS_COLLECTION}/${authUserId}/postlikes/${postId}`
-    );
-    const postRef = doc(db, POSTS_COLLECTION, postId);
-    const data = await getDoc(postLikesSubColRef);
-    // if the user has liked the post
-    if (data.exists()) {
-      batch.delete(postLikesSubColRef);
-      batch.update(postRef, {
-        likes: increment(-1),
-      });
-    }
-    // if the user has not liked the post
-    else {
-      batch.set(postLikesSubColRef, {
-        likes: true,
-        postId: postId,
-      });
-      batch.update(postRef, {
-        likes: increment(1),
-      });
-    }
-    batch
-      .commit()
-      .catch((err) => console.log('some error while liking the post', err));
-  };
-
   return (
-    <article className="relative h-auto max-w-2xl border-b border-slate-900 pb-3">
+    <article className="relative h-auto w-full max-w-2xl border-b border-slate-900 pb-3">
       <div>
         <div className="p-3">
           <header className="flex items-center">
@@ -135,7 +124,7 @@ const Feed = ({
                   <MenuList backgroundColor="#242526" border="none" padding="2">
                     <MenuItem
                       icon={<LiaEdit className="text-lg" />}
-                      onClick={() => console.log('edit post')}
+                      onClick={editHandler}
                       backgroundColor="transparent"
                       _hover={{
                         backgroundColor: '#40404F',
@@ -151,7 +140,9 @@ const Feed = ({
                     </MenuItem>
                     <MenuItem
                       icon={<CiTrash className="text-lg text-red-400" />}
-                      onClick={() => handlePostDeletion(postId, imageRef)}
+                      onClick={() =>
+                        handlePostDeletion(postId, postImage, imageRef)
+                      }
                       backgroundColor="transparent"
                       _hover={{
                         backgroundColor: '#40404F',
@@ -186,7 +177,7 @@ const Feed = ({
               <div className="flex flex-1 space-x-3">
                 <section>
                   <span>
-                    <button onClick={handleLikes}>
+                    <button onClick={() => handleLikes(postId)}>
                       {hasLiked ? (
                         <FaHeart className="text-4xl text-red-500 group-hover:opacity-40" />
                       ) : (

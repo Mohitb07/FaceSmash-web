@@ -1,15 +1,27 @@
-import { SlideFade } from '@chakra-ui/react';
+import {
+  Flex,
+  Modal,
+  ModalBody,
+  ModalOverlay,
+  SlideFade,
+  Spinner,
+} from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
-import React, { useEffect } from 'react';
+import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
 import DataList from '@/components/DataList';
 import EmptyData from '@/components/DataList/EmptyData';
 import Feed from '@/components/Feed';
+import PostModal from '@/components/SideNavigation/PostModal';
+import { POSTS_COLLECTION, USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useGetPosts } from '@/hooks/useGetPosts';
 import { useHandlePost } from '@/hooks/useHandlePost';
-import type { Post, User } from '@/interface';
+import type { Post, PostFormData, User } from '@/interface';
+
+import { db } from '../../firebase';
 
 type FeedContainerProps = {
   customQuery: Query<DocumentData>;
@@ -28,6 +40,16 @@ const FeedContainer = ({
 }: FeedContainerProps) => {
   const { authUser } = useAuthUser();
   const { userLikedPosts } = useHandlePost();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [initialPostValues, setInitialPostValues] = useState<PostFormData>({
+    title: '',
+    description: '',
+    link: '',
+    image: '',
+  });
+  const [postId, setPostId] = useState('');
+  const [imageRef, setImageRef] = useState('');
+
   const {
     getInitialPosts,
     getPosts,
@@ -42,6 +64,42 @@ const FeedContainer = ({
     const unsubscriber = getInitialPosts(customQuery);
     return () => unsubscriber();
   }, [userId]);
+
+  const modalClose = () => {
+    if (isModalOpen) {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleLikes = async (pid: string) => {
+    const batch = writeBatch(db);
+    const postLikesSubColRef = doc(
+      db,
+      `${USERS_COLLECTION}/${authUser?.uid}/postlikes/${pid}`
+    );
+    const postRef = doc(db, POSTS_COLLECTION, pid);
+    const data = await getDoc(postLikesSubColRef);
+    // if the user has liked the post
+    if (data.exists()) {
+      batch.delete(postLikesSubColRef);
+      batch.update(postRef, {
+        likes: increment(-1),
+      });
+    }
+    // if the user has not liked the post
+    else {
+      batch.set(postLikesSubColRef, {
+        likes: true,
+        postId: pid,
+      });
+      batch.update(postRef, {
+        likes: increment(1),
+      });
+    }
+    batch
+      .commit()
+      .catch((err) => console.log('some error while liking the post', err));
+  };
 
   function renderItem<T extends Post>(feed: T) {
     return (
@@ -60,6 +118,11 @@ const FeedContainer = ({
         postTitle={feed.title}
         postId={feed.key}
         hasLiked={userLikedPosts.has(feed.key)}
+        setPostEditModal={setIsModalOpen}
+        handleLikes={handleLikes}
+        setInitialPostValues={setInitialPostValues}
+        setPostId={setPostId}
+        setImageRef={setImageRef}
       />
     );
   }
@@ -81,6 +144,29 @@ const FeedContainer = ({
         postQuery={customQuery}
         userId={userId}
       />
+      <Suspense
+        fallback={
+          <Modal isCentered size="full" isOpen={true} onClose={() => {}}>
+            <ModalOverlay />
+            <ModalBody>
+              <Flex justifyContent="center" alignItems="center">
+                <Spinner />
+              </Flex>
+            </ModalBody>
+          </Modal>
+        }
+      >
+        {isModalOpen && (
+          <PostModal
+            initialFormData={initialPostValues}
+            mode="edit"
+            isModalOpen={isModalOpen}
+            modalClose={modalClose}
+            postId={postId}
+            imageRef={imageRef}
+          />
+        )}
+      </Suspense>
     </SlideFade>
   );
 };
