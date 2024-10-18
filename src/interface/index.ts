@@ -26,6 +26,13 @@ export interface Post {
   uid: string;
 }
 
+export interface PostFormData {
+  title: string;
+  description: string;
+  link?: string;
+  image?: string;
+}
+
 export interface FeedProps {
   postImage?: string;
   postTitle: string;
@@ -40,6 +47,11 @@ export interface FeedProps {
   likes: number;
   authUserId: string;
   hasLiked: boolean;
+  setPostEditModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setPostId: React.Dispatch<React.SetStateAction<string>>;
+  setImageRef: React.Dispatch<React.SetStateAction<string>>;
+  setInitialPostValues: React.Dispatch<React.SetStateAction<PostFormData>>;
+  handleLikes: (postId: string) => Promise<void>;
 }
 
 export interface PostLikes {
