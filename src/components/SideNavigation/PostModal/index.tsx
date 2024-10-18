@@ -181,7 +181,11 @@ const CreatePostModal = ({
         updatePost(
           postId,
           removeInitialImage ? '' : initialFormData?.image || '',
-          { ...data, link: currentValues.link },
+          {
+            ...data,
+            link: currentValues.link,
+            imageRef: removeInitialImage ? '' : imageRef,
+          },
           () => {
             modalClose();
             setIsLoading(false);
