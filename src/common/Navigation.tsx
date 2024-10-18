@@ -84,7 +84,11 @@ const Navigation = () => {
         }
       >
         {isModalOpen && (
-          <PostModal isModalOpen={isModalOpen} modalClose={modalClose} />
+          <PostModal
+            mode="create"
+            isModalOpen={isModalOpen}
+            modalClose={modalClose}
+          />
         )}
       </Suspense>
     </div>
