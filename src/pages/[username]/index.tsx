@@ -49,7 +49,7 @@ const UserProfile = () => {
         <Brand />
       </header>
 
-      <div className="md:flex md:h-screen">
+      {/* <div className="md:flex md:h-screen">
         <div className="max-w-lg overflow-y-auto border-r border-neutral-900 lg:w-1/6">
           <Navigation />
         </div>
@@ -67,6 +67,29 @@ const UserProfile = () => {
           </main>
         </div>
         <aside className="p-3 lg:w-1/4">
+          <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <UserRecommendation />
+            </ErrorBoundary>
+          </SlideFade>
+        </aside>
+      </div> */}
+      <div className="wrapper">
+        <div className="nav-container">
+          <Navigation />
+        </div>
+        <main className="feed-container">
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <FeedContainer
+              customQuery={postQuery}
+              user={userDetail}
+              isLoading={isUserDetailLoading}
+              userId={userId}
+              isProfile
+            />
+          </ErrorBoundary>
+        </main>
+        <aside className="recommendation-container">
           <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <UserRecommendation />
