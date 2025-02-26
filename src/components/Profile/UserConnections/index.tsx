@@ -54,7 +54,8 @@ const UserConnections = ({
 
   return (
     <>
-      <div className="hidden items-center gap-5 text-lg text-slate-600 md:flex">
+      {/* for larger screens */}
+      <div className="hidden items-center gap-5 py-4 text-lg text-dark-700 md:flex">
         <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <p>
             <span className="mr-2 font-semibold text-white">{postsCount}</span>{' '}
@@ -75,7 +76,7 @@ const UserConnections = ({
         <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
           <p
             className="cursor-pointer"
-            onClick={() => handleModalOpen('Following')}
+            onClick={() => handleModalOpen('Followings')}
           >
             <span className="mr-2 font-semibold text-white">
               {connectionsCount.following}
@@ -85,35 +86,38 @@ const UserConnections = ({
         </Skeleton>
       </div>
 
-      <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-slate-800 p-1 text-slate-600 md:hidden">
-        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-          <div className="text-center">
-            <span className="font-semibold text-white">{postsCount}</span>
-            <p className="text-slate-600">posts</p>
-          </div>
-        </Skeleton>
-        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-          <div
-            className="text-center"
-            onClick={() => handleModalOpen('Followers')}
-          >
-            <span className="font-semibold text-white">
-              {connectionsCount.followers}
-            </span>
-            <p>followers</p>
-          </div>
-        </Skeleton>
-        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-          <div
-            className="text-center"
-            onClick={() => handleModalOpen('Following')}
-          >
-            <span className="font-semibold text-white">
-              {connectionsCount.following}
-            </span>
-            <p>following</p>
-          </div>
-        </Skeleton>
+      {/* for mobile screens */}
+      <div className="-mx-3">
+        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-dark-300 p-1 text-dark-700 md:hidden">
+          <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
+            <div className="text-center">
+              <span className="font-semibold text-white">{postsCount}</span>
+              <p>posts</p>
+            </div>
+          </Skeleton>
+          <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
+            <div
+              className="text-center"
+              onClick={() => handleModalOpen('Followers')}
+            >
+              <span className="font-semibold text-white">
+                {connectionsCount.followers}
+              </span>
+              <p>followers</p>
+            </div>
+          </Skeleton>
+          <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
+            <div
+              className="text-center"
+              onClick={() => handleModalOpen('Followings')}
+            >
+              <span className="font-semibold text-white">
+                {connectionsCount.following}
+              </span>
+              <p>following</p>
+            </div>
+          </Skeleton>
+        </div>
       </div>
 
       <Suspense fallback={<></>}>
