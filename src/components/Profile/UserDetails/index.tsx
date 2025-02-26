@@ -4,6 +4,7 @@ import React from 'react';
 import Avatar from 'react-avatar';
 
 import Settings from '@/components/Settings';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import type { User } from '@/interface';
 
 import ProfileButton from '../ProfileButton';
@@ -22,10 +23,12 @@ const UserDetail = ({
   user,
   userId = '',
 }: UserDetailProps) => {
+  const { authUser } = useAuthUser();
   const [isMobile] = useMediaQuery('(max-width: 400px)');
   const [isMedium] = useMediaQuery('(max-width: 768px)');
   const [isLarge] = useMediaQuery('(max-width: 1024px)');
 
+  const isLoggedInUser = authUser?.uid === userId;
   const isSmaller = isMobile;
   const isMediumSize = isMedium;
 
@@ -57,15 +60,14 @@ const UserDetail = ({
         </div>
         <div className="flex items-center gap-5">
           <ProfileButton userId={userId} />
-          <Settings />
+          {isLoggedInUser && <Settings label="" />}
         </div>
       </div>
-      <div className="flex-wrap space-y-6 md:px-10 xl:px-20">
+      <div className="mt-5 flex-wrap space-y-6 md:px-10 xl:px-20">
         <Skeleton
           height={3}
           borderRadius="full"
           isLoaded={!isLoading}
-          mt={5}
           width="-webkit-fit-content"
         >
           <p className="text-2xl font-semibold">{user.username}</p>
@@ -77,7 +79,7 @@ const UserDetail = ({
             isLoaded={!isLoading}
             width="-webkit-fit-content"
           >
-            <p className="text-lg md:text-xl">{user.bio}</p>
+            <p className="text-lg">{user.bio}</p>
           </Skeleton>
         )}
         <Skeleton
@@ -86,7 +88,7 @@ const UserDetail = ({
           isLoaded={!isLoading}
           width="-webkit-fit-content"
         >
-          <p className="text-base md:text-lg">{user.email}</p>
+          <p className="text-base">{user.email}</p>
         </Skeleton>
 
         <UserConnections
