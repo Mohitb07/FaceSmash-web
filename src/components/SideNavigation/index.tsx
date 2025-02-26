@@ -1,4 +1,5 @@
 import { Avatar } from '@chakra-ui/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -13,6 +14,7 @@ import { TbSquareRoundedPlus } from 'react-icons/tb';
 import Brand from '@/components/Brand';
 import NavItem from '@/components/NavItem';
 import type { User } from '@/interface';
+import Logo from '@/public/android-chrome-192x192.png';
 
 import Settings from '../Settings';
 
@@ -29,77 +31,74 @@ const Sidebar = ({
 }: SidebarProps) => {
   const router = useRouter();
   return (
-    <div className="mt-5 w-full">
-      <div className="flex h-full w-full flex-col items-center">
-        <div className="h-5/6 p-2">
-          <div>
-            <div className="mb-3 hidden lg:block">
-              <Brand />
-            </div>
-            <div className="block lg:hidden">
-              <h1 className="mb-[3rem] text-center text-4xl font-bold">
-                <span className="text-primary-100">F</span>
-              </h1>
-            </div>
+    <div className="h-screen pt-5">
+      <div className="flex h-full flex-col">
+        <div className="pb-14">
+          <div className="hidden items-start lg:flex">
+            <Brand />
           </div>
-          <nav className="flex h-full flex-col justify-between">
-            <ul className="space-y-8">
-              <Link href="/">
-                <NavItem
-                  icon={
-                    router.pathname === '/' ? (
-                      <GoHomeFill className="text-4xl" />
-                    ) : (
-                      <GoHome className="text-4xl" />
-                    )
-                  }
-                  label="Home"
-                />
-              </Link>
-              <NavItem
-                onClick={() => setIsSearchDrawerOpen(true)}
-                icon={<IoSearch className="text-4xl" />}
-                label="Search"
-              />
-              <NavItem
-                onClick={() => setIsModalOpen(true)}
-                icon={<TbSquareRoundedPlus className="text-4xl" />}
-                label="Create"
-              />
-              <Link
-                href={{
-                  pathname: '/[username]',
-                  query: { username: user?.qusername, userId: user?.uid },
-                }}
-              >
-                <NavItem label="Profile">
-                  <Avatar
-                    role="navigation"
-                    ring={
-                      router.pathname === '/[username]' &&
-                      router.query.userId === user?.uid
-                        ? 2
-                        : 0
-                    }
-                    ringColor="white"
-                    className="hover-animation ml-1"
-                    size="sm"
-                    name={user?.username}
-                    src={user?.profilePic}
-                  />
-                </NavItem>
-              </Link>
-            </ul>
-            <ul className="text-xl">
-              <div className="hidden lg:block">
-                <Settings Icon={RxHamburgerMenu} />
-              </div>
-              {/* <div className="lg:hidden">
-                <Settings Icon={RxHamburgerMenu} />
-              </div> */}
-            </ul>
-          </nav>
+          <div className="block lg:hidden">
+            <Image src={Logo} alt="logo" height={60} width={60} />
+          </div>
         </div>
+
+        {/* Ensure nav takes full available height */}
+        <nav className="flex grow flex-col">
+          <ul className="space-y-8">
+            <Link href="/">
+              <NavItem
+                icon={
+                  router.pathname === '/' ? (
+                    <GoHomeFill className="text-4xl" />
+                  ) : (
+                    <GoHome className="text-4xl" />
+                  )
+                }
+                label="Home"
+              />
+            </Link>
+            <NavItem
+              onClick={() => setIsSearchDrawerOpen(true)}
+              icon={<IoSearch className="text-4xl" />}
+              label="Search"
+            />
+            <NavItem
+              onClick={() => setIsModalOpen(true)}
+              icon={<TbSquareRoundedPlus className="text-4xl" />}
+              label="Create"
+            />
+            <Link
+              href={{
+                pathname: '/[username]',
+                query: { username: user?.qusername, userId: user?.uid },
+              }}
+            >
+              <NavItem label="Profile">
+                <Avatar
+                  role="navigation"
+                  ring={
+                    router.pathname === '/[username]' &&
+                    router.query.userId === user?.uid
+                      ? 2
+                      : 0
+                  }
+                  ringColor="white"
+                  className="hover-animation ml-1"
+                  size="sm"
+                  name={user?.username}
+                  src={user?.profilePic}
+                />
+              </NavItem>
+            </Link>
+          </ul>
+
+          {/* Push this to the bottom */}
+          <ul className="mt-auto text-xl">
+            <div className="hidden lg:block">
+              <Settings Icon={RxHamburgerMenu} label="More" />
+            </div>
+          </ul>
+        </nav>
       </div>
     </div>
   );
