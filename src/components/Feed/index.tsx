@@ -78,26 +78,27 @@ const Feed = ({
   };
 
   return (
-    <article className="relative h-auto w-full max-w-2xl border-b border-slate-900 pb-3">
+    <article className="relative h-auto w-full max-w-2xl rounded-md bg-[#242628] px-0 pb-3">
       <div>
         <div className="p-3">
           <header className="flex items-center">
             <div className="flex flex-1 items-center space-x-2">
-              <div role="button">
+              <div className="cursor-pointer">
                 <Link
                   href={{
                     pathname: '/[username]',
                     query: { username, userId },
                   }}
                 >
-                  <Avatar ignoreFallback size="sm" src={userProfile} />
+                  <Avatar
+                    name={`${username} avatar`}
+                    size="sm"
+                    src={userProfile}
+                  />
                 </Link>
               </div>
               <div className="flex items-center space-x-3">
-                <span
-                  role="button"
-                  className="text-xs font-semibold tracking-wider xl:text-base"
-                >
+                <span className="text-xs font-semibold tracking-wider xl:text-base">
                   <Link
                     href={{
                       pathname: '/[username]',
@@ -115,8 +116,8 @@ const Feed = ({
                 </div>
               </div>
             </div>
-            <nav role="menu">
-              {authUserId === userId ? (
+            {authUserId === userId ? (
+              <nav role="menu">
                 <Menu isLazy closeOnSelect placement="bottom-end">
                   <MenuButton aria-label="Options">
                     <BsThreeDotsVertical className="cursor-pointer text-xl" />
@@ -158,17 +159,17 @@ const Feed = ({
                     </MenuItem>
                   </MenuList>
                 </Menu>
-              ) : null}
-            </nav>
+              </nav>
+            ) : null}
           </header>
         </div>
         {postImage && (
-          <div className="pb-1">
-            <FeedImage postImage={postImage} link={link} />
+          <div className="pb-1 ">
+            <FeedImage postImage={postImage} link={link} alt={postTitle} />
           </div>
         )}
         <div
-          className={`mt-2 flex flex-col px-4 ${
+          className={`mt-2 flex flex-col px-3 ${
             !postImage ? 'flex-col-reverse' : ''
           }`}
         >
@@ -177,37 +178,19 @@ const Feed = ({
               <div className="flex flex-1 space-x-3">
                 <section>
                   <span>
-                    <button onClick={() => handleLikes(postId)}>
+                    <button
+                      onClick={() => handleLikes(postId)}
+                      aria-label="like or unlike a post"
+                    >
                       {hasLiked ? (
-                        <FaHeart className="text-4xl text-red-500 group-hover:opacity-40" />
+                        <FaHeart className="text-3xl text-red-500 group-hover:opacity-40" />
                       ) : (
-                        <FiHeart className="text-4xl group-hover:opacity-40" />
+                        <FiHeart className="text-3xl group-hover:opacity-40" />
                       )}
                     </button>
                   </span>
                 </section>
-                <section>
-                  <span>
-                    <button>
-                      {/* <TbMessageCircle2 className="-scale-x-100 group-hover:opacity-40" /> */}
-                    </button>
-                  </span>
-                </section>
-                <section>
-                  <span>
-                    <button>
-                      {/* <HiOutlinePaperAirplane className="rotate-90 group-hover:opacity-40" /> */}
-                    </button>
-                  </span>
-                </section>
               </div>
-              <section>
-                <span>
-                  <button>
-                    {/* <FiBookmark className="group-hover:opacity-40" /> */}
-                  </button>
-                </span>
-              </section>
             </div>
 
             <div>
@@ -242,7 +225,7 @@ const Feed = ({
                   <span>{description}</span>
                 </p>
               </Collapse>
-              {description.length > 30 && (
+              {description.length > 50 && (
                 <div role="button">
                   <Text
                     className="inline-block text-base font-bold text-gray-400"
