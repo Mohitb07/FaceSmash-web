@@ -60,33 +60,35 @@ const UserRecommendation = () => {
   }
 
   return (
-    <div className="hidden overflow-hidden rounded-2xl p-3 lg:block xl:max-w-[25rem]">
-      <div className="flex items-center gap-5">
-        <UserCard
-          userId={authUser.uid}
-          size="md"
-          fontSize="sm"
-          username={authUser.username}
-          email={authUser.email}
-          profileURL={authUser.profilePic}
-        />
-      </div>
-      <div className="mt-5">
-        <p className="font-semibold tracking-wider text-gray-500 xl:text-[1.1rem]">
-          Suggested for you
-        </p>
-        <div>
-          {randomSuggestion.map((user) => (
-            <UserCard
-              size="md"
-              fontSize="sm"
-              key={user.uid}
-              userId={user.uid}
-              username={user.username}
-              email={user.email}
-              profileURL={user.profilePic}
-            />
-          ))}
+    <div className="hidden w-full pt-8 lg:block">
+      <div className="">
+        <div className="flex items-center gap-5">
+          <UserCard
+            userId={authUser.uid}
+            size="md"
+            fontSize="sm"
+            username={authUser.username}
+            email={authUser.email}
+            profileURL={authUser.profilePic}
+          />
+        </div>
+        <div className="mt-5">
+          <p className="mb-5 font-semibold tracking-wider text-gray-400 xl:text-[1.1rem]">
+            Suggested for you
+          </p>
+          <div className="space-y-5">
+            {randomSuggestion.map((user) => (
+              <UserCard
+                size="md"
+                fontSize="sm"
+                key={user.uid}
+                userId={user.uid}
+                username={user.username}
+                email={user.email}
+                profileURL={user.profilePic}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

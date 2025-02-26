@@ -7,7 +7,7 @@ type MainProps = {
 
 const Main: React.FC<MainProps> = ({ children, meta }) => {
   return (
-    <div className="h-screen w-full px-1 text-gray-700 antialiased">
+    <div className="h-screen w-full text-gray-700 antialiased lg:px-4">
       {meta}
       <div>{children}</div>
     </div>

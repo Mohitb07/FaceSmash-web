@@ -59,7 +59,7 @@ const DataList = <D extends { key: string }>({
     >
       <div
         id="scrollableDiv"
-        className="absolute inset-0 overflow-y-auto scrollbar-hide"
+        className="absolute inset-0 overflow-y-auto scrollbar-hide lg:scrollbar-default"
       >
         <InfiniteScroll
           dataLength={data.length}
@@ -80,12 +80,8 @@ const DataList = <D extends { key: string }>({
               />
             </ErrorBoundary>
           )}
-          <div
-            className={`flex h-full w-full flex-col  space-y-10 ${
-              isProfile ? 'pt-2' : 'pt-16'
-            } md:pt-[1rem]`}
-          >
-            <div className="mx-auto w-full max-w-2xl space-y-5">
+          <div className={`${isProfile ? 'pt-0' : 'pt-14 md:pt-6 '}`}>
+            <div className="space-y-1">
               {data.map((item) => (
                 <div className="place-items-center" key={item.key}>
                   {renderItem(item)}

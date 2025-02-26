@@ -6,9 +6,10 @@ import { BiLink } from 'react-icons/bi';
 type FeedImageProps = {
   postImage: string;
   link?: string;
+  alt: string;
 };
 
-const FeedImage = ({ postImage, link }: FeedImageProps) => {
+const FeedImage = ({ postImage, link, alt }: FeedImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [paddingTop, setPaddingTop] = useState('0');
 
@@ -22,8 +23,7 @@ const FeedImage = ({ postImage, link }: FeedImageProps) => {
     <div style={{ position: 'relative', paddingTop }}>
       <Image
         style={{ visibility: isLoading ? 'hidden' : 'visible' }}
-        className="rounded-lg"
-        alt="user post"
+        alt={alt}
         src={postImage}
         layout="fill"
         objectFit="contain"

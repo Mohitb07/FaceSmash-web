@@ -29,10 +29,7 @@ const User = ({
         query: { username, userId },
       }}
     >
-      <div
-        onClick={onClose}
-        className="mt-5 flex cursor-pointer items-center gap-5"
-      >
+      <div onClick={onClose} className="flex cursor-pointer items-center gap-5">
         <Avatar size={size} src={profileURL} name={username} />
         <div>
           <Text aria-label="email" fontWeight="bold" wordBreak="break-all">
@@ -41,7 +38,7 @@ const User = ({
           <Text
             wordBreak="break-all"
             aria-label="username"
-            color="GrayText"
+            className="text-dark-700"
             fontSize={fontSize}
           >
             {email}

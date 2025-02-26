@@ -10,7 +10,7 @@ type NavItemProp = {
 
 const NavItem: React.FC<NavItemProp> = ({ icon, label, onClick, children }) => {
   return children ? (
-    <li onClick={onClick} className="nav-item group">
+    <li onClick={onClick} className="nav-item group" aria-label={label}>
       {children}
       <span className="hidden lg:block">{label}</span>
     </li>

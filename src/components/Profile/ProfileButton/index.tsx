@@ -1,4 +1,4 @@
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { Button, useDisclosure, useMediaQuery } from '@chakra-ui/react';
 import { doc, writeBatch } from 'firebase/firestore';
 import { lazy, Suspense, useMemo, useState } from 'react';
 
@@ -17,6 +17,7 @@ type ProfileButtonProps = {
 };
 
 const ProfileButton = ({ userId }: ProfileButtonProps) => {
+  const [isMobile] = useMediaQuery('(max-width: 400px)');
   const { authUser } = useAuthUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -72,11 +73,12 @@ const ProfileButton = ({ userId }: ProfileButtonProps) => {
             width="fit-content"
             colorScheme="brand"
             color="white"
+            size={isMobile ? 'md' : 'lg'}
             rounded="full"
             minWidth={40}
             onClick={() => handleModalOpen('Edit profile')}
           >
-            Edit
+            Edit profile
           </Button>
         ) : (
           <Button

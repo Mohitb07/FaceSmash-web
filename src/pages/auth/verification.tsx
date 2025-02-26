@@ -124,7 +124,7 @@ const Verification = () => {
     );
   } else {
     return (
-      <div className="flex-container bg-color z-50 h-screen w-screen">
+      <div className="flex-container z-50 h-screen w-screen bg-black/60">
         <Spinner size="xl" />
       </div>
     );

@@ -9,15 +9,15 @@ import NavItem from '../NavItem';
 
 type SettingsProps = {
   Icon?: IconType;
-  label?: string;
+  label: string;
 };
 
-const Settings = ({ Icon = FiSettings }: SettingsProps) => {
+const Settings = ({ Icon = FiSettings, label }: SettingsProps) => {
   const { logout } = useAuthUser();
   return (
     <Menu>
       <MenuButton>
-        <NavItem label="More">
+        <NavItem label={label}>
           <Icon className="text-xl xl:text-3xl" />
         </NavItem>
       </MenuButton>

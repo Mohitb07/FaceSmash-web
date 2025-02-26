@@ -44,7 +44,7 @@ const ConnectionModal = ({
         </ModalHeader>
         <Divider />
         <ModalCloseButton fontSize={isMobile ? 'medium' : 'large'} />
-        <ModalBody maxHeight="md">
+        <ModalBody maxHeight="md" className="space-y-3">
           {data.length === 0 && (
             <Text textAlign="center" fontSize={isMobile ? 'medium' : 'large'}>
               No {title}
@@ -53,8 +53,8 @@ const ConnectionModal = ({
           {data.map((user) => (
             <User
               key={user.uid}
-              size={isMobile ? 'md' : 'lg'}
-              fontSize={isMobile ? 'medium' : 'large'}
+              size="md"
+              fontSize="md"
               username={user.username}
               profileURL={user.profilePic}
               userId={user.uid}

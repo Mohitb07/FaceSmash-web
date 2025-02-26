@@ -59,7 +59,7 @@ export interface PostLikes {
   likes: boolean;
 }
 
-export type ModalType = 'Edit profile' | 'Followers' | 'Following' | null;
+export type ModalType = 'Edit profile' | 'Followers' | 'Followings' | null;
 
 export interface CustomFile {
   extension: string;

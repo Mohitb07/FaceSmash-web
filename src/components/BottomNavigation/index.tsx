@@ -21,7 +21,7 @@ const BottomNavigation = ({
 }: BottomNavigationProps) => {
   const router = useRouter();
   return (
-    <nav className="fixed bottom-0 z-50 w-full bg-black">
+    <nav className="fixed inset-x-0 bottom-0 z-50 w-full border-t border-[#323335] bg-[#242628]">
       <ul className="grid h-14 w-full grid-cols-4 place-items-center p-2">
         <li>
           <Link href="/">
