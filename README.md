@@ -1,4 +1,4 @@
-# FaceSmash Web 🧋
+# faceSmash Web 🧋
 
 It's a social media platform where users can interact with friends or family. It's a native application for both android and ios
 
