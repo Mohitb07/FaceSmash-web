@@ -7,7 +7,13 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
-import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  increment,
+  runTransaction,
+  writeBatch,
+} from 'firebase/firestore';
 import React, { Suspense, useEffect, useState } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
@@ -71,34 +77,53 @@ const FeedContainer = ({
     }
   };
 
+  // const handleLikes = async (pid: string) => {
+  //   const batch = writeBatch(db);
+  //   const postLikesSubColRef = doc(
+  //     db,
+  //     `${USERS_COLLECTION}/${authUser?.uid}/postlikes/${pid}`
+  //   );
+  //   const postRef = doc(db, POSTS_COLLECTION, pid);
+  //   const data = await getDoc(postLikesSubColRef);
+  //   // if the user has liked the post
+  //   if (data.exists()) {
+  //     batch.delete(postLikesSubColRef);
+  //     batch.update(postRef, {
+  //       likes: increment(-1),
+  //     });
+  //   }
+  //   // if the user has not liked the post
+  //   else {
+  //     batch.set(postLikesSubColRef, {
+  //       likes: true,
+  //       postId: pid,
+  //     });
+  //     batch.update(postRef, {
+  //       likes: increment(1),
+  //     });
+  //   }
+  //   batch
+  //     .commit()
+  //     .catch((err) => console.log('some error while liking the post', err));
+  // };
+
   const handleLikes = async (pid: string) => {
-    const batch = writeBatch(db);
+    const postRef = doc(db, POSTS_COLLECTION, pid);
     const postLikesSubColRef = doc(
       db,
       `${USERS_COLLECTION}/${authUser?.uid}/postlikes/${pid}`
     );
-    const postRef = doc(db, POSTS_COLLECTION, pid);
-    const data = await getDoc(postLikesSubColRef);
-    // if the user has liked the post
-    if (data.exists()) {
-      batch.delete(postLikesSubColRef);
-      batch.update(postRef, {
-        likes: increment(-1),
-      });
-    }
-    // if the user has not liked the post
-    else {
-      batch.set(postLikesSubColRef, {
-        likes: true,
-        postId: pid,
-      });
-      batch.update(postRef, {
-        likes: increment(1),
-      });
-    }
-    batch
-      .commit()
-      .catch((err) => console.log('some error while liking the post', err));
+
+    return runTransaction(db, async (transaction) => {
+      const postLikesDoc = await transaction.get(postLikesSubColRef);
+      if (postLikesDoc.exists()) {
+        transaction.delete(postLikesSubColRef);
+        transaction.update(postRef, { likes: increment(-1) });
+      } else {
+        transaction.set(postLikesSubColRef, { likes: true, postId: pid });
+        transaction.update(postRef, { likes: increment(1) });
+      }
+    }).catch((err) => console.log('Transaction error while liking post', err));
   };
 
   function renderItem<T extends Post>(feed: T) {
