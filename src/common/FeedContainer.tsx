@@ -7,14 +7,8 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
-import {
-  doc,
-  getDoc,
-  increment,
-  runTransaction,
-  writeBatch,
-} from 'firebase/firestore';
-import React, { Suspense, useEffect, useState } from 'react';
+import { doc, increment, runTransaction } from 'firebase/firestore';
+import { Suspense, useEffect, useState } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
 import DataList from '@/components/DataList';
