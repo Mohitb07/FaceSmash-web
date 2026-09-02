@@ -14,7 +14,7 @@ export const COLORS = {
     900: '#160c2c',
   },
   gray: {
-    100: '#1C1C1D',
+    100: '#0C1014',
     200: '#27272A',
     300: '#3A3A3B',
     400: '#4A4A4B',
@@ -36,7 +36,7 @@ export const theme = extendTheme({
   styles: {
     global: (props: GlobalStyleProps) => ({
       body: {
-        bg: props.colorMode === 'dark' ? COLORS.gray[100] : 'gray.100',
+        bg: props.colorMode === 'dark' ? '#0C1014' : 'gray.100',
       },
     }),
   },

@@ -1,5 +1,6 @@
 import { InputGroup, InputRightElement, useBoolean } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Link from 'next/link';
 import React from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
@@ -43,6 +44,8 @@ const Login = () => {
   const onSignInAttempt: SubmitHandler<FormInput> = (data) =>
     onSignIn(data.email, data.password);
 
+  const credentialError = error.email || error.password;
+
   return (
     <AuthLayout
       meta="Login"
@@ -67,7 +70,7 @@ const Login = () => {
                 {...field}
                 isDisabled={loading}
                 isInvalid={
-                  Boolean(error.email) || Boolean(errors?.email?.message)
+                  Boolean(credentialError) || Boolean(errors?.email?.message)
                 }
                 id="email"
                 name="email"
@@ -76,16 +79,21 @@ const Login = () => {
               />
             )}
           />
-          <ErrorLabel
-            error={error.email}
-            validationError={errors.email?.message}
-          />
+          <ErrorLabel validationError={errors.email?.message} />
         </div>
 
-        <div className="flex flex-col space-y-1 pb-10">
-          <label htmlFor="password" className="form-label-text">
-            Password
-          </label>
+        <div className="flex flex-col space-y-1">
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="form-label-text">
+              Password
+            </label>
+            <Link
+              href="/auth/forgot-password"
+              className="text-xs font-medium text-purple-400 transition-colors hover:text-purple-300"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <Controller
             name="password"
             control={control}
@@ -94,7 +102,10 @@ const Login = () => {
                 <Input
                   {...field}
                   isDisabled={loading}
-                  isInvalid={Boolean(error.password)}
+                  isInvalid={
+                    Boolean(credentialError) ||
+                    Boolean(errors.password?.message)
+                  }
                   id="password"
                   name="password"
                   placeholder="Password"
@@ -109,7 +120,7 @@ const Login = () => {
             )}
           />
           <ErrorLabel
-            error={error.password}
+            error={credentialError}
             validationError={errors.password?.message}
           />
         </div>

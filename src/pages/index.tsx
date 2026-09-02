@@ -33,26 +33,9 @@ function Home() {
       }
     >
       {/* Brand name on top on smaller screens */}
-      <header className="fixed inset-x-0 top-0 z-50 h-14 border-b border-[#323335] bg-[#242628] text-center md:hidden">
+      <header className="fixed inset-x-0 top-0 z-50 h-14 border-b border-zinc-800/80 bg-[#0C1014]/90 text-center backdrop-blur-md md:hidden">
         <Brand />
       </header>
-      {/* <div className="overflow-hidden md:flex md:h-screen">
-        <div className="h-full max-w-lg overflow-y-auto border-r border-neutral-900 lg:w-1/6">
-          <Navigation />
-        </div>
-        <div className="flex-1 overflow-y-scroll md:mx-[3rem]">
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <FeedContainer customQuery={postQuery} />
-          </ErrorBoundary>
-        </div>
-        <div className="overflow-y-auto p-3 lg:w-2/6">
-          <SlideFade in={postsLoading || !postsLoading} offsetY="20px">
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <UserRecommendation />
-            </ErrorBoundary>
-          </SlideFade>
-        </div>
-      </div> */}
       <div className="wrapper">
         <div className="nav-container">
           <Navigation />

@@ -26,17 +26,26 @@ export const useConnection = (userId: string) => {
   });
 
   const promiseResolver = async (querySnap: QuerySnapshot<DocumentData>) => {
-    const promises = querySnap.docs.map((d) => getDoc(d.data().user));
+    const validDocRefs = querySnap.docs
+      .map((d) => d.data().user)
+      .filter(Boolean);
+    const promises = validDocRefs.map((docRef) => getDoc(docRef));
     const result = await Promise.all(promises);
-    return result.map((d) => d.data() as User);
+    return result.filter((d) => d.exists()).map((d) => d.data() as User);
   };
 
   useEffect(() => {
-    let unsubscribeFollowingData: Unsubscribe;
-    let unsubscribeFollowersData: Unsubscribe;
-    async function getData() {
+    if (!userId) {
+      setIsLoading(false);
+      return undefined;
+    }
+
+    let unsubscribeFollowingData: Unsubscribe | null = null;
+    let unsubscribeFollowersData: Unsubscribe | null = null;
+
+    try {
       const followingSubColRef = query(
-        collection(db, `${USERS_COLLECTION}/${userId}/followings/`)
+        collection(db, `${USERS_COLLECTION}/${userId}/followings`)
       );
       unsubscribeFollowingData = onSnapshot(
         followingSubColRef,
@@ -49,13 +58,13 @@ export const useConnection = (userId: string) => {
           }));
         },
         (err) => {
-          console.log('ERROR while fetching user posts count', err);
+          console.log('ERROR while fetching user following count', err);
           setIsLoading(false);
         }
       );
 
       const followersSubColRef = query(
-        collection(db, `${USERS_COLLECTION}/${userId}/followers/`)
+        collection(db, `${USERS_COLLECTION}/${userId}/followers`)
       );
       unsubscribeFollowersData = onSnapshot(
         followersSubColRef,
@@ -69,15 +78,22 @@ export const useConnection = (userId: string) => {
           setIsLoading(false);
         },
         (err) => {
-          console.log('ERROR while fetching user posts count', err);
+          console.log('ERROR while fetching user followers count', err);
           setIsLoading(false);
         }
       );
+    } catch (error) {
+      console.log('ERROR setting up connections listener', error);
+      setIsLoading(false);
     }
-    getData();
+
     return () => {
-      unsubscribeFollowingData();
-      unsubscribeFollowersData();
+      if (typeof unsubscribeFollowingData === 'function') {
+        unsubscribeFollowingData();
+      }
+      if (typeof unsubscribeFollowersData === 'function') {
+        unsubscribeFollowersData();
+      }
     };
   }, [userId]);
 

@@ -1,6 +1,8 @@
-import { Button, useDisclosure, useMediaQuery } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import { doc, writeBatch } from 'firebase/firestore';
 import { lazy, Suspense, useMemo, useState } from 'react';
+import { FiCheck, FiPlus } from 'react-icons/fi';
+import { LiaEdit } from 'react-icons/lia';
 
 import { USERS_COLLECTION } from '@/constant';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -8,6 +10,7 @@ import { useConnection } from '@/hooks/useConnection';
 import type { ModalType } from '@/interface';
 
 import { db } from '../../../../firebase';
+
 const UpdateProfileModal = lazy(
   () => import('@/components/UpdateProfileModal')
 );
@@ -17,7 +20,6 @@ type ProfileButtonProps = {
 };
 
 const ProfileButton = ({ userId }: ProfileButtonProps) => {
-  const [isMobile] = useMediaQuery('(max-width: 400px)');
   const { authUser } = useAuthUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -67,30 +69,36 @@ const ProfileButton = ({ userId }: ProfileButtonProps) => {
 
   return (
     <>
-      <div className="">
+      <div className="shrink-0">
         {authUser?.uid === userId ? (
-          <Button
-            width="fit-content"
-            colorScheme="brand"
-            color="white"
-            size={isMobile ? 'md' : 'lg'}
-            rounded="full"
-            minWidth={40}
+          <button
             onClick={() => handleModalOpen('Edit profile')}
+            className="flex h-9 w-[124px] items-center justify-center gap-2 rounded-full border border-zinc-700/80 bg-zinc-800/80 text-sm font-semibold text-zinc-100 shadow-sm transition-all duration-200 hover:border-purple-500/50 hover:bg-zinc-700/80 hover:text-white active:scale-[0.98]"
           >
-            Edit profile
-          </Button>
+            <LiaEdit className="shrink-0 text-base text-purple-400" />
+            <span>Edit profile</span>
+          </button>
         ) : (
-          <Button
-            rounded="full"
-            width="full"
-            colorScheme="brand"
-            color="white"
-            minWidth={40}
+          <button
             onClick={handleConnections}
+            className={`flex h-9 w-[124px] items-center justify-center gap-1 rounded-full border text-sm font-semibold shadow-md transition-all duration-200 active:scale-[0.98] ${
+              hasFollowedThisUser
+                ? 'border-zinc-700/80 bg-zinc-800/90 text-zinc-300 hover:border-red-400 hover:bg-red-500/10 hover:text-red-400'
+                : 'border-purple-500/40 bg-purple-600 text-white shadow-purple-600/30 hover:bg-purple-700'
+            }`}
           >
-            {hasFollowedThisUser ? 'Unfollow' : 'Follow'}
-          </Button>
+            {hasFollowedThisUser ? (
+              <>
+                <FiCheck className="shrink-0 text-base text-purple-400" />
+                <span>Following</span>
+              </>
+            ) : (
+              <>
+                <FiPlus className="shrink-0 text-base" />
+                <span>Follow</span>
+              </>
+            )}
+          </button>
         )}
       </div>
       <Suspense fallback={<></>}>

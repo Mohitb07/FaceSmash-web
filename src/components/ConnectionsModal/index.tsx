@@ -6,7 +6,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Text,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -37,18 +36,33 @@ const ConnectionModal = ({
       size={isMobile ? 'sm' : 'lg'}
       closeOnEsc
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" paddingBottom="5">
-        <ModalHeader textAlign="center" fontSize={isMobile ? 'large' : '2xl'}>
+      <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(6px)" />
+      <ModalContent
+        backgroundColor="#1e1f23"
+        border="1px solid rgba(63, 63, 70, 0.6)"
+        borderRadius="2xl"
+        paddingBottom="5"
+        shadow="2xl"
+      >
+        <ModalHeader
+          textAlign="center"
+          fontSize={isMobile ? 'lg' : 'xl'}
+          fontWeight="bold"
+          color="zinc.100"
+        >
           {title}
         </ModalHeader>
-        <Divider />
-        <ModalCloseButton fontSize={isMobile ? 'medium' : 'large'} />
-        <ModalBody maxHeight="md" className="space-y-3">
+        <Divider borderColor="zinc.800" />
+        <ModalCloseButton
+          color="zinc.400"
+          _hover={{ color: 'white', bg: 'zinc.800' }}
+          rounded="full"
+        />
+        <ModalBody maxHeight="md" className="space-y-3 pt-4">
           {data.length === 0 && (
-            <Text textAlign="center" fontSize={isMobile ? 'medium' : 'large'}>
-              No {title}
-            </Text>
+            <p className="py-6 text-center text-sm font-medium text-zinc-500">
+              No {title.toLowerCase()} found
+            </p>
           )}
           {data.map((user) => (
             <User

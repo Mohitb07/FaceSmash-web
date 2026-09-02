@@ -15,7 +15,6 @@ type UserProps = {
 
 const User = ({
   size = 'md',
-  fontSize = 'medium',
   profileURL,
   username,
   email,
@@ -29,20 +28,28 @@ const User = ({
         query: { username, userId },
       }}
     >
-      <div onClick={onClose} className="flex cursor-pointer items-center gap-5">
-        <Avatar size={size} src={profileURL} name={username} />
-        <div>
-          <Text aria-label="email" fontWeight="bold" wordBreak="break-all">
-            {username}
-          </Text>
-          <Text
-            wordBreak="break-all"
-            aria-label="username"
-            className="text-dark-700"
-            fontSize={fontSize}
-          >
-            {email}
-          </Text>
+      <div
+        onClick={onClose}
+        className="group flex cursor-pointer items-center justify-between gap-3 rounded-xl p-2 transition-all hover:bg-zinc-800/60"
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <Avatar
+            size={size}
+            src={profileURL}
+            name={username}
+            className="ring-1 ring-zinc-700/60 transition-transform group-hover:scale-105"
+          />
+          <div className="min-w-0 flex-1">
+            <Text
+              aria-label="username"
+              className="truncate text-sm font-bold text-zinc-100 transition-colors group-hover:text-purple-400"
+            >
+              {username}
+            </Text>
+            <Text aria-label="email" className="truncate text-xs text-zinc-400">
+              {email}
+            </Text>
+          </div>
         </div>
       </div>
     </Link>

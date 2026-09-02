@@ -2,6 +2,8 @@ import '../../styles/globals.css';
 import '../../styles/Nprogress.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import type { AppProps } from 'next/app';
 import Router from 'next/router';
 import NProgress from 'nprogress';
@@ -11,6 +13,8 @@ import ErrorFallback from '@/components/Error';
 import UserDataProvider from '@/context/authUser';
 import { useCheckOnlineStatus } from '@/hooks/useCheckOnlineStatus';
 import { theme } from '@/theme';
+
+dayjs.extend(relativeTime);
 
 NProgress.configure({ showSpinner: false });
 

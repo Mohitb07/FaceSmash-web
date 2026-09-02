@@ -45,11 +45,11 @@ const Layout: React.FC<LayoutProps> = ({
           </div>
           <div>
             <div
-              className={`h-screen w-screen p-5 md:h-auto md:w-[500px] md:p-16 ${containerStyle} rounded-md bg-gray-900`}
+              className={`min-h-screen w-screen overflow-y-auto p-5 md:h-auto md:min-h-0 md:w-[500px] md:p-16 ${containerStyle} rounded-md bg-gray-900`}
             >
               <header>
                 <h1 className="text-center text-5xl font-bold text-white">
-                  <span className="text-primary-100">Face</span>Smash
+                  face<span className="text-primary-100">Smash</span>
                 </h1>
               </header>
               <div className="flex-1">{children}</div>

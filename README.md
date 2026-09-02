@@ -4,7 +4,6 @@ It's a social media platform where users can interact with friends or family. It
 
 ![facesmash-web](https://github.com/Mohitb07/FaceSmash-web/assets/51907464/bc6388d6-4efb-47dd-bec4-61d5a758c055)
 
-
 ## Run Locally
 
 Clone the project
@@ -30,11 +29,13 @@ Start the server
 ```bash
   npm run dev or yarn run dev
 ```
+
 Build the project
 
 ```bash
   npm run build or yarn build
 ```
+
 Run build project
 
 ```bash
@@ -43,7 +44,7 @@ Run build project
 
 ## Tech Stack
 
-**Client:** TypeScript, Next JS, React JS, Tailwind CSS, Chakra UI, Day Js,  React-Icons, React hook forms, yup, husky, React files
+**Client:** TypeScript, Next JS, React JS, Tailwind CSS, Chakra UI, Day Js, React-Icons, React hook forms, yup, husky, React files
 
 **Server:** Firebase
 

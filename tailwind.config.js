@@ -4,6 +4,8 @@ module.exports = {
     './src/pages/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
     './src/layouts/**/*.{js,ts,jsx,tsx}',
+    './src/common/**/*.{js,ts,jsx,tsx}',
+    './src/templates/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     fontSize: {
@@ -32,7 +34,7 @@ module.exports = {
           900: '#160c2c',
         },
         dark: {
-          100: '#1C1C1D',
+          100: '#0C1014',
           200: '#27272A',
           300: '#3A3A3B',
           400: '#4A4A4B',

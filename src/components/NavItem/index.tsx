@@ -6,16 +6,34 @@ type NavItemProp = {
   label: string;
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLLIElement>;
+  isActive?: boolean;
 };
 
-const NavItem: React.FC<NavItemProp> = ({ icon, label, onClick, children }) => {
+const NavItem: React.FC<NavItemProp> = ({
+  icon,
+  label,
+  onClick,
+  children,
+  isActive = false,
+}) => {
   return children ? (
-    <li onClick={onClick} className="nav-item group" aria-label={label}>
+    <li
+      onClick={onClick}
+      className={`nav-item group ${
+        isActive ? 'bg-zinc-800/90 font-bold text-white shadow-sm' : ''
+      }`}
+      aria-label={label}
+    >
       {children}
       <span className="hidden lg:block">{label}</span>
     </li>
   ) : (
-    <li onClick={onClick} className="nav-item group">
+    <li
+      onClick={onClick}
+      className={`nav-item group ${
+        isActive ? 'bg-zinc-800/90 font-bold text-white shadow-sm' : ''
+      }`}
+    >
       {icon} <span className="hidden lg:block">{label}</span>
     </li>
   );

@@ -16,6 +16,11 @@ const StyledInput = (
       colorScheme="brand"
       variant="filled"
       rounded="lg"
+      color="white"
+      bg="#1e2430"
+      _hover={{ bg: '#252d3d' }}
+      _focus={{ bg: '#252d3d' }}
+      _placeholder={{ color: 'whiteAlpha.400' }}
     />
   );
 };

@@ -6,3 +6,5 @@ export const USERS_LIMIT = 5;
 
 export const USERS_COLLECTION = 'Users';
 export const POSTS_COLLECTION = 'Posts';
+
+export const ADMIN_EMAILS = ['warekow261@losvtn.com'];

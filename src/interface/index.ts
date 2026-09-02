@@ -9,6 +9,9 @@ export interface User {
   uid: string;
   username: string;
   bio?: string;
+  website?: string;
+  coverPic?: string;
+  role?: string;
 }
 
 export interface Post {

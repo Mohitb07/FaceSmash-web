@@ -11,15 +11,22 @@ type ErrorLabelProps = {
 const ErrorLabel = ({ error, validationError }: ErrorLabelProps) => {
   if (validationError) {
     return (
-      <Text role="alert" aria-live="polite" fontSize="medium" color="crimson">
+      <Text role="alert" aria-live="polite" fontSize="sm" color="crimson">
         {validationError}
       </Text>
     );
   }
-  return error?.length ? (
-    <Text role="alert" aria-live="polite" fontSize="medium" color="crimson">
-      {FIREBASE_ERRORS[error as keyof typeof FIREBASE_ERRORS]}
-    </Text>
-  ) : null;
+
+  if (error && error.length > 0) {
+    const message =
+      FIREBASE_ERRORS[error as keyof typeof FIREBASE_ERRORS] || error;
+    return (
+      <Text role="alert" aria-live="polite" fontSize="sm" color="crimson">
+        {message}
+      </Text>
+    );
+  }
+
+  return null;
 };
 export default ErrorLabel;

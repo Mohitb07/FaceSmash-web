@@ -5,14 +5,11 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
   onSnapshot,
   query,
-  runTransaction,
   serverTimestamp,
   updateDoc,
 } from 'firebase/firestore';
-import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 import { TiTick } from 'react-icons/ti';
@@ -107,7 +104,7 @@ export const useHandlePost = () => {
     } catch (error) {
       console.error('Error updating document: ', error);
       toast({
-        title: `Some went wrong`,
+        title: 'Something went wrong',
         variant: 'left-accent',
         position: 'bottom-right',
         isClosable: true,
@@ -142,43 +139,21 @@ export const useHandlePost = () => {
       await deleteDoc(postRef);
     } catch (error) {
       console.log('ERROR while deleting post', error);
-    }
-  };
-
-  const backupPost = async (postId: string) => {
-    const docRef = doc(db, POSTS_COLLECTION, postId);
-    const data = await getDoc(docRef);
-    if (!data.exists()) {
-      throw new Error('Post does not exist');
-    }
-    const post = data.data();
-    return post;
-  };
-
-  const deletePostWithImage = async (postId: string, postImageRef: string) => {
-    console.log('dete', postId, postImageRef);
-    const backup = await backupPost(postId);
-    const storage = getStorage();
-    const imageRef = ref(storage, postImageRef);
-    const docRef = doc(db, POSTS_COLLECTION, postId);
-    let isPostDeleted = false;
-    try {
-      await runTransaction(db, async (transaction) => {
-        const sfDoc = await transaction.get(docRef);
-        if (!sfDoc.exists()) {
-          throw new Error('Post does not exist!');
-        }
-        transaction.delete(docRef);
+      toast({
+        title: 'Failed to delete post',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom-right',
       });
-      isPostDeleted = true;
-      await deleteObject(imageRef);
-    } catch (error) {
-      console.log('ERROR while deleting post', error);
-      if (isPostDeleted) {
-        await addDoc(collection(db, POSTS_COLLECTION), backup);
-        console.log('backup error', backup);
-      }
     }
+  };
+
+  const deletePostWithImage = async (
+    postId: string,
+    _postImageRef?: string
+  ) => {
+    await deletePostWithoutImage(postId);
   };
 
   return {

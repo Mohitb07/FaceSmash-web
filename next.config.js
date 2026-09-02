@@ -25,6 +25,7 @@ module.exports = withBundleAnalyzer({
       'firebasestorage.googleapis.com',
       'encrypted-tbn0.gstatic.com',
       'i.postimg.cc',
+      'res.cloudinary.com',
     ],
   },
 });

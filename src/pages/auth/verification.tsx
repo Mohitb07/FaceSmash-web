@@ -1,5 +1,5 @@
 import { Spinner } from '@chakra-ui/react';
-import { getAuth, sendEmailVerification } from 'firebase/auth';
+import { sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -8,9 +8,10 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import AuthLayout from '@/layouts/Auth';
 import { withAuth } from '@/routes/WithProtected';
 
+import { auth } from '../../../firebase';
+
 const Verification = () => {
   const router = useRouter();
-  const user = getAuth();
   const { authUser, isVerified, loading, setIsVerified, logout } =
     useAuthUser();
   const [currentStatus, setCurrentStatus] = useState({
@@ -26,11 +27,35 @@ const Verification = () => {
     }
   }, [authUser, isVerified, router]);
 
+  // Background interval polling to automatically detect email verification
+  useEffect(() => {
+    if (!authUser || isVerified) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        if (auth.currentUser) {
+          await auth.currentUser.reload();
+          if (auth.currentUser.emailVerified) {
+            setIsVerified(true);
+            setCurrentStatus({
+              status: 'Email verified! Redirecting...',
+              statusColor: 'text-green-600',
+            });
+          }
+        }
+      } catch (err) {
+        console.log('Background verification poll error', err);
+      }
+    }, 4000);
+
+    return () => clearInterval(intervalId);
+  }, [authUser, isVerified, setIsVerified]);
+
   const handleCheckVerificationStatus = async () => {
     setVerificationLoading(true);
     try {
-      await user.currentUser?.reload();
-      const currentUser = user.currentUser;
+      await auth.currentUser?.reload();
+      const currentUser = auth.currentUser;
       if (currentUser) {
         setIsVerified(currentUser.emailVerified);
         if (currentUser.emailVerified) {
@@ -55,8 +80,8 @@ const Verification = () => {
   const handleSendVerificationEmail = async () => {
     setResendLoading(true);
     try {
-      if (user.currentUser) {
-        await sendEmailVerification(user.currentUser);
+      if (auth.currentUser) {
+        await sendEmailVerification(auth.currentUser);
       }
     } catch (error) {
       console.log('VERIFICATION EMAIL SEND ERROR', error);
@@ -68,7 +93,7 @@ const Verification = () => {
   let content;
   if (authUser && !isVerified) {
     content = (
-      <AuthLayout meta="Verfication" containerStyle="h-screen md:h-[400px]">
+      <AuthLayout meta="Verification" containerStyle="h-screen md:h-[400px]">
         <div className="mt-5 flex flex-col space-y-6">
           <h1 className="text-center">
             Verify - <span className="font-semibold">{authUser.email}</span>
@@ -97,8 +122,11 @@ const Verification = () => {
             Log Out
           </Button>
         </div>
+        <p className="mt-4 text-center text-xs font-medium text-zinc-400">
+          Auto-checking verification status in background...
+        </p>
         <span
-          className={`flex-container font-bold ${currentStatus.statusColor} mt-5`}
+          className={`flex-container font-bold ${currentStatus.statusColor} mt-3`}
         >
           {currentStatus.status}
         </span>
@@ -107,7 +135,7 @@ const Verification = () => {
   } else if (authUser && isVerified) {
     content = (
       <AuthLayout
-        meta="Verfication"
+        meta="Verification"
         footerLink="/"
         footerLabel="Home"
         footerText="Go Back to"

@@ -68,9 +68,16 @@ const FormModal: React.FC<FormModalProps> = ({
       size={isMobile ? 'sm' : isMedium ? 'md' : isLarge ? 'lg' : modalSize}
       motionPreset="slideInBottom"
     >
-      <ModalOverlay />
+      <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
       <form noValidate onSubmit={onSubmit}>
-        <ModalContent>
+        <ModalContent
+          bg="#131518"
+          border="1px solid"
+          borderColor="whiteAlpha.100"
+          borderRadius={{ base: '2xl', sm: '3xl' }}
+          shadow="2xl"
+          color="white"
+        >
           <ModalHeader>
             <Text
               fontSize={

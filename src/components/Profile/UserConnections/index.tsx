@@ -1,10 +1,18 @@
 import { Skeleton, useDisclosure } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
-import { onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  getCountFromServer,
+  query,
+  where,
+} from 'firebase/firestore';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 
+import { POSTS_COLLECTION } from '@/constant';
 import { useConnection } from '@/hooks/useConnection';
 import type { ModalType } from '@/interface';
+
+import { db } from '../../../../firebase';
 
 const ConnectionModal = lazy(() => import('@/components/ConnectionsModal'));
 
@@ -14,11 +22,7 @@ type UserConnectionsProps = {
   isMobile?: boolean;
 };
 
-const UserConnections = ({
-  userQuery,
-  userId,
-  isMobile,
-}: UserConnectionsProps) => {
+const UserConnections = ({ userId, isMobile }: UserConnectionsProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<ModalType>(null);
   const [postsCount, setPostsCount] = useState<number | null>(null);
@@ -31,19 +35,30 @@ const UserConnections = ({
   } = useConnection(userId);
 
   useEffect(() => {
-    let unsubscriber = onSnapshot(
-      userQuery,
-      (querySnapshot) => {
-        setPostsCount(querySnapshot.size);
-        setIsLoading(false);
-      },
-      (err) => {
-        console.log('ERROR while fetching user posts count', err);
-        setIsLoading(false);
+    let isMounted = true;
+    const fetchPostsCount = async () => {
+      if (!userId) {
+        if (isMounted) setIsLoading(false);
+        return;
       }
-    );
+      try {
+        const countQuery = query(
+          collection(db, POSTS_COLLECTION),
+          where('uid', '==', userId)
+        );
+        const snapshot = await getCountFromServer(countQuery);
+        if (isMounted) {
+          setPostsCount(snapshot.data().count);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.log('Error while fetching user posts count', err);
+        if (isMounted) setIsLoading(false);
+      }
+    };
+    fetchPostsCount();
     return () => {
-      unsubscriber();
+      isMounted = false;
     };
   }, [userId]);
 
@@ -52,71 +67,43 @@ const UserConnections = ({
     onOpen();
   };
 
+  const isStatsLoading = isLoading || isConnectionsCountLoading;
+
   return (
     <>
-      {/* for larger screens */}
-      <div className="hidden items-center gap-5 py-4 text-lg text-dark-700 md:flex">
-        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-          <p>
-            <span className="mr-2 font-semibold text-white">{postsCount}</span>{' '}
-            posts
-          </p>
-        </Skeleton>
-        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-          <p
-            className="cursor-pointer"
-            onClick={() => handleModalOpen('Followers')}
-          >
-            <span className="mr-2 font-semibold text-white">
-              {connectionsCount.followers}
-            </span>{' '}
-            followers
-          </p>
-        </Skeleton>
-        <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-          <p
-            className="cursor-pointer"
-            onClick={() => handleModalOpen('Followings')}
-          >
-            <span className="mr-2 font-semibold text-white">
-              {connectionsCount.following}
-            </span>{' '}
-            followings
-          </p>
-        </Skeleton>
-      </div>
+      <div className="flex flex-wrap items-center gap-4 text-sm font-normal text-zinc-400">
+        {/* Following */}
+        <button
+          onClick={() => handleModalOpen('Followings')}
+          className="flex items-center gap-1 transition-colors hover:text-white"
+        >
+          <Skeleton isLoaded={!isStatsLoading} display="inline-block">
+            <span className="font-bold text-zinc-100">
+              {connectionsCount.following ?? 0}
+            </span>
+          </Skeleton>
+          <span>Following</span>
+        </button>
 
-      {/* for mobile screens */}
-      <div className="-mx-3">
-        <div className="grid h-[5rem] w-full grid-cols-3 place-items-center border-y border-dark-300 p-1 text-dark-700 md:hidden">
-          <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-            <div className="text-center">
-              <span className="font-semibold text-white">{postsCount}</span>
-              <p>posts</p>
-            </div>
+        {/* Followers */}
+        <button
+          onClick={() => handleModalOpen('Followers')}
+          className="flex items-center gap-1 transition-colors hover:text-white"
+        >
+          <Skeleton isLoaded={!isStatsLoading} display="inline-block">
+            <span className="font-bold text-zinc-100">
+              {connectionsCount.followers ?? 0}
+            </span>
           </Skeleton>
-          <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-            <div
-              className="text-center"
-              onClick={() => handleModalOpen('Followers')}
-            >
-              <span className="font-semibold text-white">
-                {connectionsCount.followers}
-              </span>
-              <p>followers</p>
-            </div>
+          <span>Followers</span>
+        </button>
+
+        {/* Posts */}
+        <div className="flex items-center gap-1">
+          <Skeleton isLoaded={!isStatsLoading} display="inline-block">
+            <span className="font-bold text-zinc-100">{postsCount ?? 0}</span>
           </Skeleton>
-          <Skeleton isLoaded={!isLoading && !isConnectionsCountLoading}>
-            <div
-              className="text-center"
-              onClick={() => handleModalOpen('Followings')}
-            >
-              <span className="font-semibold text-white">
-                {connectionsCount.following}
-              </span>
-              <p>following</p>
-            </div>
-          </Skeleton>
+          <span>Posts</span>
         </div>
       </div>
 
@@ -134,4 +121,5 @@ const UserConnections = ({
     </>
   );
 };
+
 export default UserConnections;

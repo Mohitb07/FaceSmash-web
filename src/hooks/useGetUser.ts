@@ -23,22 +23,44 @@ export const useGetUser = (userId: string) => {
   const [isUserDetailLoading, setIsUserDetailLoading] = useState(true);
 
   useEffect(() => {
-    let unsub: Unsubscribe;
+    if (!userId) {
+      setIsUserDetailLoading(false);
+      return undefined;
+    }
+
+    let unsub: Unsubscribe | null = null;
     try {
       const userDetailQuery = doc(db, USERS_COLLECTION, userId);
-      unsub = onSnapshot(userDetailQuery, (d) => {
-        const userData = {
-          ...(d.data() as User),
-          key: d.id,
-        };
-        setUserDetail(userData);
-        setIsUserDetailLoading(false);
-      });
+      unsub = onSnapshot(
+        userDetailQuery,
+        (d) => {
+          if (d.exists()) {
+            const userData = {
+              ...(d.data() as User),
+              key: d.id,
+            };
+            setUserDetail(userData);
+          } else {
+            setUserDetail(DEFAULT_USER_DETAILS);
+          }
+          setIsUserDetailLoading(false);
+        },
+        (err) => {
+          console.log('Error fetching user detail', err);
+          setIsUserDetailLoading(false);
+        }
+      );
     } catch (error) {
+      console.log('Error setting up user detail listener', error);
       setIsUserDetailLoading(false);
     }
-    return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      if (typeof unsub === 'function') {
+        unsub();
+      }
+    };
   }, [userId]);
+
   return { userDetail, isUserDetailLoading };
 };

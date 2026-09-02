@@ -5,9 +5,10 @@ import {
   ModalOverlay,
   SlideFade,
   Spinner,
+  useToast,
 } from '@chakra-ui/react';
 import type { DocumentData, Query } from 'firebase/firestore';
-import { doc, getDoc, increment, writeBatch } from 'firebase/firestore';
+import { doc, increment, writeBatch } from 'firebase/firestore';
 import { Suspense, useEffect, useState } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 
@@ -40,6 +41,7 @@ const FeedContainer = ({
 }: FeedContainerProps) => {
   const { authUser } = useAuthUser();
   const { userLikedPosts } = useHandlePost();
+  const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialPostValues, setInitialPostValues] = useState<PostFormData>({
     title: '',
@@ -56,6 +58,7 @@ const FeedContainer = ({
     memoizedPosts,
     lastVisible,
     postsLoading,
+    updatePostLikes,
     error,
   } = useGetPosts();
   useErrorHandler(error);
@@ -72,22 +75,27 @@ const FeedContainer = ({
   };
 
   const handleLikes = async (pid: string) => {
+    if (!authUser?.uid) return;
+
+    const currentlyLiked = userLikedPosts.has(pid);
+    const delta = currentlyLiked ? -1 : 1;
+
+    // 1. Optimistic UI update: instantly increment / decrement like count
+    updatePostLikes(pid, delta);
+
     const batch = writeBatch(db);
     const postLikesSubColRef = doc(
       db,
-      `${USERS_COLLECTION}/${authUser?.uid}/postlikes/${pid}`
+      `${USERS_COLLECTION}/${authUser.uid}/postlikes/${pid}`
     );
     const postRef = doc(db, POSTS_COLLECTION, pid);
-    const data = await getDoc(postLikesSubColRef);
-    // if the user has liked the post
-    if (data.exists()) {
+
+    if (currentlyLiked) {
       batch.delete(postLikesSubColRef);
       batch.update(postRef, {
         likes: increment(-1),
       });
-    }
-    // if the user has not liked the post
-    else {
+    } else {
       batch.set(postLikesSubColRef, {
         likes: true,
         postId: pid,
@@ -96,9 +104,21 @@ const FeedContainer = ({
         likes: increment(1),
       });
     }
-    batch
-      .commit()
-      .catch((err) => console.log('some error while liking the post', err));
+
+    try {
+      await batch.commit();
+    } catch (err) {
+      console.error('Error while updating post like in Firestore', err);
+      // 2. Rollback optimistic update if Firestore write fails
+      updatePostLikes(pid, -delta);
+      toast({
+        title: 'Failed to update like. Rolled back.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom-right',
+      });
+    }
   };
 
   function renderItem<T extends Post>(feed: T) {
