@@ -2,6 +2,7 @@ import '../../styles/globals.css';
 import '../../styles/Nprogress.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { Analytics } from '@vercel/analytics/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { AppProps } from 'next/app';
@@ -25,14 +26,17 @@ Router.events.on('routeChangeError', () => NProgress.done());
 export default function App({ Component, pageProps }: AppProps) {
   useCheckOnlineStatus();
   return (
-    <UserDataProvider>
-      <ChakraProvider theme={theme}>
-        <div className="relative">
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Component {...pageProps} />
-          </ErrorBoundary>
-        </div>
-      </ChakraProvider>
-    </UserDataProvider>
+    <>
+      <UserDataProvider>
+        <ChakraProvider theme={theme}>
+          <div className="relative">
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <Component {...pageProps} />
+            </ErrorBoundary>
+          </div>
+        </ChakraProvider>
+      </UserDataProvider>
+      <Analytics />
+    </>
   );
 }
